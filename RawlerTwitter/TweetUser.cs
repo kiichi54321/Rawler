@@ -39,6 +39,8 @@ namespace RawlerTwitter
             set { includeRetweets = value; }
         }
 
+        public RawlerBase ErrorTree { get; set; }
+
         int count = 20;
 
         public int Count
@@ -85,20 +87,24 @@ namespace RawlerTwitter
 
                 while (true)
                 {
-                    dynamic[] test = Codeplex.Data.DynamicJson.Parse(GetData(login,userTimelineOptions));
+                    var r = GetData(login, userTimelineOptions);
+                    if (r.Item1 == false)
+                    {
+                        if (ErrorTree != null)
+                        {
+                            this.SetText(GetText()+"\t"+r.Item2);
+                            ErrorTree.SetParent(this);
+                            ErrorTree.Run();
+                        }
+
+                        break;
+                    }
+                    dynamic[] test = Codeplex.Data.DynamicJson.Parse(r.Item2);
                     int c = 0;
 
 
                     foreach (var item in test)
                     {
-                        //TweetData t = new TweetData() {
-                        //    Text = SecurityElement.Escape(item.text),
-                        //    ScreenName = item.user.screen_name,
-                        //    Id = decimal.Parse(item.id_str),
-                        //    Location = item.user.location,
-                        //    UsetId = item.user.id_str
-                        //};
-                        //t.SetDate(item.created_at);
                         c++;
                         yield return item.ToString();
                     }
@@ -108,38 +114,7 @@ namespace RawlerTwitter
                         {
                             break;
                         }
-
-                    //if (lines.Result == RequestResult.Success)
-                    //{
-                    //    foreach (var item in lines.ResponseObject)
-                    //    {
-                    //        TweetData t = null;
-                    //        t = new TweetData()
-                    //  {
-                    //      Id = (long)item.Id,
-                    //      UsetId = item.User.Id.ToString(),
-                    //      Text = item.Text,
-                    //      Source = item.Source,
-                    //      ScreenName = item.User.ScreenName,
-                    //      Annotations = item.Annotations,
-                    //      Date = item.CreatedDate,
-                    //      Language = item.User.Language,
-                    //      Location = item.Place.FullName,
-                    //      ProfileImageLocation = item.User.ProfileImageLocation
-                    //  };
-                    //        if (t != null) yield return System.Xaml.XamlServices.Save(t);
-                    //    }
-
-                    //}
-                    //else
-                    //{
-
-                    //    ReportManage.ErrReport(this, "TweetUserTimeline:" + lines.Result.ToString() + ":" + lines.ErrorMessage);
-                    //    break;
-                    //}
-
                 }
-
             }
             else
             {
@@ -147,8 +122,8 @@ namespace RawlerTwitter
             }
         }
 
-
-        private string GetData(TwitterLogin login, UserTimelineOptions userTimelineOptions)
+        
+        private Tuple<bool,string> GetData(TwitterLogin login, UserTimelineOptions userTimelineOptions)
         {
             var lines = Twitterizer.TwitterTimeline.UserTimeline(login.Token, userTimelineOptions);
             dynamic[] test = Codeplex.Data.DynamicJson.Parse(lines.Content);
@@ -157,13 +132,20 @@ namespace RawlerTwitter
             {
                 if (lines.Content.Contains("error"))
                 {
-                    ReportManage.ErrReport(this, "ツイッター制限で休止中");
-                    System.Threading.Thread.Sleep(new TimeSpan(0, 5, 0));
-                    return GetData(login, userTimelineOptions);
+                    ReportManage.ErrReport(this, test[1].ToString());
+                    if (lines.Content.Contains("Not authorized"))
+                    {
+                        return new Tuple<bool, string>(false, test[1].ToString());
+                    }
+                    else
+                    {
+                        System.Threading.Thread.Sleep(new TimeSpan(0, 10, 0));
+                        return GetData(login, userTimelineOptions);
+                    }
                 }
             }
 
-            return lines.Content;
+            return new Tuple<bool,string>(true, lines.Content);
         }
 
 
