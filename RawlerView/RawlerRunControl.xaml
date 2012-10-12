@@ -1,0 +1,22 @@
+﻿<UserControl x:Class="Rawler.View.RawlerRunControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             mc:Ignorable="d" 
+             d:DesignHeight="325" d:DesignWidth="445">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="28" />
+            <RowDefinition Height="297*" />
+        </Grid.RowDefinitions>
+        <TextBox Name="textBox1" Grid.Row="1" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" />
+        <StackPanel Height="26" HorizontalAlignment="Right" Name="stackPanel1" VerticalAlignment="Top" Orientation="Horizontal">
+            <TextBlock Height="23" Name="textBlock2" Text="Count:" Margin="5,0,0,0" />
+            <TextBlock Height="23" Name="textBlock3" Text="0" Margin="3,0" />
+        </StackPanel>
+        <Button Content="Run" Height="23" Name="button1" Width="75" Click="button1_Click" Margin="0,3,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" />
+        <Button Content="TSVで出力" Height="23" HorizontalAlignment="Left" Margin="178,3,0,0" Name="button2" VerticalAlignment="Top" Width="91" Click="button2_Click" />
+        <Button Content="ViewData" Height="23" HorizontalAlignment="Left" Margin="81,3,0,0" Name="button3" VerticalAlignment="Top" Width="91" Click="button3_Click" />
+    </Grid>
+</UserControl>

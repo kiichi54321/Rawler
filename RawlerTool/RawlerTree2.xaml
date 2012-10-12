@@ -1,0 +1,117 @@
+﻿<Data Comment="" 
+      x:Class="RawlerTool.RawlerTree2"
+      xmlns="clr-namespace:Rawler.Tool;assembly=Rawler"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      >
+    <WebClient AddUserAgent="True" VisbleErr="False">
+        <FileSave FileSaveMode="Append" Stock="False" FileName="nico.tsv">
+            <Range Start="1001" End="2000">
+                <AppendText Header="http://com.nicovideo.jp/community/co">
+                    <Report Enable="False"></Report>
+                    <DataWrite Attribute="url"></DataWrite>
+                    <Page x:Name="startPage" Encoding="utf-8" Url="" VisbleErr="False">
+                        <Page.ErrEventTree>
+                            <DataWrite Attribute="title"></DataWrite>
+                        </Page.ErrEventTree>
+                        <TagExtraction Tag="h1" >
+                            <DataWrite Attribute="title"></DataWrite>
+                        </TagExtraction>
+                        <TagExtraction Tag="div" ParameterFilter="cbox_profile">
+                            <TagExtraction Tag="table" IsSingle="True">
+                                <TagExtraction Tag="table"  IsSingle="True">
+                                    <TagExtraction Tag="tr" >
+                                        <Switch>
+                                            <Switch.SwitchValueTree>
+                                                <TagExtraction Tag="td" ParameterFilter="nowrap">
+                                                </TagExtraction>
+                                            </Switch.SwitchValueTree>
+                                            <CaseText CheckText="レベル">
+                                                <TagExtraction Tag="td" >
+                                                    <TagExtraction.Query>
+                                                        <QueryLast></QueryLast>
+                                                    </TagExtraction.Query>
+                                                    <ReadLines >
+                                                        <ReadLines.Query>
+                                                            <QueryFirst/>
+                                                        </ReadLines.Query>
+                                                        <TagClear>
+                                                            <Trim>
+                                                                <DataWrite Attribute="レベル"></DataWrite>
+                                                            </Trim>
+                                                        </TagClear>
+                                                    </ReadLines>
+                                                </TagExtraction>
+                                            </CaseText>
+                                            <CaseText CheckText="参加メンバー">
+                                                <TagExtraction Tag="td" >
+                                                    <TagExtraction.Query>
+                                                        <QueryLast></QueryLast>
+                                                    </TagExtraction.Query>
+                                                    <ReadLines >
+                                                        <ReadLines.Query>
+                                                            <QueryFirst/>
+                                                        </ReadLines.Query>
+                                                        <TagClear>
+                                                            <Trim>
+                                                                <DataWrite Attribute="参加メンバー"></DataWrite>
+                                                            </Trim>
+                                                        </TagClear>
+                                                    </ReadLines>
+                                                </TagExtraction>
+
+                                            </CaseText>
+                                            <CaseText CheckText="登録タグ" >
+                                                <TagExtraction Tag="td" >
+                                                    <TagExtraction.Query>
+                                                        <QueryLast></QueryLast>
+                                                    </TagExtraction.Query>
+                                                    <Link VisbleType="Label">
+                                                        <TagClear>
+                                                            <Trim>
+                                                                <DataWrite Attribute="タグ"></DataWrite>
+                                                            </Trim>
+                                                        </TagClear>
+                                                    </Link>
+                                                </TagExtraction>
+                                            </CaseText>
+                                            <CaseText CheckText="累計来場者数">
+                                                <TagExtraction Tag="td" >
+                                                    <TagExtraction.Query>
+                                                        <QueryLast></QueryLast>
+                                                    </TagExtraction.Query>
+                                                    <DataWrite Attribute="累計来場者数">
+                                                        <DataWrite.PreTree>
+                                                            <Replace OldText="人" NewText="">
+                                                                <TagClear>
+                                                                    <Trim></Trim>
+                                                                </TagClear>
+                                                            </Replace>
+                                                        </DataWrite.PreTree>
+                                                    </DataWrite>
+                                                </TagExtraction>
+                                            </CaseText>
+                                        </Switch>
+
+                                    </TagExtraction>
+                                </TagExtraction>
+                            </TagExtraction>
+                        </TagExtraction>
+                        <TagExtraction Tag="div" ParameterFilter="community_description" UseTagRank="False">
+                            <Link UrlFilter="http://com.nicovideo.jp/community/co" >
+                                <Link.Query>
+                                    <QueryDistinct></QueryDistinct>
+                                </Link.Query>
+                                <DataWrite Attribute="Link"></DataWrite>
+                            </Link>
+                        </TagExtraction>
+                    </Page>
+                    <NextDataRow></NextDataRow>
+                </AppendText>
+                <Sleep SleepSeconds="0"></Sleep>
+            </Range>
+        </FileSave>
+    </WebClient>
+</Data>
+
+
+

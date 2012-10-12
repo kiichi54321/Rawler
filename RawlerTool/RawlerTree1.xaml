@@ -1,0 +1,1198 @@
+﻿<Data Comment="" 
+      x:Class="RawlerTool.RawlerTree1"
+      xmlns="clr-namespace:Rawler.Tool;assembly=Rawler"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:m="clr-namespace:RawlerMecab;assembly=RawlerMecab"
+      xmlns:t="clr-namespace:RawlerTwitter;assembly=RawlerTwitter"
+      >
+
+
+
+
+
+
+    <Data Stock="True" xmlns="clr-namespace:Rawler.Tool;assembly=Rawler" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" >
+        <CreateFolder FolderName="data"></CreateFolder>
+        <TsvReadLines FileName="data/NameUrlList.tsv">
+            <Iterator>
+                <Iterator.SourceTree>
+                    <GetTsvValue ColumnName="Url">
+                        <IteratorSourceClear></IteratorSourceClear>
+                        <Page >
+                            <Tags Tag="div" ParameterFilter="recent_entries_list">
+                                <Tags Tag="ul">
+                                    <Tags Tag="li">
+                                        <Links >
+                                            <Link.Query>
+                                                <QueryFirst></QueryFirst>
+                                            </Link.Query>
+                                            <IteratorSourceAddText></IteratorSourceAddText>
+                                        </Links>
+                                    </Tags>
+                                </Tags>
+                            </Tags>
+                            <Links TagFilter="nextPage">
+                                <Links.Query>
+                                    <QueryFirst></QueryFirst>
+                                </Links.Query>
+                                <NextPage></NextPage>
+                            </Links>
+                        </Page>
+                    </GetTsvValue>
+                </Iterator.SourceTree>
+                <Report></Report>
+                <Page VisbleErr="True">
+                    <PageOnce>
+                        <FileSave FileName="data/BlogData.tsv" FileSaveMode="Append" Stock="False">
+                            <GetTsvValue ColumnName="Name">
+                                <DataWrite Attribute="Name"></DataWrite>
+                            </GetTsvValue>
+                            <GetPageUrl UrlType="Start">
+                                <DataWrite Attribute="PageUrl"></DataWrite>
+                            </GetPageUrl>
+                            <Tags Tag="div" ClassName="entry">
+                                <Tags Tag="h3" ClassName="title">
+                                    <Tags.Query>
+                                        <QueryFirst></QueryFirst>
+                                    </Tags.Query>
+
+                                    <RemoveHtmlComment>
+                                        <Trim DoChopReturnCode="True">
+                                            <DataWrite Attribute="Title"></DataWrite>
+                                        </Trim>
+                                    </RemoveHtmlComment>
+                                </Tags>
+                                <Tags Tag="span" ClassName="date">
+                                    <Trim DoChopReturnCode="True">
+                                        <DataWrite Attribute="Date"></DataWrite>
+                                    </Trim>
+                                </Tags>
+                                <ClipText StartClip="&lt;!-- google_ad_section_start" EndClip="&lt;!-- google_ad_section_end" UseInner="False">
+
+                                    <AppendText Footer="--&gt;">
+                                        <RemoveHtmlComment>
+                                            <Trim DoChopReturnCode="True">
+                                                <DataWrite Attribute="contents"></DataWrite>
+                                            </Trim>
+                                        </RemoveHtmlComment>
+                                    </AppendText>
+                                </ClipText>
+                            </Tags>
+                            <NextDataRow></NextDataRow>
+                        </FileSave>
+                        <FileSave FileName="data/ImageData.tsv" FileSaveMode="Append" Stock="False">
+
+                            <ClipText StartClip="&lt;!-- google_ad_section_start" EndClip="&lt;!-- google_ad_section_end" UseInner="False">
+                                <AppendText Footer="--&gt;">
+                                    <ImageLinks  UrlFilter=".jpg">
+                                        <GetTsvValue ColumnName="Name">
+                                            <DataWrite Attribute="Name"></DataWrite>
+                                        </GetTsvValue>
+                                        <GetPageUrl UrlType="Start">
+                                            <DataWrite Attribute="PageUrl"></DataWrite>
+                                        </GetPageUrl>
+                                        <DownLoad  >
+                                            <DownLoad.FolderNameTree>
+                                                <GetTsvValue ColumnName="Name">
+                                                    <AppendText Header="data/" Footer="image"></AppendText>
+                                                </GetTsvValue>
+                                            </DownLoad.FolderNameTree>
+                                            <GetTsvValue ColumnName="Name">
+                                                <AppendText Header="data/" Footer="image">
+                                                    <DataWrite Attribute="folder"></DataWrite>
+                                                </AppendText>
+                                            </GetTsvValue>
+
+                                            <GetFileName>
+                                                <DataWrite Attribute="image"></DataWrite>
+                                            </GetFileName>
+                                        </DownLoad>
+                                        <NextDataRow></NextDataRow>
+                                    </ImageLinks>
+                                </AppendText>
+                            </ClipText>
+                        </FileSave>
+                    </PageOnce>
+
+                    <FileSave FileSaveMode="Append" FileName="data/CommentData.tsv" Stock="False">
+                        <ClipText StartClip="&lt;div class=&quot;each_comment&quot;&gt;" EndClip="&lt;!--//.each_comment--&gt;">
+                            <GetTsvValue ColumnName="Name">
+                                <DataWrite Attribute="Name"></DataWrite>
+                            </GetTsvValue>
+                            <GetPageUrl UrlType="Start">
+                                <DataWrite Attribute="Url"></DataWrite>
+                            </GetPageUrl>
+                            <ClipText StartClip="&lt;span class=&quot;comment_date&quot;&gt;" EndClip="&lt;span class=&quot;comment_gotoform&quot;&gt;">
+                                <TagClear>
+                                    <Trim DoChopReturnCode="True">
+                                        <DataWrite Attribute="Date"></DataWrite>
+                                    </Trim>
+                                </TagClear>
+                            </ClipText>
+                            <Tags Tag="p" ClassName="label">
+                                <Trim DoChopReturnCode="True">
+                                    <DataWrite Attribute="Title"></DataWrite>
+                                </Trim>
+                            </Tags>
+                            <ClipText StartClip="&lt;p class=&quot;comment_body&quot;&gt;" EndClip="&lt;div class=&quot;comment_footer&quot;&gt;">
+                                <TagClear>
+                                    <Trim DoChopReturnCode="True">
+                                        <DataWrite Attribute="Content"></DataWrite>
+                                    </Trim>
+                                </TagClear>
+                            </ClipText>
+
+                            <Tags Tag="span" ClassName="comment_author">
+                                <TagClear>
+                                    <DataWrite Attribute="Author"></DataWrite>
+                                </TagClear>
+                                <Links VisbleType="Url">
+                                    <DataWrite Attribute="AuthorUrl"></DataWrite>
+                                </Links>
+                            </Tags>
+                            <NextDataRow/>
+                        </ClipText>
+                    </FileSave>
+
+                    <Tags Tag="div" ClassName="page commentPaging">
+                        <Tags.Query>
+                            <QueryDistinct></QueryDistinct>
+                        </Tags.Query>
+                        <Links TagFilter="nextPage" IsSingle="True">
+                            <NextPage SleepSecondTime="1"></NextPage>
+                        </Links>
+                    </Tags>
+                </Page>
+            </Iterator>
+
+        </TsvReadLines>
+
+    </Data>
+
+    <FileSave FileName="kaomoji/tweetData.tsv" Stock="False"
+                    xmlns="clr-namespace:Rawler.Tool;assembly=Rawler"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:t="clr-namespace:RawlerTwitter;assembly=RawlerTwitter">
+        <t:TwitterLogin>
+            <TsvReadLines FileName="kaomoji/tweetUesrList.tsv" >
+                <GetTsvValue ColumnName="ScreenName">
+                    <ContainTextInFile FileName="kaomoji/completedList.txt" Result="False">
+                        <t:TweetUserTimeline  Count="200" >
+                            <t:DataWriteTweet DataElement="Date"></t:DataWriteTweet>
+                            <t:DataWriteTweet DataElement="ScreenName"></t:DataWriteTweet>
+                            <t:DataWriteTweet DataElement="Text">
+                                <t:DataWriteTweet.PreTree>
+                                    <Trim DoChopReturnCode="True"></Trim>
+                                </t:DataWriteTweet.PreTree>
+                            </t:DataWriteTweet>
+                            <NextDataRow></NextDataRow>
+                        </t:TweetUserTimeline>
+                        <ContainTextInFileAddText></ContainTextInFileAddText>
+                    </ContainTextInFile>
+                </GetTsvValue>
+            </TsvReadLines>
+        </t:TwitterLogin>
+    </FileSave>
+
+
+    <t:TwitterLogin>
+        <Document TextValue="(」・ω・)」うー！(／・ω・)／にゃー！,(」・ω・)」うー！(／・ω・)／にゃー！(」・ω・)」うー！(／・ω・)／にゃー！,Rawlerからツイッターにつぶやいてみた">
+            <Split SeparatorType="Comma">
+                <Split.Query>
+                    <QueryShuffle/>
+                </Split.Query>
+                <t:TweetPost>
+                    <Report></Report>
+                </t:TweetPost>
+                <Sleep SleepSeconds="20"></Sleep>
+            </Split>
+        </Document>
+    </t:TwitterLogin>
+    <t:TwitterLogin>
+        <t:TweetUserTimeline ScreenName="kiichi54321" Count="200" >
+            <t:DataWriteTweet DataElement="Date"></t:DataWriteTweet>
+            <t:DataWriteTweet DataElement="ScreenName"></t:DataWriteTweet>
+            <t:DataWriteTweet DataElement="Text">
+                <t:DataWriteTweet.PreTree>
+                    <Trim DoChopReturnCode="True"></Trim>
+                </t:DataWriteTweet.PreTree>
+            </t:DataWriteTweet>
+            <NextDataRow></NextDataRow>
+        </t:TweetUserTimeline>
+    </t:TwitterLogin>
+
+    <t:TwitterLogin>
+        <t:TwitterSearch SearchWord="検索語">
+            <t:DataWriteTweet DataElement="Date"></t:DataWriteTweet>
+            <t:DataWriteTweet DataElement="ScreenName"></t:DataWriteTweet>
+            <t:DataWriteTweet DataElement="Text">
+                <t:DataWriteTweet.PreTree>
+                    <Trim DoChopReturnCode="True"></Trim>
+                </t:DataWriteTweet.PreTree>
+            </t:DataWriteTweet>
+            <NextDataRow></NextDataRow>
+        </t:TwitterSearch>
+    </t:TwitterLogin>
+
+
+    <t:TwitterLogin>
+        <Loop>
+            <Report Header="取得開始"/>
+            <TsvReadLines FileName="anime.tsv">
+                <FileSave Stock="False" FileSaveMode="Append">
+                    <FileSave.FileNameTree>
+                        <GetTsvValue ColumnName="file">
+                            <AppendText Header="TweetData/"></AppendText>
+                        </GetTsvValue>
+                    </FileSave.FileNameTree>
+                    <GetTsvValue ColumnName="word">
+                        <t:TwitterSearch >
+                            <t:DataWriteTweet DataElement="Date"></t:DataWriteTweet>
+                            <t:DataWriteTweet DataElement="ScreenName"></t:DataWriteTweet>
+                            <t:DataWriteTweet DataElement="Text">
+                                <t:DataWriteTweet.PreTree>
+                                    <Trim DoChopReturnCode="True"></Trim>
+                                </t:DataWriteTweet.PreTree>
+                            </t:DataWriteTweet>
+                            <NextDataRow></NextDataRow>
+                        </t:TwitterSearch>
+                    </GetTsvValue>
+                </FileSave>
+            </TsvReadLines>
+            <Report Header="取得終了"/>
+            <Sleep SleepTimeSpan="0:5:0"></Sleep>
+        </Loop>
+    </t:TwitterLogin>
+
+    <FileReadLines>
+        <Switch>
+            <Switch.SwitchValueTree>
+                <Split SeparatorType="Comma">
+                    <Split.Query>
+                        <QueryFirst></QueryFirst>
+                    </Split.Query>
+                </Split>
+            </Switch.SwitchValueTree>
+            <CaseText CheckText="brand">
+                <Replace OldText="brand," NewText="">
+                    <FileApendLine FileName="brandData.txt"></FileApendLine>
+                </Replace>
+            </CaseText>
+            <CaseText CheckText="item">
+                <Replace OldText="item," NewText="">
+                    <FileApendLine FileName="itemData.txt"></FileApendLine>
+                </Replace>
+            </CaseText>
+            <CaseText CheckText="shop">
+                <Replace OldText="shop," NewText="">
+                    <FileApendLine FileName="shopData.txt"></FileApendLine>
+                </Replace>
+            </CaseText>
+
+        </Switch>
+    </FileReadLines>
+
+    <Page>
+        <Links >
+            <Links.Query>
+                <QueryFirst>
+                    <QueryLast>
+                        <QueryElementAt Index="2"/>
+                    </QueryLast>
+                </QueryFirst>
+            </Links.Query>
+            <Report></Report>
+        </Links>
+    </Page>
+
+    <Page Url="">
+        <Tags Tag="div" ClassName="page-move">
+            <Links>
+                <Links.Query>
+                    <QueryLast></QueryLast>
+                </Links.Query>
+                <Report></Report>
+            </Links>
+            <Tags Tag="a" ClassName="next" TagVisbleType="Outer">
+                <Links>
+                    <Report></Report>
+                </Links>
+            </Tags>
+        </Tags>
+    </Page>
+
+
+    <Tags Tag="div" ClassName="Comment">
+        <TagClear>
+            <Trim>
+                <Replace OldText="XXXXX" NewText="YYYYY">
+                    <DataWrite Attribute="data"></DataWrite>
+                </Replace>
+            </Trim>
+        </TagClear>
+    </Tags>
+
+    <FileSave ExtendFilter=".tsv">
+        <TsvReadLines >
+            <GetTsvValue ColumnName="Url">
+
+            </GetTsvValue>
+        </TsvReadLines>
+    </FileSave>
+    <Tags Tag="div" ClassName="Comment">
+        <DataWrite Attribute="data">
+            <DataWrite.PreTree>
+                <TagClear>
+                    <Trim>
+                        <Replace OldText="XXXXX" NewText="YYYYY">
+                        </Replace>
+                    </Trim>
+                </TagClear>
+            </DataWrite.PreTree>
+        </DataWrite>
+    </Tags>
+
+    <Page>
+        <Links>
+            <Link.Query>
+                <QueryContain ContainText="aaaa" Result="False"></QueryContain>
+            </Link.Query>
+            <Page>
+                <Links>
+                    <Page>
+
+                    </Page>
+                </Links>
+            </Page>
+        </Links>
+    </Page>
+
+    <LoginClient LoginUrl="http://mixi.jp/login.pl" Encoding="EUC-JP" AddUserAgent="True">
+        <LoginClient.LoginPostVals>
+            <KeyValue Key="email" Value="kiichi@sfc.keio.ac.jp"></KeyValue>
+            <KeyValue Key="password" Value="@@passwd"></KeyValue>
+            <KeyValue Key="next_url" Value="/home.pl"></KeyValue>
+        </LoginClient.LoginPostVals>
+        <Page Url="http://mixi.jp/list_member.pl?id=41399">
+            <Tags Tag="div" ClassName="iconList03">
+                <Tags Tag="li">
+                    <Links >
+                        <GetUrlParameter ParameterName="id">
+                            <DataWrite Attribute="id"></DataWrite>
+                        </GetUrlParameter>
+                    </Links>
+                </Tags>
+            </Tags>
+        </Page>
+
+    </LoginClient>
+
+
+    <Page Url="">
+        <TagExtraction Tag="div" ClassName="section">
+            <Link VisbleType="Tag">
+                <Link VisbleType="Label">
+                    <DataWrite Attribute="label"></DataWrite>
+                </Link>
+                <Link VisbleType="Url">
+                    <DataWrite Attribute="url"></DataWrite>
+                </Link>
+                <NextDataRow></NextDataRow>
+            </Link>
+        </TagExtraction>
+        <Links TagFilter="prev">
+            <NextPage></NextPage>
+        </Links>
+
+        <NextPage>
+            <NextPage.PreTree>
+                <Links TagFilter="prev"></Links>
+            </NextPage.PreTree>
+        </NextPage>
+    </Page>
+
+    <Data>
+        <Page>
+            <Links>
+                <DataWrite Attribute="URL"></DataWrite>
+            </Links>
+        </Page>
+    </Data>
+
+    <Page x:Name="startPage" Encoding="utf-8" Url="">
+        <m:Mecab ViewType="表層形">
+            <m:Mecab.PreTree>
+                <TagClear></TagClear>
+            </m:Mecab.PreTree>
+            <m:Mecab.Query>
+                <QueryDistinct></QueryDistinct>
+            </m:Mecab.Query>
+            <Report></Report>
+        </m:Mecab>
+    </Page>
+
+    <CountData DoSave="True" MinCount="3" >
+        <FileReadLines>
+            <ChangeText>
+                <ChangeText.PreTree>
+                    <Split Num="0" SeparatorType="Comma"></Split>
+                </ChangeText.PreTree>
+                <CountSave></CountSave>
+                <Report></Report>
+            </ChangeText>
+            <m:Mecab ViewType="表層形" UseHinshi="名詞,形容詞,動詞" Args="-u ファイル名">
+                <m:Mecab.PreTree>
+                    <Split Num="3" SeparatorType="Comma">
+                        <m:MecabPreprocessing></m:MecabPreprocessing>
+                    </Split>
+                </m:Mecab.PreTree>
+                <m:Mecab.Query>
+                    <QueryDistinct></QueryDistinct>
+                </m:Mecab.Query>
+                <Equal EqualCSV="た,です,し,な,だ,ん,で,い,う,さ,れ,て,せ,ます" Result="False">
+                    <CountAdd>
+                        <CountAdd.GroupTree>
+                            <GetCurrentFileReadLine>
+                                <Split Num="0" SeparatorType="Comma"></Split>
+                            </GetCurrentFileReadLine>
+                        </CountAdd.GroupTree>
+                    </CountAdd>
+                </Equal>
+            </m:Mecab>
+        </FileReadLines>
+    </CountData>
+    <Range Start="1" End="12">
+        <AppendText Footer="月は酒がのめるよ">
+            <Report></Report>
+        </AppendText>
+    </Range>
+    <Page Url="">
+        <Tags Tag="div" ClassName="comments-body">
+            <Tags Tag="div" ClassName="text">
+                <DataWrite Attribute="comment">
+                    <DataWrite.PreTree>
+                        <TagClear></TagClear>
+                    </DataWrite.PreTree>
+                </DataWrite>
+            </Tags>
+            <Tags Tag="div" ClassName="comments-post">
+                <ClipText StartClip="Posted by " EndClip=" at">
+                    <DataWrite Attribute="name"></DataWrite>
+                </ClipText>
+                <Split SeparatorType="Comma">
+                    <Split.PreTree>
+                        <Replace OldText=" at " NewText=","></Replace>
+                    </Split.PreTree>
+                    <Split.Query>
+                        <QueryLast></QueryLast>
+                    </Split.Query>
+                    <DataWrite Attribute="date">
+                        <DataWrite.PreTree>
+                            <TagClear>
+                                <Trim></Trim>
+                            </TagClear>
+                        </DataWrite.PreTree>
+                    </DataWrite>
+                </Split>
+            </Tags>
+            <NextDataRow></NextDataRow>
+        </Tags>
+        <Links LabelFilter="次のコメント" IsSingle="True">
+            <NextPage SleepSecondTime="0"></NextPage>
+        </Links>
+    </Page>
+
+
+    <Range Start="1" End="100">
+        <Range.Query>
+            <QueryShuffle>
+                <QueryTake Count="10"></QueryTake>
+            </QueryShuffle>
+        </Range.Query>
+        <AppendText Header="co">
+            <Report></Report>
+        </AppendText>
+    </Range>
+
+    <TagClear>
+        <Trim>
+            <DataWrite Attribute="date"></DataWrite>
+        </Trim>
+    </TagClear>
+
+    <DataWrite Attribute="date">
+        <DataWrite.PreTree>
+            <TagClear>
+                <Trim></Trim>
+            </TagClear>
+        </DataWrite.PreTree>
+    </DataWrite>
+
+    <FileSave FileSaveMode="Create">
+        <FileReadLines ExtendFilter="tsv">
+            <Split Num="0" SeparatorType="Tab">
+                <Page>
+                    <Tags Tag="title">
+                        <DataWrite Attribute="title"></DataWrite>
+                    </Tags>
+                    <GetCurrentFileReadLine>
+                        <Split Num="1" SeparatorType="Tab">
+                            <DataWrite Attribute="key"></DataWrite>
+                        </Split>
+                    </GetCurrentFileReadLine>
+                </Page>
+                <NextDataRow></NextDataRow>
+            </Split>
+        </FileReadLines>
+    </FileSave>
+
+    <FileSave FileSaveMode="Create">
+        <FileReadLines ExtendFilter="tsv">
+            <Split Num="1" SeparatorType="Tab">
+                <Split SeparatorType="Comma">
+                    <DataWrite Attribute="tag"></DataWrite>
+                    <GetCurrentFileReadLine>
+                        <Split SeparatorType="Tab" Num="0">
+                            <DataWrite Attribute="key"></DataWrite>
+                        </Split>
+                    </GetCurrentFileReadLine>
+                    <NextDataRow></NextDataRow>
+                </Split>
+            </Split>
+        </FileReadLines>
+    </FileSave>
+
+    <Contains ContainsText="ビジー状態です">
+    </Contains>
+    <Equal EqualCSV="た,です,し,な,だ,ん,で,い,う,さ,れ,て,せ,ます" Result="False">
+    </Equal>
+
+    <FileSave>
+        <LoginClient LoginUrl="http://mixi.jp/login.pl" Encoding="EUC-JP">
+            <LoginClient.LoginPostVals>
+                <KeyValue Key="email" Value=""></KeyValue>
+                <KeyValue Key="password" Value=""></KeyValue>
+                <KeyValue Key="next_url" Value="/home.pl"></KeyValue>
+            </LoginClient.LoginPostVals>
+            <FileReadLines >
+                <FileReadLines.Query>
+                    <QueryDistinct></QueryDistinct>
+                </FileReadLines.Query>
+                <Page>
+                    <Page.PreTree>
+                        <AppendText Header="http://mixi.jp/view_community.pl?id="></AppendText>
+                    </Page.PreTree>
+                    <Tags Tag="div" ClassName="communitPhotoArea">
+                        <ImageLinks VisbleType="Url">
+                            <DataWrite Attribute="ImageUrl"></DataWrite>
+                        </ImageLinks>
+                    </Tags>
+                    <Tags Tag="dl" ClassName="communityInfolistMiddle clearfix categoryName">
+                        <Tags Tag="dd">
+                            <DataWrite Attribute="カテゴリ"></DataWrite>
+                        </Tags>
+                    </Tags>
+                    <Tags Tag="dl" ClassName="communityInfolistMiddle clearfix memberNumber">
+                        <Tags Tag="dd">
+                            <DataWrite Attribute="memberNumber"></DataWrite>
+                        </Tags>
+                    </Tags>
+                </Page>
+                <DataWrite Attribute="コミュニティID"></DataWrite>
+                <NextDataRow></NextDataRow>
+                <Sleep></Sleep>
+            </FileReadLines>
+        </LoginClient>
+    </FileSave>
+
+
+    <TagExtraction Tag="table"  IsSingle="True">
+        <TagExtraction Tag="tr" >
+            <Switch>
+                <Switch.SwitchValueTree>
+                    <TagExtraction Tag="td" ParameterFilter="nowrap">
+                    </TagExtraction>
+                </Switch.SwitchValueTree>
+                <CaseText CheckText="レベル">
+                    <TagExtraction Tag="td" >
+                        <TagExtraction.Query>
+                            <QueryLast></QueryLast>
+                        </TagExtraction.Query>
+                        <ReadLines >
+                            <ReadLines.Query>
+                                <QueryFirst/>
+                            </ReadLines.Query>
+                            <TagClear>
+                                <Trim>
+                                    <DataWrite Attribute="レベル"></DataWrite>
+                                </Trim>
+                            </TagClear>
+                        </ReadLines>
+                    </TagExtraction>
+                </CaseText>
+                <CaseText CheckText="参加メンバー">
+                    <TagExtraction Tag="td" >
+                        <TagExtraction.Query>
+                            <QueryLast></QueryLast>
+                        </TagExtraction.Query>
+                        <ReadLines >
+                            <ReadLines.Query>
+                                <QueryFirst/>
+                            </ReadLines.Query>
+                            <TagClear>
+                                <Trim>
+                                    <DataWrite Attribute="参加メンバー"></DataWrite>
+                                </Trim>
+                            </TagClear>
+                        </ReadLines>
+                    </TagExtraction>
+                </CaseText>
+                <CaseText CheckText="登録タグ" >
+                    <TagExtraction Tag="td" >
+                        <TagExtraction.Query>
+                            <QueryLast></QueryLast>
+                        </TagExtraction.Query>
+                        <Link VisbleType="Label">
+                            <TagClear>
+                                <Trim>
+                                    <DataWrite Attribute="タグ"></DataWrite>
+                                </Trim>
+                            </TagClear>
+                        </Link>
+                    </TagExtraction>
+                </CaseText>
+                <CaseText CheckText="累計来場者数">
+                    <TagExtraction Tag="td" >
+                        <TagExtraction.Query>
+                            <QueryLast></QueryLast>
+                        </TagExtraction.Query>
+                        <DataWrite Attribute="累計来場者数">
+                            <DataWrite.PreTree>
+                                <Replace OldText="人" NewText="">
+                                    <TagClear>
+                                        <Trim></Trim>
+                                    </TagClear>
+                                </Replace>
+                            </DataWrite.PreTree>
+                        </DataWrite>
+                    </TagExtraction>
+                </CaseText>
+
+            </Switch>
+        </TagExtraction>
+    </TagExtraction>
+    <Split Num="1" SeparatorType="Tab">
+        <Switch>
+            <CaseInt Start="0" End="9">
+                <DataWrite Attribute="Age" Value="10才未満"></DataWrite>
+            </CaseInt>
+            <CaseInt Start="10" End="19">
+                <DataWrite Attribute="Age" Value="10代"></DataWrite>
+            </CaseInt>
+            <CaseInt Start="20" End="29">
+                <DataWrite Attribute="Age" Value="20代"></DataWrite>
+            </CaseInt>
+        </Switch>
+    </Split>
+
+
+    <Page>
+        <Links>
+            <Links.Query>
+                <QueryDistinct></QueryDistinct>
+            </Links.Query>
+            <Report></Report>
+        </Links>
+        <DownLoad Folder="image/">
+            <DownLoad.SaveNameTree>
+                <GetCurrentFileReadLine></GetCurrentFileReadLine>
+            </DownLoad.SaveNameTree>
+        </DownLoad>
+    </Page>
+
+    <Range Start="1" End="100">
+        <Range.Query>
+            <QueryShuffle>
+                <QueryTake Count="10">
+                    <QueryOrderBy></QueryOrderBy>
+                </QueryTake>
+            </QueryShuffle>
+        </Range.Query>
+        <Report></Report>
+    </Range>
+
+    <Tags Tag="table">
+        <Tags Tag="tr">
+            <DataWrite>
+                <DataWrite.PreTree>
+                    <Tags Tag="td">
+                        <Tags.Query>
+                            <QueryLast></QueryLast>
+                        </Tags.Query>
+                    </Tags>
+                </DataWrite.PreTree>
+                <DataWrite.AttributeTree>
+                    <Tags Tag="td">
+                        <Tags.Query>
+                            <QueryFirst></QueryFirst>
+                        </Tags.Query>
+                    </Tags>
+                </DataWrite.AttributeTree>
+            </DataWrite>
+        </Tags>
+    </Tags>
+
+    <FileSave>
+        <FileReadLines>
+            <FileReadLines.Query>
+                <QuerySkip Num="1"></QuerySkip>
+            </FileReadLines.Query>
+            <Split Num="1">
+                <Equal EqualCSV="not found" Result="True">
+                    <DataWrite Attribute="File" Value="not image"></DataWrite>
+                </Equal>
+                <Equal EqualCSV="not found" Result="False">
+                    <!--    <DownLoad Folder="icons/">
+                        <DownLoad.SaveNameTree>
+                            <GetCurrentFileReadLine>
+                                <Split Num="0">
+                                </Split>
+                            </GetCurrentFileReadLine>
+                        </DownLoad.SaveNameTree>
+                    </DownLoad>
+-->
+                    <GetCurrentFileReadLine>
+                        <Split Num="0">
+                            <AppendText >
+                                <AppendText.FooterTree>
+                                    <GetCurrentFileReadLine>
+                                        <Split Num="1">
+                                            <GetFileExtension></GetFileExtension>
+                                        </Split>
+                                    </GetCurrentFileReadLine>
+                                </AppendText.FooterTree>
+                                <DataWrite Attribute="File"></DataWrite>
+                            </AppendText>
+                        </Split>
+                    </GetCurrentFileReadLine>
+                </Equal>
+            </Split>
+            <Split Num="0">
+                <DataWrite Attribute="Id"></DataWrite>
+            </Split>
+            <Split Num="2">
+                <DataWrite Attribute="follower"></DataWrite>
+            </Split>
+            <NextDataRow></NextDataRow>
+        </FileReadLines>
+    </FileSave>
+
+
+
+    <CountData DoSave="True" MinCount="3" >
+        <FileReadLines>
+            <FileReadLines.Query>
+                <QuerySkip Num="1"></QuerySkip>
+            </FileReadLines.Query>
+            <Split Num="2">
+                <m:Mecab ViewType="表層形" UseHinshi="名詞,形容詞,動詞">
+                    <m:Mecab.PreTree>
+                        <m:MecabPreprocessing></m:MecabPreprocessing>
+                    </m:Mecab.PreTree>
+                    <m:Mecab.Query>
+                        <QueryDistinct></QueryDistinct>
+                    </m:Mecab.Query>
+                    <Equal EqualCSV="た,です,し,な,だ,ん,で,い,う,さ,れ,て,せ,ます" Result="False">
+                        <CountAdd>
+                            <CountAdd.GroupTree>
+                                <GetCurrentFileReadLine>
+                                    <Split Num="0" SeparatorType="Tab"></Split>
+                                </GetCurrentFileReadLine>
+                            </CountAdd.GroupTree>
+                            <CountAdd.AddNumTree>
+                                <GetCurrentFileReadLine>
+                                    <Split Num="3"></Split>
+                                </GetCurrentFileReadLine>
+                            </CountAdd.AddNumTree>
+                        </CountAdd>
+
+                    </Equal>
+                </m:Mecab>
+            </Split>
+        </FileReadLines>
+    </CountData>
+
+    <FileSave>
+        <FileReadLines>
+            <DataWrite Attribute="member" Value="前田敦子"></DataWrite>
+            <Contains ContainsText="テレビ">
+                <DataWrite Attribute="Media" Value="テレビ"></DataWrite>
+            </Contains>
+            <Contains ContainsText="ブログ">
+                <DataWrite Attribute="Media" Value="ブログ"></DataWrite>
+            </Contains>
+            <Contains ContainsText="握手">
+                <DataWrite Attribute="Media" Value="握手"></DataWrite>
+            </Contains>
+
+            <Contains ContainsText="私">
+                <DataWrite Attribute="Words" Value="私"></DataWrite>
+            </Contains>
+            <Contains ContainsText="俺">
+                <DataWrite Attribute="Words" Value="俺"></DataWrite>
+            </Contains>
+            <Contains ContainsText="僕">
+                <DataWrite Attribute="Words" Value="僕"></DataWrite>
+            </Contains>
+            <Contains ContainsText="みんな">
+                <DataWrite Attribute="Words" Value="みんな"></DataWrite>
+            </Contains>
+            <Contains ContainsText="一緒">
+                <DataWrite Attribute="Words" Value="一緒"></DataWrite>
+            </Contains>
+            <Contains ContainsText="悔しい">
+                <DataWrite Attribute="Words" Value="悔しい"></DataWrite>
+            </Contains>
+            <Contains ContainsText="可愛い">
+                <DataWrite Attribute="Words" Value="可愛い"></DataWrite>
+            </Contains>
+            <Contains ContainsText="推し">
+                <DataWrite Attribute="Words" Value="推し"></DataWrite>
+            </Contains>
+            <Contains ContainsText="ファン">
+                <DataWrite Attribute="Words" Value="ファン"></DataWrite>
+            </Contains>
+            <Contains ContainsText="会い">
+                <DataWrite Attribute="Words" Value="会い"></DataWrite>
+            </Contains>
+            <Contains ContainsText="感動">
+                <DataWrite Attribute="Words" Value="感動"></DataWrite>
+            </Contains>
+            <Contains ContainsText="元気">
+                <DataWrite Attribute="Words" Value="元気"></DataWrite>
+            </Contains>
+            <Contains ContainsText="支え">
+                <DataWrite Attribute="Words" Value="支え"></DataWrite>
+            </Contains>
+            <Contains ContainsText="応援">
+                <DataWrite Attribute="Words" Value="応援"></DataWrite>
+            </Contains>
+            <Contains ContainsText="AKB">
+                <DataWrite Attribute="Words" Value="AKB"></DataWrite>
+            </Contains>
+            <Contains ContainsText="大好き">
+                <DataWrite Attribute="Words" Value="大好き"></DataWrite>
+            </Contains>
+            <Contains ContainsText="ファン">
+                <DataWrite Attribute="Words" Value="ファン"></DataWrite>
+            </Contains>
+            <Contains ContainsText="笑顔">
+                <DataWrite Attribute="Words" Value="笑顔"></DataWrite>
+            </Contains>
+            <Contains ContainsText="好き">
+                <DataWrite Attribute="Words" Value="好き"></DataWrite>
+            </Contains>
+            <Contains ContainsText="嬉しい">
+                <DataWrite Attribute="Words" Value="嬉しい"></DataWrite>
+            </Contains>
+            <Contains ContainsText="涙">
+                <DataWrite Attribute="Words" Value="涙"></DataWrite>
+            </Contains>
+            <Contains ContainsText="投票">
+                <DataWrite Attribute="Words" Value="投票"></DataWrite>
+            </Contains>
+            <Contains ContainsText="結果">
+                <DataWrite Attribute="Words" Value="結果"></DataWrite>
+            </Contains>
+            <Contains ContainsText="メンバー">
+                <DataWrite Attribute="Words" Value="メンバー"></DataWrite>
+            </Contains>
+            <Contains ContainsText="楽しみ">
+                <DataWrite Attribute="Words" Value="楽しみ"></DataWrite>
+            </Contains>
+            <Contains ContainsText="思い">
+                <DataWrite Attribute="Words" Value="思い"></DataWrite>
+            </Contains>
+            <Contains ContainsText="泣い">
+                <DataWrite Attribute="Words" Value="泣い"></DataWrite>
+            </Contains>
+            <Contains ContainsText="言葉">
+                <DataWrite Attribute="Words" Value="言葉"></DataWrite>
+            </Contains>
+            <Contains ContainsText="プレッシャ">
+                <DataWrite Attribute="Words" Value="プレッシャ"></DataWrite>
+            </Contains>
+            <Contains ContainsText="正直">
+                <DataWrite Attribute="Words" Value="正直"></DataWrite>
+            </Contains>
+            <Contains ContainsText="一番">
+                <DataWrite Attribute="Words" Value="一番"></DataWrite>
+            </Contains>
+
+
+
+            <DataWrite Attribute="Text"></DataWrite>
+            <NextDataRow></NextDataRow>
+        </FileReadLines>
+    </FileSave>
+
+
+
+
+
+    <LoginClient LoginUrl="http://www.pixiv.net/login.php" >
+        <LoginClient.LoginPostVals>
+            <KeyValue Key="pixiv_id" Value=""></KeyValue>
+            <KeyValue Key="pass" Value=""></KeyValue>
+            <KeyValue Key="mode" Value="login"></KeyValue>
+        </LoginClient.LoginPostVals>
+
+        <FileSave >
+            <Iterator>
+                <Iterator.Texts>
+                    <TextVaule>&amp;scd=2011-12-01&amp;ecd=2011-12-31</TextVaule>
+                    <TextVaule>&amp;scd=2011-11-01&amp;ecd=2011-12-1</TextVaule>
+                    <TextVaule>&amp;scd=2011-10-01&amp;ecd=2011-11-1</TextVaule>
+                    <TextVaule>&amp;scd=2011-9-01&amp;ecd=2011-10-1</TextVaule>
+                    <TextVaule>&amp;scd=2011-8-01&amp;ecd=2011-9-1</TextVaule>
+                    <TextVaule>&amp;scd=2011-7-01&amp;ecd=2011-8-1</TextVaule>
+                    <TextVaule>&amp;scd=2011-6-01&amp;ecd=2011-7-1</TextVaule>
+                    <TextVaule>&amp;scd=2011-5-01&amp;ecd=2011-6-1</TextVaule>
+                    <TextVaule>&amp;scd=2011-4-01&amp;ecd=2011-5-1</TextVaule>
+                </Iterator.Texts>
+                <AppendText Header="http://www.pixiv.net/search.php?s_mode=s_tag&amp;word=TIGER%26BUNNY&amp;order=date">
+                    <Page Comment="一覧ページを読み込む" >
+                        <Tags Tag="ul" ClassName="images autopagerize_page_element">
+                            <Tags Tag="li" ClassName="image">
+                                <CompareInt CompareType="over" CompareValue="20" Comment="ブクマ数で取得を絞る">
+                                    <CompareInt.PreTree>
+                                        <Tags Tag="ul" ClassName="count-list">
+                                            <TagClear>
+                                                <Trim DoChopReturnCode="True">
+
+                                                </Trim>
+                                            </TagClear>
+                                        </Tags>
+                                    </CompareInt.PreTree>
+
+                                    <GetObject ClassName="Tags">
+                                        <Tags Tag="ul" ClassName="count-list">
+                                            <TagClear>
+                                                <Trim DoChopReturnCode="True">
+                                                    <DataWrite Attribute="ブクマ数"></DataWrite>
+                                                </Trim>
+                                            </TagClear>
+                                        </Tags>
+                                        <Link>
+                                            <Link.Query>
+                                                <QueryContain ContainText="event" Result="False">
+                                                    <QueryFirst></QueryFirst>
+                                                </QueryContain>
+                                            </Link.Query>
+
+                                            <Page>
+                                                <GetPageUrl>
+                                                    <Replace OldText="http://www.pixiv.net/member_illust.php?mode=medium&amp;illust_id=" NewText="">
+                                                        <DataWrite Attribute="illust_id"></DataWrite>
+                                                    </Replace>
+                                                </GetPageUrl>
+                                                <Tags Tag="div" ClassName="works_data">
+                                                    <Tags Tag="h3">
+                                                        <DataWrite Attribute="Title"></DataWrite>
+                                                    </Tags>
+                                                    <Tags Tag="p">
+                                                        <Split Separator="｜" SeparatorType="Other" Num="0">
+                                                            <DataWrite Attribute="date"></DataWrite>
+                                                        </Split>
+                                                    </Tags>
+                                                </Tags>
+                                                <Tags Tag="div" IdName="rating">
+                                                    <Tags Tag="div" IdName="jd_rtv">
+                                                        <DataWrite Attribute="閲覧数"></DataWrite>
+                                                    </Tags>
+                                                    <Tags Tag="div" IdName="jd_rtc">
+                                                        <DataWrite Attribute="評価回数"></DataWrite>
+                                                    </Tags>
+                                                    <Tags Tag="div" IdName="jd_rtt">
+                                                        <DataWrite Attribute="総合点"></DataWrite>
+                                                    </Tags>
+                                                </Tags>
+                                                <Tags Tag="p" ClassName="works_caption">
+                                                    <DataWrite Attribute="works_caption"></DataWrite>
+                                                </Tags>
+                                                <Tags Tag="div" ClassName="works_display">
+                                                    <ImageLinks>
+                                                        <DownLoad Folder="image">
+                                                            <DataWrite Attribute="image"></DataWrite>
+                                                        </DownLoad>
+                                                    </ImageLinks>
+                                                </Tags>
+                                                <Tags Tag="span" IdName="tags">
+                                                    <Link UrlFilter="tags.php" VisbleType="Label">
+                                                        <DataWrite Attribute="tags"></DataWrite>
+                                                    </Link>
+                                                </Tags>
+                                                <NextDataRow></NextDataRow>
+
+                                            </Page>
+                                            <Sleep SleepSeconds="5"></Sleep>
+                                        </Link>
+                                    </GetObject>
+                                </CompareInt>
+
+                            </Tags>
+                        </Tags>
+                        <NextPage>
+                            <NextPage.PreTree>
+                                <Tags Tag="li" IsSingle="True" ClassName="next">
+                                    <Link></Link>
+                                </Tags>
+                            </NextPage.PreTree>
+                        </NextPage>
+                    </Page>
+                </AppendText>
+            </Iterator>
+        </FileSave>
+    </LoginClient>
+
+    <Links>
+
+    </Links>
+
+    <Links>
+        <Link.Query>
+            <QuerySkip Num="2">
+                <QueryTake Count="3"></QueryTake>
+            </QuerySkip>
+        </Link.Query>
+        <Report></Report>
+    </Links>
+
+    <Data>
+        <Page>
+            <Link>
+                <DataWrite Attribute="URL"></DataWrite>
+                <NextDataRow></NextDataRow>
+            </Link>
+        </Page>
+    </Data>
+
+    <FileSave>
+        <FileReadLines>
+            <Split Num="9" SeparatorType="Tab">
+                <Split SeparatorType="Comma">
+                    <DataWrite Attribute="tag"></DataWrite>
+                    <GetCurrentFileReadLine>
+                        <Split Num="1" SeparatorType="Tab">
+                            <DataWrite Attribute="illust_id"/>
+                        </Split>
+                        <Split Num="0" SeparatorType="Tab">
+                            <DataWrite Attribute="ブクマ数"/>
+                        </Split>
+                        <Split Num="4" SeparatorType="Tab">
+                            <DataWrite Attribute="閲覧数"/>
+                        </Split>
+                        <Split Num="5" SeparatorType="Tab">
+                            <DataWrite Attribute="評価回数"/>
+                        </Split>
+                        <Split Num="6" SeparatorType="Tab">
+                            <DataWrite Attribute="総合点"/>
+                        </Split>
+                    </GetCurrentFileReadLine>
+
+                    <NextDataRow></NextDataRow>
+                </Split>
+            </Split>
+        </FileReadLines>
+    </FileSave>
+
+    <FileSave>
+        <Iterator>
+            <Iterator.SourceTree>
+                <TsvReadLines>
+                    <GetTsvValue ColumnName="tags">
+                        <Split SeparatorType="Comma">
+                            <IteratorSourceAddText></IteratorSourceAddText>
+                        </Split>
+                    </GetTsvValue>
+                </TsvReadLines>
+            </Iterator.SourceTree>
+            <Iterator.Query>
+                <QueryDistinct></QueryDistinct>
+            </Iterator.Query>
+            <DataWrite Attribute="word"></DataWrite>
+            <AppendText Header="http://dic.pixiv.net/a/">
+                <Page>
+                    <Tags Tag="aside" IdName="sub-contents">
+                        <Tags Tag="div" ClassName="items parent">
+                            <Tags Tag="div" ClassName="info">
+                                <Link VisbleType="Label">
+                                    <Trim DoChopReturnCode="True">
+                                        <DataWrite Attribute="parent"></DataWrite>
+                                    </Trim>
+                                </Link>
+                            </Tags>
+                        </Tags>
+                    </Tags>
+                    <Tags Tag="header">
+                        <Tags Tag="h1" Enable="False">
+                            <DataWrite Attribute="word">
+                                <DataWrite.PreTree>
+                                    <Trim DoChopReturnCode="True"></Trim>
+                                </DataWrite.PreTree>
+                            </DataWrite>
+                        </Tags>
+                        <Tags Tag="div" ClassName="summary">
+                            <DataWrite Attribute="summary">
+                                <DataWrite.PreTree>
+                                    <Trim DoChopReturnCode="True"></Trim>
+                                </DataWrite.PreTree>
+                            </DataWrite>
+                        </Tags>
+                    </Tags>
+                    <NextDataRow></NextDataRow>
+                </Page>
+            </AppendText>
+
+        </Iterator>
+    </FileSave>
+
+    <TsvReadLines>
+        <FileSave Stock="False">
+            <FileSave.FileNameTree>
+                <GetTsvValue ColumnName="ファイル名"></GetTsvValue>
+            </FileSave.FileNameTree>
+            <GetTsvValue ColumnName="ブログ記事URL">
+                <Page >
+                    <Tags Tag="div" ClassName="comments-body">
+                        <Tags Tag="div" ClassName="text">
+                            <DataWrite Attribute="comment">
+                                <DataWrite.PreTree>
+                                    <TagClear></TagClear>
+                                </DataWrite.PreTree>
+                            </DataWrite>
+                        </Tags>
+                        <Tags Tag="div" ClassName="comments-post">
+                            <ClipText StartClip="Posted by " EndClip=" at">
+                                <DataWrite Attribute="name"></DataWrite>
+                            </ClipText>
+                        </Tags>
+                        <NextDataRow></NextDataRow>
+                    </Tags>
+                    <Links LabelFilter="次のコメント" IsSingle="True">
+                        <NextPage SleepSecondTime="0"></NextPage>
+                    </Links>
+                </Page>
+            </GetTsvValue>
+        </FileSave>
+    </TsvReadLines>
+
+
+
+    <Document TextValue="【電力消費 [19日19～20時]】87% [△] (3440/3920万kW) / 前日比：-205万kW(-6%) 公式情報は→ http://bit.ly/uZk4m">
+        <RemoveWordByRegular Pattern="http://[^ ]*">
+            <Report></Report>
+        </RemoveWordByRegular>
+    </Document>
+</Data>
+

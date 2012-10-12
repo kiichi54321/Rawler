@@ -1,0 +1,14 @@
+﻿<Data Comment="" 
+      x:Class="RawlerTool.RawlerTree"
+      xmlns="clr-namespace:Rawler.Tool;assembly=Rawler"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      >
+    <Page x:Name="startPage" Comment="" Encoding="utf-8" Url="">
+        <Page>
+            <Links UrlFilter="Next" VisbleType="Label">
+                    <Report></Report>
+            </Links>
+        </Page>
+    </Page>
+</Data>
+
