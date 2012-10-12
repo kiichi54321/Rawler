@@ -1,0 +1,75 @@
+﻿<UserControl x:Class="Rawler.View.RawlerView"
+             xmlns:Rawler="clr-namespace:Rawler.Tool"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:PropertyGrid="clr-namespace:System.Windows.Controls.WpfPropertyGrid;assembly=System.Windows.Controls.WpfPropertyGrid"
+             xmlns:local="clr-namespace:Rawler.View"
+             xmlns:wpg="clr-namespace:WPG;assembly=WPG"	
+             mc:Ignorable="d" 
+             d:DesignHeight="300" d:DesignWidth="559">
+    <UserControl.Resources>
+        <local:Single2ListConverter  x:Key="Single2List"></local:Single2ListConverter>
+        
+        <HierarchicalDataTemplate DataType="{x:Type Rawler:RawlerBase}" ItemsSource="{Binding Children}" >
+            <Expander Expanded="Expander_Expanded"  Tag="{Binding}">
+                <Expander.Header>
+                
+                        
+                        <StackPanel Orientation="Horizontal" >
+                            <TextBlock Text="{Binding Path=ObjectName}"></TextBlock>
+                            <Button Tag="{Binding}" Content="▲" Height="14" Width="14" Click="Button_Click" FontSize="8">
+                            </Button>
+                            <StackPanel.ToolTip>
+                                <TextBlock Text="{Binding Comment}"></TextBlock>
+                            </StackPanel.ToolTip>
+                        </StackPanel>
+                 
+                </Expander.Header>
+                <Grid>
+                    <StackPanel Orientation="Horizontal" Margin="16,0,0,0">
+                        <Expander Header="PreTree" >
+                            <TreeView ItemsSource="{Binding Path=PreTree,Converter={StaticResource ResourceKey=Single2List}}"></TreeView>
+                        </Expander>
+
+                    </StackPanel>
+                </Grid>
+            </Expander>
+        </HierarchicalDataTemplate>
+
+    </UserControl.Resources>
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="320*" />
+            <ColumnDefinition Width="239*" />
+        </Grid.ColumnDefinitions>
+        <TreeView Name="treeView1" SelectedItemChanged="treeView1_SelectedItemChanged"  >
+        </TreeView>
+        <Popup Placement="Bottom" x:Name="popup" IsOpen="False">
+            <StackPanel Width="80" Background="White">
+                <Button Click="Button_Click_1">Add</Button>
+                <Button Click="Button_Click_1">Del</Button>
+                <Button Click="Button_Click_1">Copy</Button>
+                <Button Click="Button_Click_1">Peast</Button>
+            </StackPanel>
+        </Popup>
+        <Popup Placement="Right" x:Name="popup2" IsOpen="False">
+            <Grid Width="150" >
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="20" />
+                    <RowDefinition Height="60*" />
+                </Grid.RowDefinitions>
+                <TextBox TextChanged="TextBox_TextChanged" Name="kohoTextbox" PreviewKeyDown="kohoTextbox_KeyDown"></TextBox>
+                <ListBox Grid.Row="1" Name="rawlerListBox" MaxHeight="120" SelectionChanged="rawlerListBox_SelectionChanged"></ListBox>
+            </Grid>
+        </Popup>
+
+        <Grid Grid.Column="1">
+            <wpg:PropertyGrid  Name="PropertyGrid1" ShowDescription="True"  Categorized="False">
+
+            </wpg:PropertyGrid>
+
+        </Grid>
+    </Grid>
+</UserControl>

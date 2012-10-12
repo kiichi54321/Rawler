@@ -1,0 +1,8 @@
+﻿<Data Comment="" UseReLogin="False"
+      x:Class="Rawler.Template.RawlerTemplate"
+      xmlns="clr-namespace:Rawler.Tool;assembly=Rawler"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Page Comment="" Encoding="utf-8" Url="">
+
+    </Page>
+</Data>

@@ -1,0 +1,232 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{D0FF1894-5D72-40C4-91FD-774A8D87D34F}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Rawler</RootNamespace>
+    <AssemblyName>Rawler</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkProfile>Client</TargetFrameworkProfile>
+    <FileAlignment>512</FileAlignment>
+    <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <WarningLevel>4</WarningLevel>
+    <SccProjectName>
+    </SccProjectName>
+    <SccLocalPath>
+    </SccLocalPath>
+    <SccAuxPath>
+    </SccAuxPath>
+    <SccProvider>
+    </SccProvider>
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
+    <PlatformTarget>x86</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <DocumentationFile>bin\Debug\Rawler.XML</DocumentationFile>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
+    <PlatformTarget>x86</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject />
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Xaml">
+      <RequiredTargetFramework>4.0</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="WindowsBase" />
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="RawlerLib\BackgroundWorker.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="RawlerLib\EventStringArgs.cs" />
+    <Compile Include="RawlerLib\Io.cs" />
+    <Compile Include="RawlerLib\ObjectLib.cs" />
+    <Compile Include="RawlerLib\Pair.cs" />
+    <Compile Include="RawlerLib\TagAnalyze.cs" />
+    <Compile Include="RawlerLib\TagClass.cs" />
+    <Compile Include="RawlerLib\Text.cs" />
+    <Compile Include="RawlerLib\TxtEnc.cs" />
+    <Compile Include="RawlerLib\UIData.cs" />
+    <Compile Include="RawlerLib\Web.cs" />
+    <Compile Include="RawlerLib\WebClientEx.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="RawlerLib\WPF.cs" />
+    <Compile Include="Tool\Condition\ChangeText.cs" />
+    <Compile Include="Tool\Condition\CompareInt.cs" />
+    <Compile Include="Tool\Enumeration\Loop.cs" />
+    <Compile Include="Tool\Html\RemoveHtmlComment.cs" />
+    <Compile Include="Tool\Html\XPath.cs" />
+    <Compile Include="Tool\IO\ContainLineInFile.cs" />
+    <Compile Include="Tool\IO\CreateFolder.cs" />
+    <Compile Include="Tool\IO\FileApendLine.cs" />
+    <Compile Include="Tool\IO\GetFileExtension.cs" />
+    <Compile Include="Tool\IO\GetFileName.cs" />
+    <Compile Include="Tool\IO\ReadTsv.cs" />
+    <Compile Include="Tool\RawlerMultiBase.cs" />
+    <Compile Include="Tool\Condition\Switch.cs" />
+    <Compile Include="Tool\Condition\SwitchDateTimeNode.cs" />
+    <Compile Include="Tool\Condition\SwitchIntNode.cs" />
+    <Compile Include="Tool\Condition\SwitchTextContainsNode.cs" />
+    <Compile Include="Tool\Enumeration\Range.cs" />
+    <Compile Include="Tool\Query\BasicQuery.cs" />
+    <Compile Include="Tool\Text\AppendText.cs" />
+    <Compile Include="Tool\IO\CheckFileExists.cs" />
+    <Compile Include="Tool\Text\ClipText.cs" />
+    <Compile Include="Tool\Condition\Contains.cs" />
+    <Compile Include="Tool\Data\CountData.cs" />
+    <Compile Include="Tool\CustomFilter.cs" />
+    <Compile Include="Tool\CustomText.cs" />
+    <Compile Include="Tool\Data\Data.cs" />
+    <Compile Include="Tool\Data\DataRow.cs" />
+    <Compile Include="Tool\Data\DataWrite.cs" />
+    <Compile Include="Tool\Text\Document.cs" />
+    <Compile Include="Tool\Condition\Equal.cs" />
+    <Compile Include="Tool\IO\FileOpen.cs" />
+    <Compile Include="Tool\Data\FileSave.cs" />
+    <Compile Include="Tool\Text\RemoveWordByRegular.cs" />
+    <Compile Include="Tool\Text\StringLength.cs" />
+    <Compile Include="Tool\Text\ToCharArray.cs" />
+    <Compile Include="Tool\Utility\GetObject.cs" />
+    <Compile Include="Tool\Web\DownLoad.cs" />
+    <Compile Include="Tool\Web\GetPageUrl.cs" />
+    <Compile Include="Tool\Html\GetScriptVariable.cs" />
+    <Compile Include="Tool\Web\HostFilter.cs" />
+    <Compile Include="Tool\Html\ImageLink.cs" />
+    <Compile Include="Tool\Condition\IsEmpty.cs" />
+    <Compile Include="Tool\Utility\KeyValuePair.cs" />
+    <Compile Include="Tool\Web\PageOnce.cs" />
+    <Compile Include="Tool\Web\PageParent.cs" />
+    <Compile Include="Tool\Dirt\Parallel.cs" />
+    <Compile Include="Tool\Query\RawlerQuery.cs" />
+    <Compile Include="Tool\RawlerClass1.cs" />
+    <Compile Include="Tool\Text\ReadLine.cs" />
+    <Compile Include="Tool\Text\RegularExpressions.cs" />
+    <Compile Include="Tool\Web\ReLogin.cs" />
+    <Compile Include="Tool\Utility\ReportManage.cs" />
+    <Compile Include="Tool\IRawler.cs" />
+    <Compile Include="Tool\Enumeration\Iterator.cs" />
+    <Compile Include="Tool\Html\Link.cs" />
+    <Compile Include="Tool\Web\Login.cs" />
+    <Compile Include="Tool\Data\NextDataRow.cs" />
+    <Compile Include="Tool\Web\NextPage.cs" />
+    <Compile Include="Tool\Web\Page.cs" />
+    <Compile Include="Tool\Utility\RawlerRoot.cs" />
+    <Compile Include="Tool\Text\Replace.cs" />
+    <Compile Include="Tool\Utility\Report.cs" />
+    <Compile Include="Tool\Utility\Sleep.cs" />
+    <Compile Include="Tool\Text\Split.cs" />
+    <Compile Include="Tool\Enumeration\Stack.cs" />
+    <Compile Include="Tool\Html\TagClear.cs" />
+    <Compile Include="Tool\Html\TagExtraction.cs" />
+    <Compile Include="Tool\Text\Trim.cs" />
+    <Compile Include="Tool\Dirt\View.cs" />
+    <Compile Include="Tool\Dirt\ViewManage.cs" />
+    <Compile Include="Tool\Web\UrlParameter.cs" />
+    <Compile Include="Tool\Web\WebClient.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Properties\AssemblyInfo.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <None Include="app.config">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <AppDesigner Include="Properties\" />
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include=".NETFramework,Version=v4.0">
+      <Visible>False</Visible>
+      <ProductName>Microsoft .NET Framework 4 %28x86 および x64%29</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Windows.Installer.3.1">
+      <Visible>False</Visible>
+      <ProductName>Windows インストーラー 3.1</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Template\" />
+    <Folder Include="Tool\NewFolder1\" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
