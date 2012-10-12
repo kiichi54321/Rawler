@@ -178,7 +178,9 @@
                 <GetTsvValue ColumnName="ScreenName">
                     <ContainTextInFile FileName="kaomoji/completedList.txt" Result="False">
                         <t:TweetUserTimeline  Count="200" >
-                            <t:DataWriteTweet DataElement="Date"></t:DataWriteTweet>
+                            <t:TweetUserTimeline.ErrorTree>
+                                <FileApendLine FileName="err.txt"></FileApendLine>
+                            </t:TweetUserTimeline.ErrorTree>                            <t:DataWriteTweet DataElement="Date"></t:DataWriteTweet>
                             <t:DataWriteTweet DataElement="ScreenName"></t:DataWriteTweet>
                             <t:DataWriteTweet DataElement="Text">
                                 <t:DataWriteTweet.PreTree>
