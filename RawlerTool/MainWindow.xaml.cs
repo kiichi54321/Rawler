@@ -35,6 +35,7 @@ namespace RawlerTool
             var tmp = new Rawler.Tool.Data();
             tmp.Children.Add(new Rawler.Tool.Page());
             rawlerView1.SetRawler(tmp );
+            this.Closed += (o, e) => { Dispose(); };
         }
 
         private void init()
@@ -176,19 +177,18 @@ namespace RawlerTool
                 rowCount = 0;
                 rawler.SetParent();
                 startDate = DateTime.Now;
-                foreach (var item in rawler.GetConectAllRawler())
-                {
-                    item.BeginRunEvent += (o, arg) =>
-                    {
-                        tokenSource.Token.ThrowIfCancellationRequested();
-                        while (pause)
-                        {
-                            System.Threading.Thread.Sleep(1000);
-                        }
-                    };
-                }
-
-                task = Task.Factory.StartNew(() => rawler.Run()).ContinueWith((t) => StopWatch());
+                //foreach (var item in rawler.GetConectAllRawler())
+                //{
+                //    item.BeginRunEvent += (o, arg) =>
+                //    {
+                //        tokenSource.Token.ThrowIfCancellationRequested();
+                //        while (pause)
+                //        {
+                //            System.Threading.Thread.Sleep(1000);
+                //        }
+                //    };
+                //}
+                task = Task.Factory.StartNew(() => rawler.Run(),tokenSource.Token).ContinueWith((t) => StopWatch());
             }
             catch (OperationCanceledException oce)
             {               
@@ -244,7 +244,7 @@ namespace RawlerTool
 
         }
 
-
+        #region button
         string FilterStringCreate(string extend)
         {
             return "<> files (*.<>)|*.<>|All files (*.*)|*.*".Replace("<>", extend);
@@ -329,7 +329,7 @@ namespace RawlerTool
         {
             tokenSource.Cancel();
         }
-
+        #endregion
         public string Rawler2XAML(RawlerBase rawler)
         {
             StringBuilder xaml = new StringBuilder(System.Xaml.XamlServices.Save(rawler));
@@ -418,12 +418,23 @@ namespace RawlerTool
 
         public void Dispose()
         {
-            if (task != null && tokenSource !=null)
+            pause = false;
+            if (rawler != null)
+            {
+                rawler.Dispose();
+                rawler = null;
+            }
+            if (tokenSource != null)
             {
                 tokenSource.Cancel();
                 tokenSource.Dispose();
-                task.Dispose();
             }
+            if (task != null )
+            {
+                task.Dispose();
+                task = null;
+            }
+            ReportManage.ListClear();
         }
 
         private void MenuItem_Click(object sender, RoutedEventArgs e)
