@@ -180,7 +180,8 @@
                         <t:TweetUserTimeline  Count="200" >
                             <t:TweetUserTimeline.ErrorTree>
                                 <FileApendLine FileName="err.txt"></FileApendLine>
-                            </t:TweetUserTimeline.ErrorTree>                            <t:DataWriteTweet DataElement="Date"></t:DataWriteTweet>
+                            </t:TweetUserTimeline.ErrorTree>
+                            <t:DataWriteTweet DataElement="Date"></t:DataWriteTweet>
                             <t:DataWriteTweet DataElement="ScreenName"></t:DataWriteTweet>
                             <t:DataWriteTweet DataElement="Text">
                                 <t:DataWriteTweet.PreTree>
@@ -196,6 +197,48 @@
         </t:TwitterLogin>
     </FileSave>
 
+
+
+    <FileSave FileName="kaomoji/LevenshteinDistance.tsv"     
+              xmlns="clr-namespace:Rawler.Tool;assembly=Rawler"
+               xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                 xmlns:m="clr-namespace:RawlerMecab;assembly=RawlerMecab">
+        <Iterator>
+            <Iterator.SourceTree>
+                <FileReadLines >
+                    <IteratorSourceAddText></IteratorSourceAddText>
+                </FileReadLines>
+            </Iterator.SourceTree>
+            <Iterator.Query>
+                <QueryCreatePair NoOverlap="True"></QueryCreatePair>
+            </Iterator.Query>
+            <m:LevenshteinDistance MaxDistance="2">
+                <m:LevenshteinDistance.PreTree>
+                    <Split Num="0" SeparatorType="Tab">
+                    </Split>
+                </m:LevenshteinDistance.PreTree>
+                <m:LevenshteinDistance.Text2Tree>
+                    <Split Num="1" SeparatorType="Tab">
+                    </Split>
+                </m:LevenshteinDistance.Text2Tree>
+                <GetCurrentIterator>
+                    <Split Num="0" SeparatorType="Tab">
+                        <Trim>
+                            <DataWrite Attribute="ItemA"></DataWrite>
+                        </Trim>
+                    </Split>
+                    <Split Num="1" SeparatorType="Tab">
+                        <Trim>
+                            <DataWrite Attribute="ItemB"></DataWrite>
+                        </Trim>
+                    </Split>
+                </GetCurrentIterator>
+                <DataWrite Attribute="LevenshteinDistance">
+                </DataWrite>
+                <NextDataRow></NextDataRow>
+            </m:LevenshteinDistance>
+        </Iterator>
+    </FileSave>
 
     <t:TwitterLogin>
         <Document TextValue="(」・ω・)」うー！(／・ω・)／にゃー！,(」・ω・)」うー！(／・ω・)／にゃー！(」・ω・)」うー！(／・ω・)／にゃー！,Rawlerからツイッターにつぶやいてみた">

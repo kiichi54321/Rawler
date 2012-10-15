@@ -131,6 +131,7 @@
     <Compile Include="Tool\Text\StringLength.cs" />
     <Compile Include="Tool\Text\ToCharArray.cs" />
     <Compile Include="Tool\Utility\GetObject.cs" />
+    <Compile Include="Tool\Utility\KeyValueStore.cs" />
     <Compile Include="Tool\Web\DownLoad.cs" />
     <Compile Include="Tool\Web\GetPageUrl.cs" />
     <Compile Include="Tool\Html\GetScriptVariable.cs" />

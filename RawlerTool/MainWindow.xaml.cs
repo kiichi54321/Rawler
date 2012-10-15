@@ -177,17 +177,17 @@ namespace RawlerTool
                 rowCount = 0;
                 rawler.SetParent();
                 startDate = DateTime.Now;
-                //foreach (var item in rawler.GetConectAllRawler())
-                //{
-                //    item.BeginRunEvent += (o, arg) =>
-                //    {
-                //        tokenSource.Token.ThrowIfCancellationRequested();
-                //        while (pause)
-                //        {
-                //            System.Threading.Thread.Sleep(1000);
-                //        }
-                //    };
-                //}
+                foreach (var item in rawler.GetConectAllRawler())
+                {
+                    item.BeginRunEvent += (o, arg) =>
+                    {
+                        tokenSource.Token.ThrowIfCancellationRequested();
+                        while (pause)
+                        {
+                            System.Threading.Thread.Sleep(1000);
+                        }
+                    };
+                }
                 task = Task.Factory.StartNew(() => rawler.Run(),tokenSource.Token).ContinueWith((t) => StopWatch());
             }
             catch (OperationCanceledException oce)
