@@ -178,6 +178,42 @@ namespace Rawler.Tool
         }
     }
 
+    public class QueryOrderByStringLength : RawlerQuery
+    {
+        #region テンプレ
+        /// <summary>
+        /// Clone
+        /// </summary>
+        /// <param name="parent"></param>
+        /// <returns></returns>
+        public override RawlerQuery Clone()
+        {
+            return base.Clone<QueryOrderByStringLength>();
+        }
+
+        bool descending = false;
+
+        public bool Descending
+        {
+            get { return descending; }
+            set { descending = value; }
+        }
+
+        /// <summary>
+        /// ObjectのName。表示用
+        /// </summary>
+        public override string ObjectName
+        {
+            get { return this.GetType().Name; }
+        }
+        #endregion
+
+        public override IEnumerable<string> Query(IEnumerable<string> list)
+        {
+            return list.OrderByDescending(n => n.Length);
+        }
+    }
+
 
     public class QueryTake : RawlerQuery
     {
