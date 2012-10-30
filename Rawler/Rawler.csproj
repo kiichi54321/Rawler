@@ -65,6 +65,7 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Core" />
@@ -81,6 +82,7 @@
     <Compile Include="RawlerLib\BackgroundWorker.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="RawlerLib\DynamicJson.cs" />
     <Compile Include="RawlerLib\EventStringArgs.cs" />
     <Compile Include="RawlerLib\Io.cs" />
     <Compile Include="RawlerLib\ObjectLib.cs" />
@@ -127,6 +129,7 @@
     <Compile Include="Tool\Condition\Equal.cs" />
     <Compile Include="Tool\IO\FileOpen.cs" />
     <Compile Include="Tool\Data\FileSave.cs" />
+    <Compile Include="Tool\Text\GetJsonData.cs" />
     <Compile Include="Tool\Text\RemoveWordByRegular.cs" />
     <Compile Include="Tool\Text\StringLength.cs" />
     <Compile Include="Tool\Text\ToCharArray.cs" />

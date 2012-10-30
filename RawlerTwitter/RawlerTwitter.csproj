@@ -65,6 +65,7 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ChopMention.cs" />
     <Compile Include="DataWriteTweet.cs" />
     <Compile Include="DirectTwitter.cs" />
     <Compile Include="DynamicJson.cs" />

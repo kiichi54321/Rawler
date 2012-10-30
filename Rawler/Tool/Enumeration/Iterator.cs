@@ -65,6 +65,16 @@ namespace Rawler.Tool
             texts.Clear();
         }
 
+        bool createDataOnce = true;
+        bool createDataOnceFlag = false;
+
+        public bool CreateDataOnce
+        {
+            get { return createDataOnce; }
+            set { createDataOnce = value; }
+        }
+        
+
         public RawlerBase SourceTree { get; set; }
 
         /// <summary>
@@ -75,9 +85,13 @@ namespace Rawler.Tool
         {
             if (SourceTree != null)
             {
-                SourceTree.SetParent();
-                SourceTree.SetParent(this);
-                SourceTree.Run();
+                if ((createDataOnceFlag == false) || createDataOnce == false)
+                {
+                    SourceTree.SetParent();
+                    SourceTree.SetParent(this);
+                    SourceTree.Run();
+                    createDataOnceFlag = true;
+                }
             }
 
             RunChildrenForArray(runChildren, texts.GetList());

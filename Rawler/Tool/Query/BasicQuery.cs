@@ -210,7 +210,14 @@ namespace Rawler.Tool
 
         public override IEnumerable<string> Query(IEnumerable<string> list)
         {
-            return list.OrderByDescending(n => n.Length);
+            if (descending)
+            {
+                return list.OrderByDescending(n => n.Length);
+            }
+            else
+            {
+                return list.OrderBy(n => n.Length);
+            }
         }
     }
 
