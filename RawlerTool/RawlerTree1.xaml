@@ -8,10 +8,30 @@
 
 
 
+    <CountData DoSave="True" FileName="顔文字カウント.tsv">
+        <TsvReadLines>
+            <GetTsvValue  ColumnName="Text">
+                <m:WordsCount>
+                    <m:WordsCount.SouceIterator>
+                        <Iterator>
+                            <Iterator.SourceTree>
+                                <FileReadLines >
+                                    <IteratorSourceAddText></IteratorSourceAddText>
+                                </FileReadLines>
+                            </Iterator.SourceTree>
+                        </Iterator>
+                    </m:WordsCount.SouceIterator>
+                    <CountAdd>
+                        <CountAdd.GroupTree>
+                            <GetTsvValue ColumnName="ScreenName"></GetTsvValue>
+                        </CountAdd.GroupTree>                        
+                    </CountAdd>
+                </m:WordsCount>
+            </GetTsvValue>
+        </TsvReadLines>
+    </CountData>
 
-
-
-    <Data Stock="True" xmlns="clr-namespace:Rawler.Tool;assembly=Rawler" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" >
+        <Data Stock="True" xmlns="clr-namespace:Rawler.Tool;assembly=Rawler" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" >
         <CreateFolder FolderName="data"></CreateFolder>
         <TsvReadLines FileName="data/NameUrlList.tsv">
             <Iterator>
@@ -1099,6 +1119,122 @@
             </Iterator>
         </FileSave>
     </LoginClient>
+
+
+    <LoginClient LoginUrl="http://www.pixiv.net/login.php" >
+        <LoginClient.LoginPostVals>
+            <KeyValue Key="pixiv_id" Value=""></KeyValue>
+            <KeyValue Key="pass" Value=""></KeyValue>
+            <KeyValue Key="mode" Value="login"></KeyValue>
+        </LoginClient.LoginPostVals>
+
+        <FileSave >
+            <Iterator>
+                <Iterator.Texts>
+                    <TextVaule>http://www.pixiv.net/tags.php?tag=%E3%81%91%E3%81%84%E3%81%8A%E3%82%93100users%E5%85%A5%E3%82%8A</TextVaule>
+                    <TextVaule>http://www.pixiv.net/search.php?word=%E3%81%91%E3%81%84%E3%81%8A%E3%82%93500users%E5%85%A5%E3%82%8A</TextVaule>
+                    <TextVaule>http://www.pixiv.net/search.php?word=%E3%81%91%E3%81%84%E3%81%8A%E3%82%931000users%E5%85%A5%E3%82%8A%20</TextVaule>
+                    <TextVaule>http://www.pixiv.net/search.php?word=%E3%81%91%E3%81%84%E3%81%8A%E3%82%935000users%E5%85%A5%E3%82%8A</TextVaule>
+                </Iterator.Texts>
+                <AppendText >
+                    <Page Comment="一覧ページを読み込む" >
+                        <Tags Tag="ul" ClassName="images autopagerize_page_element">
+                            <Tags Tag="li" ClassName="image">
+                                <CompareInt CompareType="over" CompareValue="20" Comment="ブクマ数で取得を絞る">
+                                    <CompareInt.PreTree>
+                                        <Tags Tag="ul" ClassName="count-list">
+                                            <TagClear>
+                                                <Trim DoChopReturnCode="True">
+
+                                                </Trim>
+                                            </TagClear>
+                                        </Tags>
+                                    </CompareInt.PreTree>
+
+                                    <GetObject ClassName="Tags">
+                                        <Tags Tag="ul" ClassName="count-list">
+                                            <TagClear>
+                                                <Trim DoChopReturnCode="True">
+                                                    <DataWrite Attribute="ブクマ数"></DataWrite>
+                                                </Trim>
+                                            </TagClear>
+                                        </Tags>
+                                        <Link>
+                                            <Link.Query>
+                                                <QueryContain ContainText="event" Result="False">
+                                                    <QueryFirst></QueryFirst>
+                                                </QueryContain>
+                                            </Link.Query>
+
+                                            <Page>
+                                                <GetPageUrl>
+                                                    <Replace OldText="http://www.pixiv.net/member_illust.php?mode=medium&amp;illust_id=" NewText="">
+                                                        <DataWrite Attribute="illust_id"></DataWrite>
+                                                    </Replace>
+                                                </GetPageUrl>
+                                                <Tags Tag="section" ClassName="work-info">
+                                                    <Tags Tag="h1">
+                                                        <DataWrite Attribute="Title"></DataWrite>
+                                                    </Tags>
+                                                    <Tags Tag="p" ClassName="caption">
+                                                        <Trim DoChopReturnCode="True">
+                                                            <DataWrite Attribute="caption"></DataWrite>
+                                                        </Trim>
+                                                    </Tags>
+                                                    <Tags Tag="li">
+                                                        <Tags.Query>
+                                                            <QueryFirst></QueryFirst>
+                                                        </Tags.Query>
+                                                        <DataWrite Attribute="date"></DataWrite>
+                                                    </Tags>
+                                                </Tags>
+                                                <Tags Tag="div" IdName="rating">
+                                                    <Tags Tag="dd" ClassName="view-count">
+                                                        <DataWrite Attribute="閲覧数"></DataWrite>
+                                                    </Tags>
+                                                    <Tags Tag="dd" ClassName="rated-count">
+                                                        <DataWrite Attribute="評価回数"></DataWrite>
+                                                    </Tags>
+                                                    <Tags Tag="dd" ClassName="score-count">
+                                                        <DataWrite Attribute="総合点"></DataWrite>
+                                                    </Tags>
+                                                </Tags>
+
+                                                <Tags Tag="div" ClassName="works_display">
+                                                    <ImageLinks>
+                                                        <DownLoad Folder="keionImage">
+                                                            <DataWrite Attribute="image"></DataWrite>
+                                                        </DownLoad>
+                                                    </ImageLinks>
+                                                </Tags>
+                                                <Tags Tag="section" ClassName="work-tags">
+                                                    <Link UrlFilter="tags.php" VisbleType="Label">
+                                                        <DataWrite Attribute="tags"></DataWrite>
+                                                    </Link>
+                                                </Tags>
+                                                <NextDataRow></NextDataRow>
+
+                                            </Page>
+                                            <Sleep SleepSeconds="5"></Sleep>
+                                        </Link>
+                                    </GetObject>
+                                </CompareInt>
+
+                            </Tags>
+                        </Tags>
+                        <NextPage>
+                            <NextPage.PreTree>
+                                <Tags Tag="li" IsSingle="True" ClassName="next">
+                                    <Link></Link>
+                                </Tags>
+                            </NextPage.PreTree>
+                        </NextPage>
+                    </Page>
+                </AppendText>
+            </Iterator>
+        </FileSave>
+    </LoginClient>
+
 
     <Links>
 
