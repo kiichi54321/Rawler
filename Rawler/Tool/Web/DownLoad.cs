@@ -78,6 +78,7 @@ namespace Rawler.Tool
                 using (var writer = System.IO.File.Create(path))
                 {
                     writer.Write(data,0, data.Length);
+                    SetText(path);
                 }
             }
             catch(Exception e)
@@ -103,16 +104,6 @@ namespace Rawler.Tool
             set;
         }
 
-        /// <summary>
-        /// 子が参照するテキスト。
-        /// </summary>
-        public override string Text
-        {
-            get
-            {
-                return GetText();
-            }
-        }
 
 
     }
