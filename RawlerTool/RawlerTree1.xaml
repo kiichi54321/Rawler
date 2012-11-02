@@ -11,8 +11,8 @@
     <CountData DoSave="True" FileName="顔文字カウント.tsv">
         <TsvReadLines>
             <GetTsvValue  ColumnName="Text">
-                <m:WordsCount>
-                    <m:WordsCount.SouceIterator>
+                <m:GetWords>
+                    <m:GetWords.SouceIterator>
                         <Iterator>
                             <Iterator.SourceTree>
                                 <FileReadLines >
@@ -20,18 +20,25 @@
                                 </FileReadLines>
                             </Iterator.SourceTree>
                         </Iterator>
-                    </m:WordsCount.SouceIterator>
+                    </m:GetWords.SouceIterator>
                     <CountAdd>
                         <CountAdd.GroupTree>
                             <GetTsvValue ColumnName="ScreenName"></GetTsvValue>
-                        </CountAdd.GroupTree>                        
+                        </CountAdd.GroupTree>
                     </CountAdd>
-                </m:WordsCount>
+                </m:GetWords>
+                <Document TextValue="Tweet">
+                    <CountAdd>
+                        <CountAdd.GroupTree>
+                            <GetTsvValue ColumnName="ScreenName"></GetTsvValue>
+                        </CountAdd.GroupTree>
+                    </CountAdd>
+                </Document>
             </GetTsvValue>
         </TsvReadLines>
     </CountData>
 
-        <Data Stock="True" xmlns="clr-namespace:Rawler.Tool;assembly=Rawler" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" >
+    <Data Stock="True" xmlns="clr-namespace:Rawler.Tool;assembly=Rawler" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" >
         <CreateFolder FolderName="data"></CreateFolder>
         <TsvReadLines FileName="data/NameUrlList.tsv">
             <Iterator>
@@ -189,29 +196,31 @@
 
     </Data>
 
-    <FileSave FileName="kaomoji/tweetData.tsv" Stock="False"
+    <FileSave FileName="kaomoji/tweetData.tsv" Stock="False"  FileSaveMode="Append"
                     xmlns="clr-namespace:Rawler.Tool;assembly=Rawler"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:t="clr-namespace:RawlerTwitter;assembly=RawlerTwitter">
         <t:TwitterLogin>
             <TsvReadLines FileName="kaomoji/tweetUesrList.tsv" >
                 <GetTsvValue ColumnName="ScreenName">
-                    <ContainTextInFile FileName="kaomoji/completedList.txt" Result="False">
-                        <t:TweetUserTimeline  Count="200" >
-                            <t:TweetUserTimeline.ErrorTree>
-                                <FileApendLine FileName="err.txt"></FileApendLine>
-                            </t:TweetUserTimeline.ErrorTree>
-                            <t:DataWriteTweet DataElement="Date"></t:DataWriteTweet>
-                            <t:DataWriteTweet DataElement="ScreenName"></t:DataWriteTweet>
-                            <t:DataWriteTweet DataElement="Text">
-                                <t:DataWriteTweet.PreTree>
-                                    <Trim DoChopReturnCode="True"></Trim>
-                                </t:DataWriteTweet.PreTree>
-                            </t:DataWriteTweet>
-                            <NextDataRow></NextDataRow>
-                        </t:TweetUserTimeline>
-                        <ContainTextInFileAddText></ContainTextInFileAddText>
-                    </ContainTextInFile>
+                    <Trim>
+                        <ContainTextInFile FileName="kaomoji/completedList.txt" Result="False">
+                            <t:TweetUserTimeline  Count="200" >
+                                <t:TweetUserTimeline.ErrorTree>
+                                    <FileApendLine FileName="err.txt"></FileApendLine>
+                                </t:TweetUserTimeline.ErrorTree>
+                                <t:DataWriteTweet DataElement="Date"></t:DataWriteTweet>
+                                <t:DataWriteTweet DataElement="ScreenName"></t:DataWriteTweet>
+                                <t:DataWriteTweet DataElement="Text">
+                                    <t:DataWriteTweet.PreTree>
+                                        <Trim DoChopReturnCode="True"></Trim>
+                                    </t:DataWriteTweet.PreTree>
+                                </t:DataWriteTweet>
+                                <NextDataRow></NextDataRow>
+                            </t:TweetUserTimeline>
+                            <ContainTextInFileAddText></ContainTextInFileAddText>
+                        </ContainTextInFile>
+                    </Trim>
                 </GetTsvValue>
             </TsvReadLines>
         </t:TwitterLogin>

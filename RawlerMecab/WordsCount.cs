@@ -7,7 +7,7 @@ using Rawler.Tool;
 namespace RawlerMecab
 {
 
-    public class WordsCount : RawlerMultiBase
+    public class GetWords : RawlerMultiBase
     {
         #region テンプレ
         /// <summary>
@@ -17,7 +17,7 @@ namespace RawlerMecab
         /// <returns></returns>
         public override RawlerBase Clone(RawlerBase parent)
         {
-            return base.Clone<WordsCount>(parent);
+            return base.Clone<GetWords>(parent);
         }
 
         /// <summary>
@@ -32,6 +32,16 @@ namespace RawlerMecab
         public Iterator SouceIterator { get; set; }
         public int MinCount { get; set; }
 
+        bool createOnce = true;
+        bool createOnceFlag = false;
+        public bool CreateOnce
+        {
+            get { return createOnce; }
+            set { createOnce = value; }
+        }
+        Dictionary<string, List<string>> dic = new Dictionary<string, List<string>>();
+        int keyWordLength = 2;
+
         /// <summary>
         /// このクラスでの実行すること。
         /// </summary>
@@ -45,21 +55,41 @@ namespace RawlerMecab
 
                 string target = GetText();
                 int count = 0;
-
-                List<string> list = new List<string>();
-                foreach (var item in SouceIterator.Texts.GetList().OrderByDescending(n => n.Length))
+                if (createOnceFlag == false || createOnce == false)
                 {
-                    target = GetCount(target,item,out count);
-                    if (count >= MinCount)
+                    dic = new Dictionary<string, List<string>>();
+                    var wordList = SouceIterator.Texts.GetList().OrderByDescending(n => n.Length).ToArray();
+                    foreach (var item in wordList)
                     {
-                        for (int i = 0; i < count; i++)
+                        List<string> tmpList = new List<string>();
+                        if (dic.TryGetValue(item.Substring(0,keyWordLength), out tmpList) == false)
                         {
-                            list.Add(item);
+                            tmpList = new List<string>();
+                            dic.Add(item.Substring(0, keyWordLength), tmpList);
                         }
-                        //var data = Codeplex.Data.DynamicJson.Serialize(new { SeachWord = item, Count = count });
-                        //list.Add(data);
+                        tmpList.Add(item);
                     }
                 }
+                List<string> list = new List<string>();
+                foreach (var item in NGram(GetText(), keyWordLength).Distinct())
+                {
+                    List<string> tmpList = new List<string>();
+                    if (dic.TryGetValue(item, out tmpList))
+                    {
+                        foreach (var item2 in tmpList)
+                        {
+                            target = GetCount(target, item2, out count);
+                            if (count >= MinCount)
+                            {
+                                for (int i = 0; i < count; i++)
+                                {
+                                    list.Add(item2);
+                                }
+                            }
+                        }
+                    }
+                }
+
                 RunChildrenForArray(runChildren, list);
             }
             else
@@ -81,7 +111,7 @@ namespace RawlerMecab
         }
 
 
-        public string GetCount( string target, string searchWord,out int result)
+        public string GetCount(string target, string searchWord, out int result)
         {
             int positon = 0;
             int count = 0;
@@ -91,7 +121,7 @@ namespace RawlerMecab
                 if (i > 0)
                 {
                     count++;
-                    positon = i+1;
+                    positon = i + 1;
                 }
                 else
                 {
@@ -101,6 +131,16 @@ namespace RawlerMecab
             result = count;
             return target.Replace(searchWord, " ");
 
+        }
+
+        public IEnumerable<string> NGram(string text, int n)
+        {
+            List<string> list = new List<string>();
+            for (int i = 0; i < text.Length-n; i++)
+            {
+                list.Add(text.Substring(i, n));
+            }
+            return list;
         }
 
 
