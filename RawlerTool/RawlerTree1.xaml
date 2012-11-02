@@ -1384,5 +1384,38 @@
             <Report></Report>
         </RemoveWordByRegular>
     </Document>
+
+    <FileSave FileName="keioImage/list.tsv">
+        <Iterator>
+            <Iterator.Texts>
+                <TextVaule Value="http://www.sfc.keio.ac.jp/academics/undergraduate/pm/faculty.html"></TextVaule>
+                <TextVaule Value="http://www.sfc.keio.ac.jp/academics/undergraduate/ei/faculty.html"></TextVaule>
+            </Iterator.Texts>
+            <Page >
+                <Tags Tag="div" IdName="main">
+                    <Tags Tag="li">
+                        <Links>
+                            <Page>
+                                <ImageLinks  UrlFilter="photo">
+                                    <DownLoad Folder="keioImage" >
+                                        <DownLoad.SaveNameTree>
+                                            <GetPageHtml>
+                                                <Tags Tag="span" ClassName="ename"></Tags>
+                                            </GetPageHtml>
+                                        </DownLoad.SaveNameTree>
+                                        <DataWrite Attribute="file"></DataWrite>
+                                    </DownLoad>
+                                </ImageLinks>
+                            </Page>
+                        </Links>
+                        <Links VisbleType="Label">
+                            <DataWrite Attribute="name"></DataWrite>
+                        </Links>
+                        <NextDataRow></NextDataRow>
+                    </Tags>
+                </Tags>
+            </Page>
+        </Iterator>
+    </FileSave>
 </Data>
 
