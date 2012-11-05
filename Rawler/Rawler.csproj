@@ -135,6 +135,7 @@
     <Compile Include="Tool\Text\ToCharArray.cs" />
     <Compile Include="Tool\Utility\GetObject.cs" />
     <Compile Include="Tool\Utility\KeyValueStore.cs" />
+    <Compile Include="Tool\Utility\SetWorkFolder.cs" />
     <Compile Include="Tool\Web\DownLoad.cs" />
     <Compile Include="Tool\Web\GetPageUrl.cs" />
     <Compile Include="Tool\Html\GetScriptVariable.cs" />
@@ -161,7 +162,7 @@
     <Compile Include="Tool\Utility\RawlerRoot.cs" />
     <Compile Include="Tool\Text\Replace.cs" />
     <Compile Include="Tool\Utility\Report.cs" />
-    <Compile Include="Tool\Sleep.cs" />
+    <Compile Include="Tool\Utility\Sleep.cs" />
     <Compile Include="Tool\Text\Split.cs" />
     <Compile Include="Tool\Enumeration\Stack.cs" />
     <Compile Include="Tool\Html\TagClear.cs" />
