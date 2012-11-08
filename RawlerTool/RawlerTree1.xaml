@@ -441,6 +441,31 @@
         </Links>
     </Page>
 
+
+    <SetWorkFolder Folder="ORF2012" SpecialFolder="MyDocuments"></SetWorkFolder>
+    <FileSave FileName="Jリーグイメージ.tsv">
+        <LoginClient LoginUrl="http://mixi.jp/login.pl" Encoding="EUC-JP" AddUserAgent="True">
+            <LoginClient.LoginPostVals>
+                <KeyValue Key="email" Value="kiichi@sfc.keio.ac.jp"></KeyValue>
+                <KeyValue Key="password" Value="@@passwd"></KeyValue>
+                <KeyValue Key="next_url" Value="/home.pl"></KeyValue>
+            </LoginClient.LoginPostVals>
+            <FileReadLines>
+                <GetUrlParameter ParameterName="id">
+                    <DataWrite Attribute="id"></DataWrite>
+                </GetUrlParameter>
+                <Page >
+                    <Tags Tag="div" ClassName="communitPhotoArea">
+                        <ImageLinks>
+                            <DataWrite Attribute="Url"></DataWrite>
+                        </ImageLinks>
+                    </Tags>
+                </Page>
+                <NextDataRow></NextDataRow>
+            </FileReadLines>
+        </LoginClient>
+    </FileSave>
+
     <LoginClient LoginUrl="http://mixi.jp/login.pl" Encoding="EUC-JP" AddUserAgent="True">
         <LoginClient.LoginPostVals>
             <KeyValue Key="email" Value="kiichi@sfc.keio.ac.jp"></KeyValue>
@@ -860,6 +885,38 @@
             <NextDataRow></NextDataRow>
         </FileReadLines>
     </FileSave>
+
+    <SetWorkFolder Folder="ORF2012" SpecialFolder="MyDocuments"></SetWorkFolder>
+    <CountData DoSave="True" MinCount="3" FileName="ももくろ月ごと集計.tsv">
+        <TsvReadLines FileName="ももクロCommentData.tsv">
+            <GetTsvValue ColumnName="Content">
+                <m:Mecab ViewType="表層形" UseHinshi="名詞,形容詞,動詞">
+                    <m:Mecab.PreTree>
+                        <m:MecabPreprocessing></m:MecabPreprocessing>
+                    </m:Mecab.PreTree>
+                    <m:Mecab.Query>
+                        <QueryDistinct></QueryDistinct>
+                    </m:Mecab.Query>
+                    <CountAdd>
+                        <CountAdd.GroupTree>
+                            <GetTsvValue ColumnName="Date">
+                                <ConvertDateTime Format="YYMM">
+                                    <AppendText>
+                                        <AppendText.HeaderTree>
+                                            <GetTsvValue ColumnName="Name">
+                                                <AppendText Footer="-"></AppendText>
+                                            </GetTsvValue>
+                                        </AppendText.HeaderTree>
+                                    </AppendText>
+                                </ConvertDateTime>
+                            </GetTsvValue>
+                        </CountAdd.GroupTree>
+                    </CountAdd>
+                </m:Mecab>
+            </GetTsvValue>
+            <ReportAddCount/>
+        </TsvReadLines>
+    </CountData>
 
 
 
