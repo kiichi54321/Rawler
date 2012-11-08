@@ -124,4 +124,27 @@ namespace Rawler.Tool
              get { return this.GetType().Name; }
          }
     }
+
+    /// <summary>
+    /// レポートに改行をいれる。
+    /// </summary>
+    public class ReportAddCount : Report
+    {
+        public ReportAddCount()
+            : base()
+        {
+            this.ReturnCode = false;
+            this.ViewParentText = false;
+            this.Visible = false;
+            this.Header = "NextDataRow";
+        }
+
+        /// <summary>
+        /// ObjectのName。表示用
+        /// </summary>
+        public override string ObjectName
+        {
+            get { return this.GetType().Name; }
+        }
+    }
 }

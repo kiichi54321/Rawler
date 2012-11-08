@@ -130,6 +130,7 @@
     <Compile Include="Tool\IO\FileOpen.cs" />
     <Compile Include="Tool\Data\FileSave.cs" />
     <Compile Include="Tool\Text\GetJsonData.cs" />
+    <Compile Include="Tool\Text\ConvertDateTime.cs" />
     <Compile Include="Tool\Text\RemoveWordByRegular.cs" />
     <Compile Include="Tool\Text\StringLength.cs" />
     <Compile Include="Tool\Text\ToCharArray.cs" />
