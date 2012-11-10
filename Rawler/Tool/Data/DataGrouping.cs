@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Rawler.Tool.Data;
+using Rawler.Tool;
 
-namespace Rawler
+namespace Rawler.Tool
 {
-    public class GroupingData : RawlerBase
+    public class DataGrouping : RawlerBase
     {
         #region テンプレ
         /// <summary>
@@ -16,7 +16,7 @@ namespace Rawler
         /// <returns></returns>
         public override RawlerBase Clone(RawlerBase parent)
         {
-            return base.Clone<GroupingData>(parent);
+            return base.Clone<DataGrouping>(parent);
         }
 
         /// <summary>
@@ -28,6 +28,9 @@ namespace Rawler
         }
         #endregion
 
+
+        Dictionary<string,Dictionary<string,List<string>>> dic = new Dictionary<string,Dictionary<string,List<string>>>();
+
         /// <summary>
         /// このクラスでの実行すること。
         /// </summary>
@@ -35,6 +38,40 @@ namespace Rawler
         public override void Run(bool runChildren)
         {
             base.Run(runChildren);
+
+            Save();
+        }
+
+        string SaveFileName { get; set; }
+
+        public void Save()
+        {
+            var file = System.IO.File.CreateText(SaveFileName);
+            foreach (var item in dic.OrderBy(n=>n.Key))
+            {
+                file.Write(item.Key + "\t");
+
+            }
+        }
+
+        public void AddData(string group, string key, string value)
+        {
+            if (dic.ContainsKey(group))
+            {
+                if (dic[group].ContainsKey(key))
+                {
+                    dic[group][key].Add(value);
+                }
+                else
+                {
+                    dic[group].Add(key, new List<string>() { value });
+                }                       
+            }
+            else
+            {
+                dic.Add(group, new Dictionary<string, List<string>>());
+                dic[group].Add(key, new List<string>() { value });
+            }
         }
 
         /// <summary>

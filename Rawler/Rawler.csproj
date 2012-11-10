@@ -99,6 +99,7 @@
     <Compile Include="RawlerLib\WPF.cs" />
     <Compile Include="Tool\Condition\ChangeText.cs" />
     <Compile Include="Tool\Condition\CompareInt.cs" />
+    <Compile Include="Tool\Data\DataGrouping.cs" />
     <Compile Include="Tool\Enumeration\Loop.cs" />
     <Compile Include="Tool\Html\RemoveHtmlComment.cs" />
     <Compile Include="Tool\Html\XPath.cs" />

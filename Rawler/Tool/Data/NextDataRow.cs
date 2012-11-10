@@ -44,7 +44,8 @@ namespace Rawler.Tool
         int pageCount = 0;
 
         public event EventHandler PageReLoadEvent;
-
+        private bool ignoreDataNull = false;
+        public bool IgnoreDataNull { get { return ignoreDataNull; } set { ignoreDataNull = value; } }
         /// <summary>
         /// ObjectのName。表示用
         /// </summary>
@@ -70,24 +71,27 @@ namespace Rawler.Tool
             {
                 if (data.GetCurrentDataNull())
                 {
-                    ReportManage.ErrReport(this, "RowがNullです。Writeが動作していないようです。");
-                    var list = this.GetAncestorRawler().Where(n => n is Page);
-                    if (DoPageReLoad)
+                    if (ignoreDataNull == false)
                     {
-                        if (list.Count() > 0)
+                        ReportManage.ErrReport(this, "RowがNullです。Writeが動作していないようです。");
+                        var list = this.GetAncestorRawler().Where(n => n is Page);
+                        if (DoPageReLoad)
                         {
-                            var p = list.First() as Page;
-                            pageCount++;
-                            if (PageReLoadCount < pageCount)
+                            if (list.Count() > 0)
                             {
-                                ReportManage.Report(this, "再読み込み待機中。");
-                                System.Threading.Thread.Sleep(1000 * pageCount * pageCount);
-                                
-                                p.Run();
-                            }
-                            else
-                            {
-                                ReportManage.ErrReport(this, "書き込み先のData クラスが見つかりませんでした。");
+                                var p = list.First() as Page;
+                                pageCount++;
+                                if (PageReLoadCount < pageCount)
+                                {
+                                    ReportManage.Report(this, "再読み込み待機中。");
+                                    System.Threading.Thread.Sleep(1000 * pageCount * pageCount);
+
+                                    p.Run();
+                                }
+                                else
+                                {
+                                    ReportManage.ErrReport(this, "書き込み先のData クラスが見つかりませんでした。");
+                                }
                             }
                         }
                     }
