@@ -6,7 +6,33 @@
       xmlns:t="clr-namespace:RawlerTwitter;assembly=RawlerTwitter"
       >
 
-
+    <SetWorkFolder SpecialFolder="MyDocuments" Folder="ORF2012"></SetWorkFolder>
+    <FileSave FileName="ももくろ共通部分のみコメント.csv" FileSaveMode="Create">
+        <TsvReadLines FileName="ももクロCommentData.tsv">
+            <GetTsvValue ColumnName="Content">
+                <m:MecabPreprocessing>
+                    <m:Mecab ViewType="表層形" UseHinshi="名詞,形容詞,動詞">
+                        <m:Mecab.Query>
+                            <QueryDistinct></QueryDistinct>
+                        </m:Mecab.Query>
+                        <Equal Result="True">
+                            <Equal.EqualDataTree>
+                                <Iterator>
+                                    <Iterator.SourceTree>
+                                        <FileReadLines FileName="ももくろ共通部分.txt">
+                                            <IteratorSourceAddText></IteratorSourceAddText>
+                                        </FileReadLines>
+                                    </Iterator.SourceTree>
+                                </Iterator>
+                            </Equal.EqualDataTree>
+                            <DataWrite Attribute="Text"></DataWrite>
+                        </Equal>
+                    </m:Mecab>
+                </m:MecabPreprocessing>
+                <NextDataRow IgnoreDataNull="True"></NextDataRow>
+            </GetTsvValue>
+        </TsvReadLines>
+    </FileSave>
 
     <CountData DoSave="True" FileName="顔文字カウント.tsv">
         <TsvReadLines>
@@ -918,8 +944,12 @@
         </TsvReadLines>
     </CountData>
 
+    <FileSave AttributeOrderString="">
+        <TsvReadLines FileName="ももくろ月ごと集計2.tsv">
 
 
+        </TsvReadLines>
+    </FileSave>
     <CountData DoSave="True" MinCount="3" >
         <FileReadLines>
             <FileReadLines.Query>

@@ -24,7 +24,7 @@ namespace Rawler.Tool
         {
             this.Result = result;
         }
-
+        Dictionary<char, List<string>> dic = new Dictionary<char, List<string>>();
         private string equalCSV = string.Empty;
         private string[] equalArray = null;
         public string EqualCSV
@@ -37,6 +37,7 @@ namespace Rawler.Tool
             }
         }
 
+        public Iterator EqualDataTree { get; set; }
 
         private bool result = true;
         /// <summary>
@@ -57,9 +58,9 @@ namespace Rawler.Tool
             get
             {
                 var t = GetText();
-                if (equalArray.Any(n => n.Equals(t)))
+                if(dic.ContainsKey(t.First()))
                 {
-                    return true;
+                    return  dic[t.First()].Any(n => n.Equals(t));
                 }
                 else
                 {
@@ -83,13 +84,51 @@ namespace Rawler.Tool
         //{
         //    Run(true);
         //}
-
+        private bool createOnce = false;
         /// <summary>
         /// 実行
         /// </summary>
         /// <param name="runChildren"></param>
         public override void Run(bool runChildren)
         {
+            if (createOnce == false)
+            {
+                if (EqualDataTree != null)
+                {
+                    EqualDataTree.SetParent(this);
+                    EqualDataTree.Run();
+                    dic.Clear();
+                    foreach (var item in EqualDataTree.Texts)
+                    {
+                        if (item.Value.Length > 0)
+                        {
+                            if (dic.ContainsKey(item.Value.First()))
+                            {
+                                dic[item.Value.First()].Add(item.Value);
+                            }
+                            else
+                            {
+                                dic.Add(item.Value.First(), new List<string>() { item.Value });
+                            }
+                        }
+                    }
+                }
+                if (equalArray != null && equalArray.Length > 0)
+                {
+                    foreach (var item in equalArray)
+                    {
+                        if (dic.ContainsKey(item.First()))
+                        {
+                            dic[item.First()].Add(item);
+                        }
+                        else
+                        {
+                            dic.Add(item.First(), new List<string>() { item });
+                        }
+                    }
+                }
+                createOnce = true;
+            }
 
             if (Check == this.Result)
             {
