@@ -376,7 +376,98 @@ namespace Rawler.Tool
         }
     }
 
+    public class QuerySkipExtend : RawlerQuery
+    {
+        #region テンプレ
+        /// <summary>
+        /// Clone
+        /// </summary>
+        /// <param name="parent"></param>
+        /// <returns></returns>
+        public override RawlerQuery Clone()
+        {
+            return base.Clone<QuerySkipExtend>();
+        }
 
+        /// <summary>
+        /// ObjectのName。表示用
+        /// </summary>
+        public override string ObjectName
+        {
+            get { return this.GetType().Name; }
+        }
+        #endregion
+
+        private int quotient = 2;
+
+        public int Quotient
+        {
+            get { return quotient; }
+            set { quotient = value; }
+        }
+        int remainder = 0;
+
+        public int Remainder
+        {
+            get { return remainder; }
+            set { remainder = value; }
+        }
+
+        public override IEnumerable<string> Query(IEnumerable<string> list)
+        {
+            int count = 0;
+            foreach (var item in list)
+            {
+                if (count % Quotient == Remainder)
+                {
+                    yield return item;
+                }
+                count++;
+            }
+        }
+    }
+
+    public class QueryAddCounter : RawlerQuery
+    {
+        #region テンプレ
+        /// <summary>
+        /// Clone
+        /// </summary>
+        /// <param name="parent"></param>
+        /// <returns></returns>
+        public override RawlerQuery Clone()
+        {
+            return base.Clone<QueryAddCounter>();
+        }
+
+        /// <summary>
+        /// ObjectのName。表示用
+        /// </summary>
+        public override string ObjectName
+        {
+            get { return this.GetType().Name; }
+        }
+        #endregion
+
+        public int StartCount { get; set; }
+        private string separater = ":";
+
+        public string Separater
+        {
+            get { return separater; }
+            set { separater = value; }
+        }
+
+        public override IEnumerable<string> Query(IEnumerable<string> list)
+        {
+            int count = 1;
+            foreach (var item in list)
+            {
+                yield return count+separater+item;
+                count++;
+            }
+        }
+    }
 
 
     public class QueryCreatePair : RawlerQuery

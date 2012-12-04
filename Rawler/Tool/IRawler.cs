@@ -192,9 +192,16 @@ namespace Rawler.Tool
         {
             if (enable)
             {
-                OnBeginRunEvent();
-                Run(true);
-                OnEndRunEvent();
+                try
+                {
+                    OnBeginRunEvent();
+                    Run(true);
+                    OnEndRunEvent();
+                }
+                catch(Exception e)
+                {
+                    ReportManage.ErrReport(this, e.Message);
+                }
             }
         }
 

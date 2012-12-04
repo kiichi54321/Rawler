@@ -24,6 +24,18 @@ namespace Rawler.Tool
            
         }
 
+        public string FileName { get; set; }
+         FileSaveMode fileSaveMode = FileSaveMode.Create;
+
+        public FileSaveMode FileSaveMode
+        {
+            get { return fileSaveMode; }
+            set { fileSaveMode = value; }
+        }
+
+        public RawlerBase FileNameTree { get; set; }
+
+
         /// <summary>
         /// ObjectのName。表示用
         /// </summary>
@@ -41,7 +53,6 @@ namespace Rawler.Tool
             {
                 return GetText();
             }
-
         }
 
         /// <summary>
@@ -74,6 +85,7 @@ namespace Rawler.Tool
 
         [NonSerialized]
         List<DataRow> dataList = new List<DataRow>();
+        Dictionary<string, DataRow> dataDic = new Dictionary<string, DataRow>();
         /// <summary>
         /// 蓄積されていくDataRow
         /// </summary>
@@ -102,6 +114,21 @@ namespace Rawler.Tool
             return list;
         }
 
+        public void ChangeCurrentDataRow(string key)
+        {
+            if (dataDic.ContainsKey(key))
+            {
+                currentDataRow = dataDic[key];
+            }
+            else
+            {
+                currentDataRow = new DataRow();
+                currentDataRow.AddData("Key",key);
+                dataDic.Add(key, currentDataRow);
+                dataList.Add(currentDataRow);
+            }
+        }
+
 
 
         DataRow currentDataRow = new DataRow();
@@ -120,6 +147,12 @@ namespace Rawler.Tool
             {
                 
             }
+
+            if (attribute.ToLower() == "key")
+            {
+                dataDic.Add(value, currentDataRow);
+            }
+
         }
         /// <summary>
         /// 次のDataRowに行く。NextDataRowがよびだすもの。
@@ -147,6 +180,83 @@ namespace Rawler.Tool
                 }
             }
 
+            
+        }
+
+        public override void Run(bool runChildren)
+        {
+            base.Run(runChildren);
+            FileSave();
+            
+            
+        }
+
+        private void FileSave()
+        {
+            string filename = this.FileName;
+            if (this.FileNameTree != null)
+            {
+                filename = RawlerBase.GetText(this.GetText(), this.FileNameTree, this);
+            }
+            if (string.IsNullOrEmpty(filename)==false)
+            {
+                System.IO.StreamWriter sw = null;
+                if (this.FileSaveMode == Tool.FileSaveMode.Create)
+                {
+                    sw = System.IO.File.CreateText(filename);
+                }
+                else if (this.FileSaveMode == Tool.FileSaveMode.Append)
+                {
+                    sw = System.IO.File.AppendText(filename);
+                }
+                HashSet<string> hash = new HashSet<string>();
+                foreach (var item2 in this.GetDataRows())
+                {
+                    foreach (var item3 in item2.DataDic.Keys)
+                    {
+                        hash.Add(item3);
+                    }
+                }
+                foreach (var key in hash)
+                {
+                    sw.Write(key);
+                    sw.Write("\t");
+                }
+                sw.WriteLine();
+
+                foreach (var row in this.GetDataRows())
+                {
+                    foreach (var key in hash)
+                    {
+                        if (row.DataDic.ContainsKey(key))
+                        {
+                            StringBuilder str = new StringBuilder();
+                            bool flag = true;
+                            foreach (var item5 in row.DataDic[key])
+                            {
+                                if (item5 != null)
+                                {
+                                    str.Append(item5.Replace("\n", "").Replace("\r", "").Replace("\t", "") + ",");
+                                }
+                                else
+                                {
+                                    flag = false;
+                                }
+                            }
+                            if (flag)
+                            {
+                                str.Length = str.Length - 1;
+                            }
+                            sw.Write(str.ToString());
+                        }
+                        sw.Write("\t");
+                    }
+                    sw.WriteLine();
+                }
+                sw.Close();
+                ReportManage.Report(this, filename + "作成完了", true, true);
+            }
+                
             
         }
 
