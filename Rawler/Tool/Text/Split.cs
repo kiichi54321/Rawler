@@ -25,6 +25,14 @@ namespace Rawler.Tool
             }
         }
 
+        bool emptyTextSkip = false;
+
+        public bool EmptyTextSkip
+        {
+            get { return emptyTextSkip; }
+            set { emptyTextSkip = value; }
+        }
+
         int num = -1;
 
         public int Num
@@ -55,6 +63,10 @@ namespace Rawler.Tool
                     ReportManage.ErrReport(this, "Split でsepartorの指定がありません");
                     return;
                 }
+            }
+            if (emptyTextSkip)
+            {
+                data = data.Where(n => n.Length > 0).ToArray();
             }
             if (num > -1)
             {

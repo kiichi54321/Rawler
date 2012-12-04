@@ -6,10 +6,7 @@ using Rawler.Tool;
 
 namespace Rawler.Tool
 {
-    /// <summary>
-    /// ごみ
-    /// </summary>
-    class DataGrouping : RawlerBase
+    public class ChangeCurrentDataRow : RawlerBase
     {
         #region テンプレ
         /// <summary>
@@ -19,7 +16,7 @@ namespace Rawler.Tool
         /// <returns></returns>
         public override RawlerBase Clone(RawlerBase parent)
         {
-            return base.Clone<DataGrouping>(parent);
+            return base.Clone<ChangeCurrentDataRow>(parent);
         }
 
         /// <summary>
@@ -31,51 +28,29 @@ namespace Rawler.Tool
         }
         #endregion
 
-
-        Dictionary<string,Dictionary<string,List<string>>> dic = new Dictionary<string,Dictionary<string,List<string>>>();
-
         /// <summary>
         /// このクラスでの実行すること。
         /// </summary>
         /// <param name="runChildren"></param>
         public override void Run(bool runChildren)
         {
-            base.Run(runChildren);
-
-            Save();
-        }
-
-        string SaveFileName { get; set; }
-
-        public void Save()
-        {
-            var file = System.IO.File.CreateText(SaveFileName);
-            foreach (var item in dic.OrderBy(n=>n.Key))
+            var text = this.GetText();
+            this.SetText(text);
+            if (string.IsNullOrEmpty(text) == false)
             {
-                file.Write(item.Key + "\t");
-
-            }
-        }
-
-        public void AddData(string group, string key, string value)
-        {
-            if (dic.ContainsKey(group))
-            {
-                if (dic[group].ContainsKey(key))
+                var data = this.GetAncestorRawler().OfType<Data>().FirstOrDefault();
+                if (data != null)
                 {
-                    dic[group][key].Add(value);
+                    data.ChangeCurrentDataRow(text);
                 }
                 else
                 {
-                    dic[group].Add(key, new List<string>() { value });
-                }                       
+                    ReportManage.ErrReport(this, "上流にDataがありません");
+                }
             }
-            else
-            {
-                dic.Add(group, new Dictionary<string, List<string>>());
-                dic[group].Add(key, new List<string>() { value });
-            }
+            base.Run(runChildren);
         }
+
 
         /// <summary>
         /// 子が参照するテキスト。

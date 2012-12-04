@@ -145,9 +145,14 @@ namespace Rawler.Tool
             var file = this.GetAncestorRawler().OfType<TsvReadLines>();
             if (file.Count() > 0)
             {
-                if (string.IsNullOrEmpty(ColumnName) == false)
+                string columnName = this.ColumnName;
+                if (this.ColumnNameTree != null)
                 {
-                    SetText(file.First().GetValue(ColumnName));
+                    columnName = RawlerBase.GetText(GetText(), ColumnNameTree, this);
+                }
+                if (string.IsNullOrEmpty(columnName) == false)
+                {
+                    SetText(file.First().GetValue(columnName));
                 }
                 else
                 {
@@ -162,6 +167,7 @@ namespace Rawler.Tool
         }
 
         public string ColumnName { get; set; }
+        public RawlerBase ColumnNameTree { get; set; }
 
         /// <summary>
         /// ObjectのName。表示用

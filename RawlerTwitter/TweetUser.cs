@@ -71,7 +71,7 @@ namespace RawlerTwitter
                 userTimelineOptions.Count = count;
                 userTimelineOptions.IncludeRetweets = includeRetweets;
                 userTimelineOptions.UseSSL = true;
-                
+
                 if (ScreenName == null || ScreenName.Length == 0)
                 {
                     userTimelineOptions.ScreenName = GetText();
@@ -92,7 +92,7 @@ namespace RawlerTwitter
                     {
                         if (ErrorTree != null)
                         {
-                            this.SetText(GetText()+"\t"+r.Item2);
+                            this.SetText(GetText() + "\t" + r.Item2);
                             ErrorTree.SetParent(this);
                             ErrorTree.Run();
                         }
@@ -109,11 +109,11 @@ namespace RawlerTwitter
                         yield return item.ToString();
                     }
                     if (c < userTimelineOptions.Count * 0.9) break;
-                        userTimelineOptions.Page++;
-                        if (maxPage < userTimelineOptions.Page)
-                        {
-                            break;
-                        }
+                    userTimelineOptions.Page++;
+                    if (maxPage < userTimelineOptions.Page)
+                    {
+                        break;
+                    }
                 }
             }
             else
@@ -122,8 +122,8 @@ namespace RawlerTwitter
             }
         }
 
-        
-        private Tuple<bool,string> GetData(TwitterLogin login, UserTimelineOptions userTimelineOptions)
+
+        private Tuple<bool, string> GetData(TwitterLogin login, UserTimelineOptions userTimelineOptions)
         {
             var lines = Twitterizer.TwitterTimeline.UserTimeline(login.Token, userTimelineOptions);
             dynamic[] test = Codeplex.Data.DynamicJson.Parse(lines.Content);
@@ -145,7 +145,7 @@ namespace RawlerTwitter
                 }
             }
 
-            return new Tuple<bool,string>(true, lines.Content);
+            return new Tuple<bool, string>(true, lines.Content);
         }
 
 

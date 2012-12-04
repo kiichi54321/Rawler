@@ -22,19 +22,10 @@ namespace Rawler.Tool
             this.Commited += new EventHandler<EventDataRow>(FileSave_Commited);
         }
 
-        public string FileName { get; set; }
-
         public string AttributeOrderString { get; set; }
 
-        FileSaveMode fileSaveMode = FileSaveMode.Create;
 
-        public FileSaveMode FileSaveMode
-        {
-            get { return fileSaveMode; }
-            set { fileSaveMode = value; }
-        }
 
-        public RawlerBase FileNameTree { get; set; }
 
 
         private List<string> order = new List<string>();
@@ -169,7 +160,7 @@ namespace Rawler.Tool
                 var existflag =  System.IO.File.Exists(fileName);
                     
 
-                if (fileSaveMode == Tool.FileSaveMode.Create)
+                if (FileSaveMode == Tool.FileSaveMode.Create)
                 {
                     streamWriter = File.CreateText(fileName);
                 }
@@ -187,7 +178,7 @@ namespace Rawler.Tool
                     order = CreateOrderString();
                 }
 
-                if (fileSaveMode == Tool.FileSaveMode.Create)
+                if (FileSaveMode == Tool.FileSaveMode.Create)
                 {
                     order.ForEach(n => streamWriter.Write(n + "\t"));
                     streamWriter.WriteLine();
@@ -215,6 +206,7 @@ namespace Rawler.Tool
             {
                 if (streamWriter != null)
                 {
+                    streamWriter.Close();
                     streamWriter.Dispose();
                 }
             }

@@ -131,12 +131,12 @@ namespace RawlerTool
             reportProgressTask.Wait();
         }
         RawlerBase rawler = null;
-        Task task = null;
+        bool isBusy = false;
         CancellationTokenSource tokenSource = new CancellationTokenSource();
 
         private void button1_Click(object sender, RoutedEventArgs e)
         {
-            if (task != null && task.IsCompleted == false)
+            if (isBusy)
             {
                 MessageBox.Show("実行中です");
                 return;
@@ -188,7 +188,8 @@ namespace RawlerTool
                         }
                     };
                 }
-                task = Task.Factory.StartNew(() => rawler.Run(),tokenSource.Token).ContinueWith((t) => StopWatch());
+                isBusy = true;
+                Task.Factory.StartNew(() => rawler.Run(), tokenSource.Token).ContinueWith((t) => { StopWatch(); isBusy = false; });
             }
             catch (OperationCanceledException oce)
             {               
@@ -418,6 +419,7 @@ namespace RawlerTool
 
         public void Dispose()
         {
+            
             pause = false;
             if (rawler != null)
             {
@@ -429,12 +431,8 @@ namespace RawlerTool
                 tokenSource.Cancel();
                 tokenSource.Dispose();
             }
-            if (task != null )
-            {
-                task.Dispose();
-                task = null;
-            }
             ReportManage.ListClear();
+            Application.Current.Shutdown();
         }
 
         private void MenuItem_Click(object sender, RoutedEventArgs e)

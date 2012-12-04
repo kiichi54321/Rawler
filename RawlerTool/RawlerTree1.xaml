@@ -7,6 +7,97 @@
       >
 
     <SetWorkFolder SpecialFolder="MyDocuments" Folder="ORF2012"></SetWorkFolder>
+    <FileSave FileName="天気データ.tsv">
+        <Page Url="http://www.weather-eye.com/weatherchart/src/1201_47772.htm">
+            <GetPageUrl UrlType="Current">
+                <GetFileName>
+                    <Split Separator="_">
+                        <Split.Query>
+                            <QueryFirst></QueryFirst>
+                        </Split.Query>
+                        <DataWrite Attribute="Month"></DataWrite>
+                    </Split>
+                </GetFileName>
+            </GetPageUrl>
+            <Tags Tag="font" ClassName="sx">
+                <Tags.Query>
+                    <QuerySkipExtend Remainder="0" Quotient="2">
+                        <QueryAddCounter></QueryAddCounter>
+                    </QuerySkipExtend>
+                </Tags.Query>
+                <DataWrite Attribute="天気(午前)"></DataWrite>
+            </Tags>
+            <Tags Tag="font" ClassName="sx">
+                <Tags.Query>
+                    <QuerySkipExtend Remainder="0" Quotient="2">
+                        <QueryAddCounter></QueryAddCounter>
+                    </QuerySkipExtend>
+                </Tags.Query>
+                <DataWrite Attribute="天気(午後)"></DataWrite>
+            </Tags>
+            <Tags Tag="font" ParameterFilter="#ff0000">
+                <Tags.Query>
+                    <QuerySkip Num="1">
+                        <QueryAddCounter></QueryAddCounter>
+                    </QuerySkip>
+                </Tags.Query>
+                <DataWrite Attribute="最高気温"></DataWrite>
+            </Tags>
+            <Tags Tag="font" ParameterFilter="#0000ff">
+                <Tags.Query>
+                    <QuerySkip Num="1">
+                        <QueryAddCounter></QueryAddCounter>
+                    </QuerySkip>
+                </Tags.Query>
+                <DataWrite Attribute="最低気温"></DataWrite>
+            </Tags>
+            <NextDataRow></NextDataRow>
+            <Links LabelFilter="image/forward_b.gif">
+                <NextPage SleepSecondTime="0">
+                </NextPage>
+            </Links>
+        </Page>
+    </FileSave>
+    <Data FileName="天気データ変換済み.tsv">
+        <TsvReadLines FileName="天気データ.tsv">
+            <Iterator CreateDataOnce="True">
+                <Iterator.SourceTree>
+                    <Document TextValue="天気(午前),天気(午後),最低気温,最高気温">
+                        <Split SeparatorType="Comma">
+                            <IteratorSourceAddText></IteratorSourceAddText>
+                        </Split>
+                    </Document>
+                </Iterator.SourceTree>
+                <GetTsvValue >
+                    <GetTsvValue.ColumnNameTree>
+                        <GetCurrentIterator></GetCurrentIterator>
+                    </GetTsvValue.ColumnNameTree>
+                    <Split SeparatorType="Comma" EmptyTextSkip="True">
+                        <Split Separator=":" Num="0">
+                            <AppendText>
+                                <AppendText.HeaderTree>
+                                    <GetTsvValue ColumnName="Month">
+                                        <AppendText Footer="_"></AppendText>
+                                    </GetTsvValue>
+                                </AppendText.HeaderTree>
+                                <ChangeCurrentDataRow></ChangeCurrentDataRow>
+                            </AppendText>
+                        </Split>
+                        <Split Separator=":" Num="1">
+                            <DataWrite >
+                                <DataWrite.AttributeTree>
+                                    <GetCurrentIterator></GetCurrentIterator>
+                                </DataWrite.AttributeTree>
+                            </DataWrite>
+                        </Split>
+                    </Split>
+                </GetTsvValue>
+            </Iterator>
+        </TsvReadLines>    
+    </Data>
+
+
+    <SetWorkFolder SpecialFolder="MyDocuments" Folder="ORF2012/ももくろ"></SetWorkFolder>
     <FileSave FileName="ももくろ共通部分のみコメント.csv" FileSaveMode="Create">
         <TsvReadLines FileName="ももクロCommentData.tsv">
             <GetTsvValue ColumnName="Content">
@@ -65,9 +156,9 @@
     </CountData>
 
     <Data Stock="True" xmlns="clr-namespace:Rawler.Tool;assembly=Rawler" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" >
-        <CreateFolder FolderName="data"></CreateFolder>
-        <TsvReadLines FileName="data/NameUrlList.tsv">
-            <Iterator>
+        <SetWorkFolder SpecialFolder="MyDocuments" Folder="ORF2012/ももくろ/"></SetWorkFolder>
+        <TsvReadLines FileName="NameUrlList.tsv">
+            <Iterator CreateDataOnce="False">
                 <Iterator.SourceTree>
                     <GetTsvValue ColumnName="Url">
                         <IteratorSourceClear></IteratorSourceClear>
@@ -93,10 +184,13 @@
                         </Page>
                     </GetTsvValue>
                 </Iterator.SourceTree>
+                <Iterator.Query>
+                    <QueryDistinct></QueryDistinct>
+                </Iterator.Query>
                 <Report></Report>
                 <Page VisbleErr="True">
                     <PageOnce>
-                        <FileSave FileName="data/BlogData.tsv" FileSaveMode="Append" Stock="False">
+                        <FileSave FileName="BlogData.tsv" FileSaveMode="Append" Stock="False" Enable="False">
                             <GetTsvValue ColumnName="Name">
                                 <DataWrite Attribute="Name"></DataWrite>
                             </GetTsvValue>
@@ -133,7 +227,7 @@
                             </Tags>
                             <NextDataRow></NextDataRow>
                         </FileSave>
-                        <FileSave FileName="data/ImageData.tsv" FileSaveMode="Append" Stock="False">
+                        <FileSave FileName="ImageData.tsv" FileSaveMode="Append" Stock="False" Enable="False">
 
                             <ClipText StartClip="&lt;!-- google_ad_section_start" EndClip="&lt;!-- google_ad_section_end" UseInner="False">
                                 <AppendText Footer="--&gt;">
@@ -167,7 +261,7 @@
                         </FileSave>
                     </PageOnce>
 
-                    <FileSave FileSaveMode="Append" FileName="data/CommentData.tsv" Stock="False">
+                    <FileSave FileSaveMode="Append" FileName="CommentData.tsv" Stock="False">
                         <ClipText StartClip="&lt;div class=&quot;each_comment&quot;&gt;" EndClip="&lt;!--//.each_comment--&gt;">
                             <GetTsvValue ColumnName="Name">
                                 <DataWrite Attribute="Name"></DataWrite>
@@ -252,6 +346,29 @@
         </t:TwitterLogin>
     </FileSave>
 
+
+    <SetWorkFolder SpecialFolder="MyDocuments" Folder="ORF2012/kaomoji"></SetWorkFolder>
+    <FileSave FileName="アカウント対応表（画像つき）.tsv">
+        <t:TwitterLogin>
+            <TsvReadLines FileName="アカウント対応表.tsv">
+                <GetTsvValue ColumnName="名前">
+                    <DataWrite Attribute="名前"></DataWrite>
+                </GetTsvValue>
+                <GetTsvValue ColumnName="アカウント">
+                    <t:TweetUserTimeline  Count="20" MaxPage="1" IncludeRetweets="False" >
+                        <t:TweetUserTimeline.Query>
+                            <QueryFirst></QueryFirst>
+                        </t:TweetUserTimeline.Query>
+                        <t:DataWriteTweet DataElement="ProfileImageLocation">
+                            <DataWrite Attribute="画像"></DataWrite>
+                        </t:DataWriteTweet>
+                    </t:TweetUserTimeline>
+                    <DataWrite Attribute="アカウント"></DataWrite>
+                </GetTsvValue>
+                <NextDataRow></NextDataRow>
+            </TsvReadLines>
+        </t:TwitterLogin>
+    </FileSave>
 
 
     <FileSave FileName="kaomoji/LevenshteinDistance.tsv"     
@@ -912,8 +1029,8 @@
         </FileReadLines>
     </FileSave>
 
-    <SetWorkFolder Folder="ORF2012" SpecialFolder="MyDocuments"></SetWorkFolder>
-    <CountData DoSave="True" MinCount="3" FileName="ももくろ月ごと集計.tsv">
+    <SetWorkFolder Folder="ORF2012/ももくろ" SpecialFolder="MyDocuments"></SetWorkFolder>
+    <CountData DoSave="True" MinCount="0" FileName="ももくろ月ごと集計.tsv">
         <TsvReadLines FileName="ももクロCommentData.tsv">
             <GetTsvValue ColumnName="Content">
                 <m:Mecab ViewType="表層形" UseHinshi="名詞,形容詞,動詞">
@@ -933,6 +1050,16 @@
                                                 <AppendText Footer="-"></AppendText>
                                             </GetTsvValue>
                                         </AppendText.HeaderTree>
+                                    </AppendText>
+                                </ConvertDateTime>
+                            </GetTsvValue>
+                        </CountAdd.GroupTree>
+                    </CountAdd>
+                    <CountAdd>
+                        <CountAdd.GroupTree>
+                            <GetTsvValue ColumnName="Date">
+                                <ConvertDateTime Format="YYMM">
+                                    <AppendText Header="All-">
                                     </AppendText>
                                 </ConvertDateTime>
                             </GetTsvValue>

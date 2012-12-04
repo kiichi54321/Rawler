@@ -81,7 +81,15 @@ namespace Rawler.Tool
 
         public static void ErrReport(RawlerBase sender, string err)
         {
-            ReportEvnetArgs args = new ReportEvnetArgs(sender,GetTopComment(sender)+ "ERR:"+err,true, true);
+            ReportEvnetArgs args;
+            if (sender != null)
+            {
+                args = new ReportEvnetArgs(sender, GetTopComment(sender) + "ERR:" + sender.ObjectName + ":" + err, true, true);
+            }
+            else
+            {
+                args = new ReportEvnetArgs(sender, GetTopComment(sender) + "ERR:"  + err, true, true);
+            }
             AddReportEventArgs(args);
             if (ErrReportEvent != null)
             {
