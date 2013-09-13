@@ -10,7 +10,7 @@ namespace Rawler.Tool
     {
         public static event EventHandler<ReportEvnetArgs> ErrReportEvent;
         public static event EventHandler<ReportEvnetArgs> ReportEvnet;
-
+        public static event EventHandler<EventArgs> ChangeRowCount;
         private static ObservableCollection<ReportEvnetArgs> reportList = new ObservableCollection<ReportEvnetArgs>();
 
         public static ObservableCollection<ReportEvnetArgs> ReportList
@@ -35,7 +35,7 @@ namespace Rawler.Tool
         {
             if (visbleTopObjectComment)
             {
-                return sender.GetAncestorRawler().Last().Comment+":";
+                return sender.GetAncestorRawler().Last().Comment + ":";
             }
             else
             {
@@ -88,22 +88,29 @@ namespace Rawler.Tool
             }
             else
             {
-                args = new ReportEvnetArgs(sender, GetTopComment(sender) + "ERR:"  + err, true, true);
+                args = new ReportEvnetArgs(sender, GetTopComment(sender) + "ERR:" + err, true, true);
             }
             AddReportEventArgs(args);
             if (ErrReportEvent != null)
             {
-                ErrReportEvent(sender,args);
+                ErrReportEvent(sender, args);
             }
         }
 
-        public static void Report(RawlerBase sender, string message,bool returncode)
+        public static void Report(RawlerBase sender, string message, bool returncode)
         {
             ReportEvnetArgs args = new ReportEvnetArgs(sender, GetTopComment(sender) + message, returncode);
             AddReportEventArgs(args);
-            if (ReportEvnet != null)
+            if (message.Contains("NextDataRow"))
             {
-                ReportEvnet(sender, args);
+                RowCount++;
+            }
+            else
+            {
+                if (ReportEvnet != null)
+                {
+                    ReportEvnet(sender, args);
+                }
             }
         }
 
@@ -111,21 +118,60 @@ namespace Rawler.Tool
         {
             ReportEvnetArgs args = new ReportEvnetArgs(sender, GetTopComment(sender) + message, true);
             AddReportEventArgs(args);
-            if (ReportEvnet != null)
+
+            if (message.Contains("NextDataRow"))
             {
-                ReportEvnet(sender, args);
+                RowCount++;
+            }
+            else
+            {
+                if (ReportEvnet != null)
+                {
+                    ReportEvnet(sender, args);
+                }
             }
         }
 
-        public static void Report(RawlerBase sender, string message,bool returncode,bool visible)
+        public static void Report(RawlerBase sender, string message, bool returncode, bool visible)
         {
             ReportEvnetArgs args = new ReportEvnetArgs(sender, GetTopComment(sender) + message, returncode);
             AddReportEventArgs(args);
             args.Visible = visible;
-            if (ReportEvnet != null)
+            if (message.Contains("NextDataRow"))
             {
-                ReportEvnet(sender, args);
+                RowCount++;
             }
+            else
+            {
+                if (ReportEvnet != null)
+                {
+                    ReportEvnet(sender, args);
+                }
+            }
+        }
+
+        static int rowCount = 0;
+
+        public static int RowCount
+        {
+            get { return ReportManage.rowCount; }
+            set
+            {
+                if (rowCount != value)
+                {
+                    ReportManage.rowCount = value;
+
+                    if (ChangeRowCount != null)
+                    {
+                        ChangeRowCount(null, new EventArgs());
+                    }
+                }
+            }
+        }
+
+        public static void ResetRowCount()
+        {
+            RowCount = 0;
         }
 
     }
@@ -133,15 +179,15 @@ namespace Rawler.Tool
     public class ReportEvnetArgs : EventArgs
     {
         public string Message { get; set; }
-  //      public RawlerBase Sender { get; set; }
-        public bool IsErr {get;set;}
+        //      public RawlerBase Sender { get; set; }
+        public bool IsErr { get; set; }
         public DateTime DateTime { get; set; }
         public bool Visible { get; set; }
-        public bool ReturnCode { get; set; }        
-        public ReportEvnetArgs(RawlerBase sender, string message,bool returncode)
+        public bool ReturnCode { get; set; }
+        public ReportEvnetArgs(RawlerBase sender, string message, bool returncode)
             : base()
         {
-    //        this.Sender = sender;
+            //        this.Sender = sender;
             this.Message = message;
             this.IsErr = false;
             this.DateTime = DateTime.Now;
@@ -149,10 +195,10 @@ namespace Rawler.Tool
             this.ReturnCode = returncode;
         }
 
-        public ReportEvnetArgs(RawlerBase sender, string message,bool returncode, bool isErr)
+        public ReportEvnetArgs(RawlerBase sender, string message, bool returncode, bool isErr)
             : base()
         {
-     //       this.Sender = sender;
+            //       this.Sender = sender;
             this.Message = message;
             this.IsErr = isErr;
             this.DateTime = DateTime.Now;

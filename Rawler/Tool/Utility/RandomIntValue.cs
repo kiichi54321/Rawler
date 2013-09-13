@@ -2,11 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Rawler.Tool;
 
 namespace Rawler.Tool
 {
-    public class Loop : RawlerBase
+    public class RandomIntValue : RawlerBase
     {
         #region テンプレ
         /// <summary>
@@ -16,7 +15,7 @@ namespace Rawler.Tool
         /// <returns></returns>
         public override RawlerBase Clone(RawlerBase parent)
         {
-            return base.Clone<Loop>(parent);
+            return base.Clone<RandomIntValue>(parent);
         }
 
         /// <summary>
@@ -34,37 +33,19 @@ namespace Rawler.Tool
         /// <param name="runChildren"></param>
         public override void Run(bool runChildren)
         {
-            while (isBreaked == false)
-            {
-                base.Run(runChildren);
-                int time = Math.Max( (sleepTime + (int)(sleepWide * (randam.NextDouble() - 0.5) * 2))*1000,1000);
-                System.Threading.Thread.Sleep(time);
-               }
+            SetText(random.Next(maxValue).ToString());
+            base.Run(runChildren);
         }
-        Random randam = new Random();
-        int sleepTime = 3;
 
-        int sleepWide = 0;
+        int maxValue = 100;
 
-        public int SleepWide
+        public int MaxValue
         {
-            get { return sleepWide; }
-            set { sleepWide = value; }
+            get { return maxValue; }
+            set { maxValue = value; }
         }
 
-        public int SleepTime
-        {
-            get { return sleepTime; }
-            set { sleepTime = value; }
-        }
-
-        bool isBreaked = false;
-
-        public void Break()
-        {
-            isBreaked = true;
-        }
-
+        Random random = new Random();
 
         /// <summary>
         /// 子が参照するテキスト。
@@ -73,7 +54,7 @@ namespace Rawler.Tool
         {
             get
             {
-                return GetText();
+                return base.Text;
             }
         }
 

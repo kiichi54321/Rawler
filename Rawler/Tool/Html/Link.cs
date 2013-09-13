@@ -120,6 +120,8 @@ namespace Rawler.Tool
             set { emptyReport = value; }
         }
 
+        public string TargetTag { get; set; }
+
         //private bool useDistinct = false;
 
         //public bool UseDistinct
@@ -137,13 +139,27 @@ namespace Rawler.Tool
             {
 
                 List<RawlerLib.Web.Link> list;
-                if (useAbsolutetLink)
+                if (string.IsNullOrEmpty(TargetTag))
                 {
-                    list = new List<RawlerLib.Web.Link>(RawlerLib.Web.GetLinkForHTML(GetText(), GetPageUrl()));
+                    if (useAbsolutetLink)
+                    {
+                        list = new List<RawlerLib.Web.Link>(RawlerLib.Web.GetLinkForHTML(GetText(), GetPageUrl()));
+                    }
+                    else
+                    {
+                        list = new List<RawlerLib.Web.Link>(RawlerLib.Web.GetLinkForHTML(GetText()));
+                    }
                 }
                 else
                 {
-                    list = new List<RawlerLib.Web.Link>(RawlerLib.Web.GetLinkForHTML(GetText()));
+                    if (useAbsolutetLink)
+                    {
+                        list = new List<RawlerLib.Web.Link>(RawlerLib.Web.GetLinkForHTML(GetText(), GetPageUrl(),TargetTag));
+                    }
+                    else
+                    {
+                        list = new List<RawlerLib.Web.Link>(RawlerLib.Web.GetLinkForHTML(GetText(),null, TargetTag));
+                    }
                 }
 
                 if (LabelFilter != null && LabelFilter.Length > 0)

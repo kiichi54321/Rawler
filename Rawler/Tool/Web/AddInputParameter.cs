@@ -6,7 +6,7 @@ using Rawler.Tool;
 
 namespace Rawler.Tool
 {
-    public class Loop : RawlerBase
+    public class AddInputParameter : RawlerBase
     {
         #region テンプレ
         /// <summary>
@@ -16,7 +16,7 @@ namespace Rawler.Tool
         /// <returns></returns>
         public override RawlerBase Clone(RawlerBase parent)
         {
-            return base.Clone<Loop>(parent);
+            return base.Clone<AddInputParameter>(parent);
         }
 
         /// <summary>
@@ -34,38 +34,34 @@ namespace Rawler.Tool
         /// <param name="runChildren"></param>
         public override void Run(bool runChildren)
         {
-            while (isBreaked == false)
+            var list = this.GetAncestorRawler().OfType<Page>();
+            string key = this.Key;
+            if (KeyTree != null)
             {
-                base.Run(runChildren);
-                int time = Math.Max( (sleepTime + (int)(sleepWide * (randam.NextDouble() - 0.5) * 2))*1000,1000);
-                System.Threading.Thread.Sleep(time);
-               }
-        }
-        Random randam = new Random();
-        int sleepTime = 3;
-
-        int sleepWide = 0;
-
-        public int SleepWide
-        {
-            get { return sleepWide; }
-            set { sleepWide = value; }
-        }
-
-        public int SleepTime
-        {
-            get { return sleepTime; }
-            set { sleepTime = value; }
+               key =  RawlerBase.GetText(this.Parent.Text, KeyTree,this.Parent);
+            }
+            if (list.Any())
+            {
+                if (string.IsNullOrEmpty(Value))
+                {
+                    list.First().AddParameter(key, GetText());
+                }
+                else
+                {
+                    list.First().AddParameter(key, Value);
+                }
+            }
+            else
+            {
+                ReportManage.ErrReport(this, "上流にPageが必要です。");
+            }
+            base.Run(runChildren);
         }
 
-        bool isBreaked = false;
+        public RawlerBase KeyTree { get; set; }
 
-        public void Break()
-        {
-            isBreaked = true;
-        }
-
-
+        public string Key { get; set; }
+        public string Value { get; set; }
         /// <summary>
         /// 子が参照するテキスト。
         /// </summary>
@@ -73,7 +69,7 @@ namespace Rawler.Tool
         {
             get
             {
-                return GetText();
+                return base.Text;
             }
         }
 

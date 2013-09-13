@@ -6,7 +6,7 @@ using Rawler.Tool;
 
 namespace Rawler.Tool
 {
-    public class Loop : RawlerBase
+    public class RandomRun : RawlerBase
     {
         #region テンプレ
         /// <summary>
@@ -16,7 +16,7 @@ namespace Rawler.Tool
         /// <returns></returns>
         public override RawlerBase Clone(RawlerBase parent)
         {
-            return base.Clone<Loop>(parent);
+            return base.Clone<RandomRun>(parent);
         }
 
         /// <summary>
@@ -34,37 +34,19 @@ namespace Rawler.Tool
         /// <param name="runChildren"></param>
         public override void Run(bool runChildren)
         {
-            while (isBreaked == false)
+            if (probability > random.NextDouble())
             {
                 base.Run(runChildren);
-                int time = Math.Max( (sleepTime + (int)(sleepWide * (randam.NextDouble() - 0.5) * 2))*1000,1000);
-                System.Threading.Thread.Sleep(time);
-               }
+            }
         }
-        Random randam = new Random();
-        int sleepTime = 3;
+        Random random = new Random();
+        double probability = 1;
 
-        int sleepWide = 0;
-
-        public int SleepWide
+        public double Probability
         {
-            get { return sleepWide; }
-            set { sleepWide = value; }
+            get { return probability; }
+            set { probability = value; }
         }
-
-        public int SleepTime
-        {
-            get { return sleepTime; }
-            set { sleepTime = value; }
-        }
-
-        bool isBreaked = false;
-
-        public void Break()
-        {
-            isBreaked = true;
-        }
-
 
         /// <summary>
         /// 子が参照するテキスト。
@@ -73,7 +55,7 @@ namespace Rawler.Tool
         {
             get
             {
-                return GetText();
+                return base.Text;
             }
         }
 

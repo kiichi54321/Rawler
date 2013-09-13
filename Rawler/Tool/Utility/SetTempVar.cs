@@ -6,64 +6,22 @@ using Rawler.Tool;
 
 namespace Rawler.Tool
 {
-    public class KeyValueStore : RawlerBase
+    public static class TempVar
     {
-        #region テンプレ
-        /// <summary>
-        /// Clone
-        /// </summary>
-        /// <param name="parent"></param>
-        /// <returns></returns>
-        public override RawlerBase Clone(RawlerBase parent)
-        {
-            return base.Clone<KeyValueStore>(parent);
-        }
-
-        /// <summary>
-        /// ObjectのName。表示用
-        /// </summary>
-        public override string ObjectName
-        {
-            get { return this.GetType().Name; }
-        }
-        #endregion
-
-        /// <summary>
-        /// このクラスでの実行すること。
-        /// </summary>
-        /// <param name="runChildren"></param>
-        public override void Run(bool runChildren)
-        {
-            SetText(GetText());
-            base.Run(runChildren);
-        }
-
-        /// <summary>
-        /// 子が参照するテキスト。
-        /// </summary>
-        public override string Text
-        {
-            get
-            {
-                return base.Text;
-            }
-        }
-
-        Dictionary<string, string> dic = new Dictionary<string, string>();
-
-        public void SetKeyValue(string key, string value)
+        static Dictionary<string, string> dic = new Dictionary<string, string>();
+        public static void SetVar(string key, string val)
         {
             if (dic.ContainsKey(key))
             {
-                dic[key] = value;
+                dic[key] = val;
             }
             else
             {
-                dic.Add(key, value);
+                dic.Add(key, val);
             }
         }
 
-        public string GetKeyValue(string key)
+        public static string GetVar(string key)
         {
             if (dic.ContainsKey(key))
             {
@@ -71,19 +29,17 @@ namespace Rawler.Tool
             }
             else
             {
-                ReportManage.ErrReport(this, "Key（" + key + "）が見つかりません");
+                ReportManage.ErrReport(null, "TempVarクラスのGetVarで「"+key+"」がありませんでした。");
                 return string.Empty;
             }
+            
         }
 
-        public void Clear()
-        {
-            dic.Clear();
-        }
     }
 
 
-    public class GetKeyValue : RawlerBase
+
+    public class SetTempVar : RawlerBase
     {
         #region テンプレ
         /// <summary>
@@ -93,7 +49,7 @@ namespace Rawler.Tool
         /// <returns></returns>
         public override RawlerBase Clone(RawlerBase parent)
         {
-            return base.Clone<GetKeyValue>(parent);
+            return base.Clone<SetTempVar>(parent);
         }
 
         /// <summary>
@@ -106,91 +62,32 @@ namespace Rawler.Tool
         #endregion
 
         public string Key { get; set; }
-
+        public string Value { get; set; }
         /// <summary>
         /// このクラスでの実行すること。
         /// </summary>
         /// <param name="runChildren"></param>
         public override void Run(bool runChildren)
         {
-            var list = this.GetAncestorRawler().OfType<KeyValueStore>();
-            if (list.Any())
+            if (string.IsNullOrEmpty(Key))
             {
-                SetText(list.First().GetKeyValue(Key));
+                ReportManage.ErrReport(this, "SetTempVarのKeyが空です。");
             }
             else
-            {
-                ReportManage.ErrReport(this, "上流にKeyValueStoreがありません");
-            }
-            base.Run(runChildren);
-        }
-
-        /// <summary>
-        /// 子が参照するテキスト。
-        /// </summary>
-        public override string Text
-        {
-            get
-            {
-                return base.Text;
-            }
-        }
-
-
-    }
-
-    public class SetKeyValue : RawlerBase
-    {
-        #region テンプレ
-        /// <summary>
-        /// Clone
-        /// </summary>
-        /// <param name="parent"></param>
-        /// <returns></returns>
-        public override RawlerBase Clone(RawlerBase parent)
-        {
-            return base.Clone<SetKeyValue>(parent);
-        }
-
-        /// <summary>
-        /// ObjectのName。表示用
-        /// </summary>
-        public override string ObjectName
-        {
-            get { return this.GetType().Name; }
-        }
-        #endregion
-        public string Key { get; set; }
-
-        /// <summary>
-        /// このクラスでの実行すること。
-        /// </summary>
-        /// <param name="runChildren"></param>
-        public override void Run(bool runChildren)
-        {
-            var list = this.GetAncestorRawler().OfType<KeyValueStore>();
-            if (list.Any())
             {
                 if (string.IsNullOrEmpty(Value))
                 {
-                    list.First().SetKeyValue(Key, GetText());
+                    TempVar.SetVar(Key, GetText());
+                    this.SetText(GetText());
                 }
                 else
                 {
-                    list.First().SetKeyValue(Key, Value);
+                    TempVar.SetVar(Key, Value);
+                    this.SetText(Value);
                 }
             }
-            else
-            {
-                ReportManage.ErrReport(this, "上流にKeyValueStoreがありません");
-            }
-
-
-            SetText(GetText());
             base.Run(runChildren);
         }
-
-        public string Value { get; set; }
 
         /// <summary>
         /// 子が参照するテキスト。
@@ -202,11 +99,9 @@ namespace Rawler.Tool
                 return base.Text;
             }
         }
-
-
     }
 
-    public class CheckKeyValue : RawlerBase
+    public class GetTempVar : RawlerBase
     {
         #region テンプレ
         /// <summary>
@@ -216,7 +111,59 @@ namespace Rawler.Tool
         /// <returns></returns>
         public override RawlerBase Clone(RawlerBase parent)
         {
-            return base.Clone<CheckKeyValue>(parent);
+            return base.Clone<GetTempVar>(parent);
+        }
+
+        /// <summary>
+        /// ObjectのName。表示用
+        /// </summary>
+        public override string ObjectName
+        {
+            get { return this.GetType().Name; }
+        }
+        #endregion
+        public string Key { get; set; }
+
+        /// <summary>
+        /// このクラスでの実行すること。
+        /// </summary>
+        /// <param name="runChildren"></param>
+        public override void Run(bool runChildren)
+        {
+            if (string.IsNullOrEmpty(Key))
+            {
+                ReportManage.ErrReport(this, "GetTempVarのKeyが空です。");
+            }
+            else
+            {
+                this.SetText(TempVar.GetVar(Key));
+            } 
+            base.Run(runChildren);
+        }
+
+        /// <summary>
+        /// 子が参照するテキスト。
+        /// </summary>
+        public override string Text
+        {
+            get
+            {
+                return base.Text;
+            }
+        }
+    }
+
+    public class CheckTempVar : RawlerBase
+    {
+        #region テンプレ
+        /// <summary>
+        /// Clone
+        /// </summary>
+        /// <param name="parent"></param>
+        /// <returns></returns>
+        public override RawlerBase Clone(RawlerBase parent)
+        {
+            return base.Clone<CheckTempVar>(parent);
         }
 
         /// <summary>
@@ -244,25 +191,17 @@ namespace Rawler.Tool
         {
             if (string.IsNullOrEmpty(Key))
             {
-                ReportManage.ErrReport(this, "CheckKeyValueのKeyが空です。");
+                ReportManage.ErrReport(this, "GetTempVarのKeyが空です。");
             }
             else
             {
-                var list = this.GetAncestorRawler().OfType<KeyValueStore>();
-                if (list.Any())
+                if ((TempVar.GetVar(Key) == Value) == result)
                 {
-                    if ((list.First().GetKeyValue(Key) == Value) == result)
-                    {
-                        this.SetText(this.GetText());
-                        base.Run(runChildren);
-                    }
-                }
-                else
-                {
-                    ReportManage.ErrReport(this, "上流にKeyValueStoreがありません");
+                    this.SetText(this.GetText());
+                    base.Run(runChildren);
                 }
             }
-
+         
         }
 
         /// <summary>
@@ -277,8 +216,7 @@ namespace Rawler.Tool
         }
     }
 
-
-    public class KeyValueStoreClear : RawlerBase
+    public class GetTempVarCsv : RawlerBase
     {
         #region テンプレ
         /// <summary>
@@ -288,7 +226,7 @@ namespace Rawler.Tool
         /// <returns></returns>
         public override RawlerBase Clone(RawlerBase parent)
         {
-            return base.Clone<KeyValueStoreClear>(parent);
+            return base.Clone<GetTempVarCsv>(parent);
         }
 
         /// <summary>
@@ -299,24 +237,32 @@ namespace Rawler.Tool
             get { return this.GetType().Name; }
         }
         #endregion
-
+        public string Key { get; set; }
+        public int Num { get; set; }
         /// <summary>
         /// このクラスでの実行すること。
         /// </summary>
         /// <param name="runChildren"></param>
         public override void Run(bool runChildren)
         {
-            var list = this.GetAncestorRawler().OfType<KeyValueStore>();
-            if (list.Any())
+            if (string.IsNullOrEmpty(Key))
             {
-                list.First().Clear();
+                ReportManage.ErrReport(this, "GetTempVarのKeyが空です。");
             }
             else
             {
-                ReportManage.ErrReport(this, "上流にKeyValueStoreがありません");
+                var d = TempVar.GetVar(Key).Split(',');
+                if (d.Length > Num && Num >-1)
+                {
+                    this.SetText(d.ElementAt(Num));
+                }
+                else
+                {
+                    ReportManage.ErrReport(this, "GetTempVarのNumが範囲外です。");
+                }
             }
-            SetText(GetText());
             base.Run(runChildren);
+
         }
 
         /// <summary>
@@ -329,8 +275,5 @@ namespace Rawler.Tool
                 return base.Text;
             }
         }
-
-
     }
-
 }

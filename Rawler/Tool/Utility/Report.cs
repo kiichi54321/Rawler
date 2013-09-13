@@ -26,7 +26,7 @@ namespace Rawler.Tool
         public string Footer { get; set; }
         private bool visible = true;
         public bool Visible { get { return visible; } set { visible = value; } }
-        
+        public string Message { get; set; }
 
         private bool viewParentText = true;
         private bool returncode = true;
@@ -54,13 +54,13 @@ namespace Rawler.Tool
         public override void Run(bool runChildren)
         {
             string text;
-            if (viewParentText)
+            if (viewParentText && string.IsNullOrEmpty(Message))
             {
                 text = Header + GetText() + this.Footer;
             }
             else
             {
-                text = Header  + this.Footer;
+                text = Header + Message + this.Footer;
             }
             ReportManage.Report(this, System.Net.WebUtility.HtmlDecode( text),returncode, visible);
             this.RunChildren(runChildren);
@@ -145,6 +145,56 @@ namespace Rawler.Tool
         public override string ObjectName
         {
             get { return this.GetType().Name; }
+        }
+    }
+
+    /// <summary>
+    /// レポートに改行をいれる。
+    /// </summary>
+    public class ReportCounter : Report
+    {
+        public ReportCounter()
+            : base()
+        {
+            this.ReturnCode = true;
+            this.ViewParentText = false;
+            this.Visible = true;
+        }
+
+        int viewCount = 100;
+
+        public int ViewCount
+        {
+            get { return viewCount; }
+            set { viewCount = value; }
+        }
+
+        int count = 0;
+        public override void Run(bool runChildren)
+        {
+            count++;
+            if (count % viewCount == 0)
+            {
+                this.Message = count.ToString();
+                base.Run(runChildren);
+            }
+        }
+
+        /// <summary>
+        /// ObjectのName。表示用
+        /// </summary>
+        public override string ObjectName
+        {
+            get { return this.GetType().Name; }
+        }
+        /// <summary>
+        /// clone
+        /// </summary>
+        /// <param name="parent"></param>
+        /// <returns></returns>
+        public override RawlerBase Clone(RawlerBase parent)
+        {
+            return base.Clone<ReportCounter>(parent);
         }
     }
 }

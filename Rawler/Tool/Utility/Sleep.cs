@@ -13,12 +13,13 @@ namespace Rawler.Tool
     {
         public override void Run(bool runChildren)
         {
-            if (SleepTimeSpan != null)
+            if (SleepTimeSpan.TotalMilliseconds>0 )
             {
                 System.Threading.Thread.Sleep(SleepTimeSpan);
             }
             else
             {
+                int time = (int)Math.Max((sleepSeconds + (int)(sleepWide * (randam.NextDouble() - 0.5) * 2)) * 1000, 1000);
                 System.Threading.Thread.Sleep((int)(sleepSeconds * 1000));
             }
 
@@ -28,6 +29,17 @@ namespace Rawler.Tool
         public TimeSpan SleepTimeSpan { get; set; }
 
         private double sleepSeconds = 3;
+
+        Random randam = new Random();
+      
+
+        int sleepWide = 0;
+
+        public int SleepWide
+        {
+            get { return sleepWide; }
+            set { sleepWide = value; }
+        }
 
         /// <summary>
         /// スリープする時間です。

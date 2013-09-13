@@ -67,8 +67,8 @@ namespace Rawler.Tool
             get { return result; }
             set { result = value; }
         }
-
-
+        public RawlerBase TextTree { get; set; }
+        public RawlerBase ContainsTextTree { get; set; }
         /// <summary>
         /// 含まれるか判定する。
         /// </summary>
@@ -102,11 +102,37 @@ namespace Rawler.Tool
         /// <param name="runChildren"></param>
         public override void Run(bool runChildren)
         {
+            string containsText = this.ContainsText;
+            string text = this.GetText();
+            if (ContainsTextTree != null)
+            {
+                containsText = RawlerBase.GetText(this.Parent.Text, ContainsTextTree, this);
+            }
+            if (TextTree != null)
+            {
+                text = RawlerBase.GetText(this.Parent.Text, TextTree, this);
+            }
 
-                if (this.GetText().Contains(this.ContainsText) == this.Result)
-                {
-                    this.RunChildren(runChildren);
-                }
+            if (text.Contains(containsText) == this.Result)
+            {
+                this.RunChildren(runChildren);
+            }
+
+            //if (ContainsTextTree == null)
+            //{
+            //    if (this.GetText().Contains(this.ContainsText) == this.Result)
+            //    {
+            //        this.RunChildren(runChildren);
+            //    }
+            //}
+            //else
+            //{
+            //    string t = RawlerBase.GetText(this.Parent.Text, ContainsTextTree, this);
+            //    if (this.GetText().Contains(t) == this.Result)
+            //    {
+            //        this.RunChildren(runChildren);
+            //    }
+            //}
         }
 
         /// <summary>

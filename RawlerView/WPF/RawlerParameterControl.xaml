@@ -1,0 +1,16 @@
+﻿<UserControl x:Class="RawlerView.WPF.RawlerParameterControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             mc:Ignorable="d" 
+             d:DesignHeight="30" d:DesignWidth="400">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="150" />
+            <ColumnDefinition Width="188*" />
+        </Grid.ColumnDefinitions>
+        <TextBlock Name="textBlock" Text="TextBlock" />
+        <TextBox Grid.Column="1" Name="textBox" />
+    </Grid>
+</UserControl>

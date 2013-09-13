@@ -20,6 +20,7 @@ namespace Rawler.Tool
         public FileSave()
         {
             this.Commited += new EventHandler<EventDataRow>(FileSave_Commited);
+            doLastFileSave = false;
         }
 
         public string AttributeOrderString { get; set; }

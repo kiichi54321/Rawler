@@ -2,11 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Rawler.Tool;
 
 namespace Rawler.Tool
 {
-    public class Loop : RawlerBase
+    public class RScript : RawlerBase
     {
         #region テンプレ
         /// <summary>
@@ -16,7 +15,7 @@ namespace Rawler.Tool
         /// <returns></returns>
         public override RawlerBase Clone(RawlerBase parent)
         {
-            return base.Clone<Loop>(parent);
+            return base.Clone<RScript>(parent);
         }
 
         /// <summary>
@@ -34,37 +33,36 @@ namespace Rawler.Tool
         /// <param name="runChildren"></param>
         public override void Run(bool runChildren)
         {
-            while (isBreaked == false)
+            string tmpFile = string.Empty;
+            string file = ScriptFile;
+            if (string.IsNullOrWhiteSpace(Script) == false)
             {
-                base.Run(runChildren);
-                int time = Math.Max( (sleepTime + (int)(sleepWide * (randam.NextDouble() - 0.5) * 2))*1000,1000);
-                System.Threading.Thread.Sleep(time);
-               }
+                tmpFile = System.IO.Path.GetTempFileName();
+                var st = System.IO.File.CreateText(tmpFile);
+                st.Write(Script);
+                st.Close();
+                file = tmpFile;
+            }
+
+            var process = System.Diagnostics.Process.Start(System.IO.Path.Combine(path, "Rscript.exe") +" "+file);
+            process.WaitForExit();
+            if (tmpFile != string.Empty)
+            {
+                System.IO.File.Delete(tmpFile);
+            }
+            base.Run(runChildren);
         }
-        Random randam = new Random();
-        int sleepTime = 3;
 
-        int sleepWide = 0;
+        private string path = @"C:\Program Files\R\R-2.15.3\bin\x64";
 
-        public int SleepWide
+        public string Path
         {
-            get { return sleepWide; }
-            set { sleepWide = value; }
+            get { return path; }
+            set { path = value; }
         }
 
-        public int SleepTime
-        {
-            get { return sleepTime; }
-            set { sleepTime = value; }
-        }
-
-        bool isBreaked = false;
-
-        public void Break()
-        {
-            isBreaked = true;
-        }
-
+        public string ScriptFile { get; set; }
+        public string Script { get; set; }
 
         /// <summary>
         /// 子が参照するテキスト。
@@ -73,7 +71,7 @@ namespace Rawler.Tool
         {
             get
             {
-                return GetText();
+                return base.Text;
             }
         }
 

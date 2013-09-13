@@ -18,9 +18,18 @@ namespace Rawler.Tool
         /// Footer 親のTextの後に足すText
         /// </summary>
         public string Footer { get; set; }
+        public string Value { get; set; }
         public override void Run(bool runChildren)
         {
-            string t = GetText();
+            string t =string.Empty;
+            if (string.IsNullOrEmpty(Value))
+            {
+                t = GetText();
+            }
+            else
+            {
+                t = Value;
+            }
             if (Header != null)
             {
                 t = Header + t;

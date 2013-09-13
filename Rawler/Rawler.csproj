@@ -99,9 +99,12 @@
     <Compile Include="RawlerLib\WPF.cs" />
     <Compile Include="Tool\Condition\ChangeText.cs" />
     <Compile Include="Tool\Condition\CompareInt.cs" />
+    <Compile Include="Tool\Condition\RandomRun.cs" />
     <Compile Include="Tool\Data\ChangeCurrentDataRow.cs" />
+    <Compile Include="Tool\Data\CheckDataRow.cs" />
     <Compile Include="Tool\Data\DataGrouping.cs" />
     <Compile Include="Tool\Enumeration\Loop.cs" />
+    <Compile Include="Tool\Html\GetScriptFunction.cs" />
     <Compile Include="Tool\Html\RemoveHtmlComment.cs" />
     <Compile Include="Tool\Html\XPath.cs" />
     <Compile Include="Tool\IO\ContainLineInFile.cs" />
@@ -138,7 +141,14 @@
     <Compile Include="Tool\Text\ToCharArray.cs" />
     <Compile Include="Tool\Utility\GetObject.cs" />
     <Compile Include="Tool\Utility\KeyValueStore.cs" />
+    <Compile Include="Tool\Utility\RandomIntValue.cs" />
+    <Compile Include="Tool\Utility\RScript.cs" />
+    <Compile Include="Tool\Utility\SetTempVar.cs" />
+    <Compile Include="Tool\Utility\FunctionTree.cs" />
     <Compile Include="Tool\Utility\SetWorkFolder.cs" />
+    <Compile Include="Tool\Web\AddAllInputParameter.cs" />
+    <Compile Include="Tool\Web\AddHiddenInputParameter.cs" />
+    <Compile Include="Tool\Web\AddInputParameter.cs" />
     <Compile Include="Tool\Web\DownLoad.cs" />
     <Compile Include="Tool\Web\GetPageUrl.cs" />
     <Compile Include="Tool\Html\GetScriptVariable.cs" />
@@ -153,6 +163,7 @@
     <Compile Include="Tool\RawlerClass1.cs" />
     <Compile Include="Tool\Text\ReadLine.cs" />
     <Compile Include="Tool\Text\RegularExpressions.cs" />
+    <Compile Include="Tool\Web\PageReload.cs" />
     <Compile Include="Tool\Web\ReLogin.cs" />
     <Compile Include="Tool\Utility\ReportManage.cs" />
     <Compile Include="Tool\IRawler.cs" />
@@ -175,6 +186,7 @@
     <Compile Include="Tool\Dirt\ViewManage.cs" />
     <Compile Include="Tool\Web\UrlParameter.cs" />
     <Compile Include="Tool\Web\WebClient.cs" />
+    <Compile Include="Tool\Web\WebForm.cs" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs">

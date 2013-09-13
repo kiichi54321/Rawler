@@ -13,7 +13,7 @@ namespace RawlerLib.MarkupLanguage
         public string EndTag { get; set; }
         private string baseText;
         private string parameter = string.Empty;
-
+        private bool IsSingleTag = false;
         public string Parameter
         {
             get { return parameter; }
@@ -31,9 +31,17 @@ namespace RawlerLib.MarkupLanguage
             if (baseText != null)
             {
                 int s = baseText.IndexOf('>', start);
-                this.StartTag = baseText.Substring(start, s+1 - start);
-                this.parameter = StartTag.Replace("<" + tag, "").Replace(">", "");
-
+                int single = baseText.IndexOf("/>", start);
+                this.StartTag = baseText.Substring(start, s + 1 - start);
+                if (single > 0 && s > single)
+                {
+                    IsSingleTag = true;
+                    this.parameter = StartTag.Replace("<" + tag, "").Replace("/>", "");
+                }
+                else
+                {
+                     this.parameter = StartTag.Replace("<" + tag, "").Replace(">", "");
+                }
 
             }
         }
@@ -66,6 +74,21 @@ namespace RawlerLib.MarkupLanguage
             }
         }
 
+        public bool CheckName(string name)
+        {
+            System.Text.RegularExpressions.Regex regex = new System.Text.RegularExpressions.Regex("name[ ]*=[\"|\'| ]*" + name + "[\"|\'| |$]", System.Text.RegularExpressions.RegexOptions.IgnoreCase);
+            var r = regex.Match(parameter);
+            if (r.Success)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+
         /// <summary>
         /// textそのままのタグ
         /// </summary>
@@ -93,13 +116,20 @@ namespace RawlerLib.MarkupLanguage
             {
                 if (baseText != null)
                 {
-                    if (this.End > 0)
+                    if (IsSingleTag == false)
                     {
-                        return baseText.Substring(Start + StartTag.Length, End - (Start + StartTag.Length));
+                        if (this.End > 0)
+                        {
+                            return baseText.Substring(Start + StartTag.Length, End - (Start + StartTag.Length));
+                        }
+                        else
+                        {
+                            return baseText.Substring(Start + StartTag.Length);
+                        }
                     }
                     else
                     {
-                        return baseText.Substring(Start + StartTag.Length);
+                        return string.Empty;
                     }
                 }
                 else
@@ -115,13 +145,20 @@ namespace RawlerLib.MarkupLanguage
             {
                 if (baseText != null)
                 {
-                    if (this.End > 0)
+                    if (IsSingleTag)
                     {
-                        return baseText.Substring(Start, End + EndTag.Length - (Start));
+                        return baseText.Substring(Start + StartTag.Length);
                     }
                     else
                     {
-                        return baseText.Substring(Start + StartTag.Length);
+                        if (this.End > 0)
+                        {
+                            return baseText.Substring(Start, End + EndTag.Length - (Start));
+                        }
+                        else
+                        {
+                            return baseText.Substring(Start + StartTag.Length);
+                        }
                     }
                 }
                 else

@@ -6,7 +6,7 @@ using Rawler.Tool;
 
 namespace Rawler.Tool
 {
-    public class Loop : RawlerBase
+    public class CheckDataRow : RawlerBase
     {
         #region テンプレ
         /// <summary>
@@ -16,7 +16,7 @@ namespace Rawler.Tool
         /// <returns></returns>
         public override RawlerBase Clone(RawlerBase parent)
         {
-            return base.Clone<Loop>(parent);
+            return base.Clone<CheckDataRow>(parent);
         }
 
         /// <summary>
@@ -28,43 +28,31 @@ namespace Rawler.Tool
         }
         #endregion
 
+        public int MinAttributeCount { get; set; }
+        public RawlerBase FailedTree { get; set; }
         /// <summary>
         /// このクラスでの実行すること。
         /// </summary>
         /// <param name="runChildren"></param>
         public override void Run(bool runChildren)
         {
-            while (isBreaked == false)
+            var data = this.GetAncestorRawler().OfType<Data>().FirstOrDefault();
+            if (data != null)
             {
-                base.Run(runChildren);
-                int time = Math.Max( (sleepTime + (int)(sleepWide * (randam.NextDouble() - 0.5) * 2))*1000,1000);
-                System.Threading.Thread.Sleep(time);
-               }
+                if (data.GetCurrentDataRow().DataDic.Count >= MinAttributeCount)
+                {
+                    base.Run(runChildren);
+                }
+                else
+                {
+                    if (FailedTree != null)
+                    {
+                        FailedTree.SetParent(this);
+                        FailedTree.Run();
+                    }
+                }
+            }
         }
-        Random randam = new Random();
-        int sleepTime = 3;
-
-        int sleepWide = 0;
-
-        public int SleepWide
-        {
-            get { return sleepWide; }
-            set { sleepWide = value; }
-        }
-
-        public int SleepTime
-        {
-            get { return sleepTime; }
-            set { sleepTime = value; }
-        }
-
-        bool isBreaked = false;
-
-        public void Break()
-        {
-            isBreaked = true;
-        }
-
 
         /// <summary>
         /// 子が参照するテキスト。
@@ -73,7 +61,7 @@ namespace Rawler.Tool
         {
             get
             {
-                return GetText();
+                return base.Text;
             }
         }
 

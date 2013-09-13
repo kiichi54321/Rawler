@@ -6,7 +6,7 @@ using Rawler.Tool;
 
 namespace Rawler.Tool
 {
-    public class Switch : RawlerBase
+    public class SetFunctionTree : RawlerBase
     {
         #region テンプレ
         /// <summary>
@@ -16,7 +16,7 @@ namespace Rawler.Tool
         /// <returns></returns>
         public override RawlerBase Clone(RawlerBase parent)
         {
-            return base.Clone<Switch>(parent);
+            return base.Clone<SetFunctionTree>(parent);
         }
 
         /// <summary>
@@ -28,63 +28,29 @@ namespace Rawler.Tool
         }
         #endregion
 
+        string key = string.Empty;
+        public string Key { get { return key; } set { key = value; TreeFunctionManage.SetTree(Key, this); } }
+        bool useClone = false;
+
+        public bool UseClone
+        {
+            get { return useClone; }
+            set { useClone = value; }
+        }
         /// <summary>
         /// このクラスでの実行すること。
         /// </summary>
         /// <param name="runChildren"></param>
         public override void Run(bool runChildren)
         {
-
-            string switchValue = GetSwitchValue();
-            bool flag = true;
-            foreach (var item in this.Children)
-            {
-                if (item is CaseBase)
-                {
-                    var node = item as CaseBase;
-                    if (node.Check(switchValue))
-                    {
-                        node.Run();
-                        if (node.IsBreak)
-                        {
-                            flag = false;
-                            break;
-                        }
-                    }
-                }
-            }
-            if (flag)
-            {
-                if (OutsideTree != null)
-                {
-                    OutsideTree.SetParent();
-                    OutsideTree.SetParent(this);
-
-                    OutsideTree.Run();
-                }
-
-            }
-
-         //   base.Run(runChildren);
+//            TreeFunctionManage.SetTree(Key, this);
+//            base.Run(runChildren);
         }
 
-
-
-        protected string GetSwitchValue()
+        public void RunTree()
         {
-            if (SwitchValueTree != null)
-            {
-                SwitchValueTree.SetParent();
-                return  RawlerBase.GetText(this.Parent.Text, SwitchValueTree, this.Parent);
-            }
-            else
-            {
-                return GetText();
-            }
+            base.Run(true);
         }
-
-        public RawlerBase SwitchValueTree { get; set; }
-        public RawlerBase OutsideTree { get; set; }
 
         /// <summary>
         /// 子が参照するテキスト。
@@ -96,11 +62,9 @@ namespace Rawler.Tool
                 return GetText();
             }
         }
-
-
     }
 
-    public class CaseBase : RawlerBase
+    public class RunFunctionTree : RawlerBase
     {
         #region テンプレ
         /// <summary>
@@ -110,7 +74,7 @@ namespace Rawler.Tool
         /// <returns></returns>
         public override RawlerBase Clone(RawlerBase parent)
         {
-            return base.Clone<CaseBase>(parent);
+            return base.Clone<RunFunctionTree>(parent);
         }
 
         /// <summary>
@@ -122,31 +86,30 @@ namespace Rawler.Tool
         }
         #endregion
 
-        bool isBreak = true;
-
-        public bool IsBreak
-        {
-            get { return isBreak; }
-            set { isBreak = value; }
-        }
-
-        public virtual bool Check(string txt)
-        {
-            return false;
-        }
-
-
+        public string Key { get; set; }
         /// <summary>
         /// このクラスでの実行すること。
         /// </summary>
         /// <param name="runChildren"></param>
         public override void Run(bool runChildren)
         {
+            var tree = TreeFunctionManage.GetTree(Key);
+            if (tree == null)
+            {
+                ReportManage.ErrReport(this, "FunctionTree:「"+Key+"」が見つかりません。");
+                return;
+            }
+            if (tree.UseClone)
+            {
+                tree = tree.Clone() as SetFunctionTree;
+            }
+            tree.SetParent(this);
+            tree.RunTree();
+
             base.Run(runChildren);
         }
 
 
-        public RawlerBase SwitchValueTree { get; set; }
 
         /// <summary>
         /// 子が参照するテキスト。
@@ -156,6 +119,35 @@ namespace Rawler.Tool
             get
             {
                 return GetText();
+            }
+        }
+    }
+
+    public static class TreeFunctionManage
+    {
+        static Dictionary<string, SetFunctionTree> treeDic = new Dictionary<string, SetFunctionTree>();
+
+        public static void SetTree(string key, SetFunctionTree r)
+        {
+            if (treeDic.ContainsKey(key))
+            {
+                treeDic[key] = r;
+            }
+            else
+            {
+                treeDic.Add(key, r);
+            }
+        }
+
+        public static SetFunctionTree GetTree(string key)
+        {
+            if (treeDic.ContainsKey(key))
+            {
+                return treeDic[key];
+            }
+            else
+            {
+                return null;
             }
         }
     }

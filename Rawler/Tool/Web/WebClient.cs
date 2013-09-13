@@ -16,7 +16,7 @@ namespace Rawler.Tool
     public class WebClient : RawlerBase
     {
 
-        private Encoding encoder = null;
+        private Encoding encoder = System.Text.Encoding.UTF8;
 
         //public Encoding Encoding
         //{
@@ -38,7 +38,29 @@ namespace Rawler.Tool
             {
                 encoding = value;
                 encoder = GetEncoding();
+                
             }
+        }
+        double sleepSeconds = 0;
+
+        public double SleepSeconds
+        {
+            get { return sleepSeconds; }
+            set { sleepSeconds = value; }
+        }
+
+        private void Sleep()
+        {
+            if (sleepSeconds > 0)
+            {
+                System.Threading.Thread.Sleep((int)(1000 * sleepSeconds));
+            }
+        }
+
+        public override void Run(bool runChildren)
+        {
+            wc = new RawlerLib.WebClientEx();
+            base.Run(runChildren);
         }
 
         protected Encoding GetEncoding()
@@ -90,7 +112,7 @@ namespace Rawler.Tool
         /// <returns></returns>
         public string HttpGet(string url)
         {
-
+            Sleep();
             return HttpGet(url, encoder);
         }
 
@@ -158,7 +180,7 @@ namespace Rawler.Tool
                 }
             }
         }
-
+        RawlerLib.WebClientEx wc = new RawlerLib.WebClientEx();
         /// <summary>
         /// HttpGet
         /// </summary>
@@ -167,67 +189,71 @@ namespace Rawler.Tool
         /// <returns></returns>
         public virtual string HttpGet(string url, Encoding enc)
         {
+            Sleep();
+
             ErrMessage = string.Empty;
             string result = string.Empty;
             bool retry = false;
             try
             {
 
-            if (enc != null)
-            {
-                RawlerLib.WebClientEx wc = new RawlerLib.WebClientEx();
-                wc.Headers.Add("Referer", referer);
-                wc.Headers.Add("UserAgent", userAgent);
-                wc.CookieContainer = cc;
-                wc.Encoding = enc;
-                result = wc.DownloadString(url);
-                return result;
-            }
-                // リクエストの作成
-                HttpWebRequest req = (HttpWebRequest)WebRequest.Create(Uri.EscapeUriString(url));
-                req.CookieContainer = cc;
-
-                if (addUserAgent)
+                if (enc != null)
                 {
-                    req.UserAgent = userAgent;
+                    wc.Referer = referer;
+                    wc.UserAgent = userAgent;
+
+                  //  wc.CookieContainer = cc;
+                    wc.Encoding = enc;
+
+                    result = wc.DownloadString(url);
+
+                   // return result;
                 }
-                if (referer != string.Empty)
-                {
-                    req.Referer = referer;
-                }
+                //// リクエストの作成
+                //HttpWebRequest req = (HttpWebRequest)WebRequest.Create(Uri.EscapeUriString(url));
+                //req.CookieContainer = cc;
 
-                WebResponse res = req.GetResponse();
+                //if (addUserAgent)
+                //{
+                //    req.UserAgent = userAgent;
+                //}
+                //if (referer != string.Empty)
+                //{
+                //    req.Referer = referer;
+                //}
 
-                // レスポンスの読み取り
-                Stream resStream = res.GetResponseStream();
+                //WebResponse res = req.GetResponse();
 
-                if (encoder != null)
-                {
-                    StreamReader sr = new StreamReader(resStream, enc);
-                    result = sr.ReadToEnd();
+                //// レスポンスの読み取り
+                //Stream resStream = res.GetResponseStream();
 
-                    sr.Close();
-                }
-                else
-                {
-                    //応答データを受信するためのStreamを取得
+                //if (encoder != null)
+                //{
+                //    StreamReader sr = new StreamReader(resStream, enc);
+                //    result = sr.ReadToEnd();
 
-                    List<byte> byteArray = new List<byte>();
-                    int b;
-                    while ((b = resStream.ReadByte()) > -1)
-                    {
-                        byteArray.Add((byte)b);
-                    }
+                //    sr.Close();
+                //}
+                //else
+                //{
+                //    //応答データを受信するためのStreamを取得
 
-                    RawlerLib.Text.TxtEnc txtEnc = new RawlerLib.Text.TxtEnc();
-                    byte[] byteArray2 = byteArray.ToArray();
-                    txtEnc.SetFromByteArray(ref byteArray2);
+                //    List<byte> byteArray = new List<byte>();
+                //    int b;
+                //    while ((b = resStream.ReadByte()) > -1)
+                //    {
+                //        byteArray.Add((byte)b);
+                //    }
 
-                    txtEnc.Codec = "shift_jis";
-                    result = txtEnc.Text;
-                }
-                resStream.Close();
-                count = 0;
+                //    RawlerLib.Text.TxtEnc txtEnc = new RawlerLib.Text.TxtEnc();
+                //    byte[] byteArray2 = byteArray.ToArray();
+                //    txtEnc.SetFromByteArray(ref byteArray2);
+
+                //    txtEnc.Codec = "shift_jis";
+                //    result = txtEnc.Text;
+                //}
+                //resStream.Close();
+                //count = 0;
             }
             catch (Exception e)
             {
@@ -273,6 +299,7 @@ namespace Rawler.Tool
         /// <returns></returns>
         public virtual byte[] HttpGetByte(string url)
         {
+            Sleep();
 
             List<byte> data = new List<byte>();
             try
@@ -333,50 +360,79 @@ namespace Rawler.Tool
         /// <returns></returns>
         public virtual string HttpPost(string url, List<KeyValue> vals)
         {
-
-            string param = "";
-            foreach (var k in vals)
+            try
             {
-                param += String.Format("{0}={1}&", k.Key, k.Value);
+                Sleep();
+                wc.Referer = referer;
+                wc.UserAgent = userAgent;
+
+                System.Collections.Specialized.NameValueCollection list = new System.Collections.Specialized.NameValueCollection();
+                foreach (var item in vals)
+                {
+                    list.Add(item.Key, item.Value);
+                }
+                var data2 = wc.UploadValues(url, list);
+                return encoder.GetString(data2);
             }
-            byte[] data = System.Text.Encoding.UTF8.GetBytes(param);
-
-            // リクエストの作成
-            HttpWebRequest req = (HttpWebRequest)WebRequest.Create(Uri.EscapeUriString(url));
-            req.Method = "POST";
-            req.ContentType = "application/x-www-form-urlencoded";
-            req.ContentLength = data.Length;
-            req.CookieContainer = cc;
-
-            if (addUserAgent)
+            catch (Exception e)
             {
-                req.UserAgent = userAgent;
+                if (visbleErr)
+                {
+                    ReportManage.ErrReport(this, "Url:" + url + " " + e.Message);
+                }
+                //if (e is System.UriFormatException)
+                //{
+                //    ReportManage.ErrReport(this,"["+url+"]は無効なURLです。");
+                //}
+                ErrMessage = e.Message;
+           
+                //                throw new Exception("HttpGet:"+url+"に失敗しました");
+
             }
-            if (referer != string.Empty)
-            {
-                req.Referer = referer;
-            }
+            return string.Empty;
+            //string param = "";
+            //foreach (var k in vals)
+            //{
+            //    param += String.Format("{0}={1}&", k.Key, k.Value);
+            //}
+            //byte[] data = System.Text.Encoding.UTF8.GetBytes(param);
 
-            // ポスト・データの書き込み
-            Stream reqStream = req.GetRequestStream();
-            reqStream.Write(data, 0, data.Length);
-            reqStream.Close();
+            //// リクエストの作成
+            //HttpWebRequest req = (HttpWebRequest)WebRequest.Create(Uri.EscapeUriString(url));
+            //req.Method = "POST";
+            //req.ContentType = "application/x-www-form-urlencoded";
+            //req.ContentLength = data.Length;
+            //req.CookieContainer = cc;
 
-            WebResponse res = req.GetResponse();
+            //if (addUserAgent)
+            //{
+            //    req.UserAgent = userAgent;
+            //}
+            //if (referer != string.Empty)
+            //{
+            //    req.Referer = referer;
+            //}
 
-            if (encoder == null)
-            {
-                encoder = System.Text.Encoding.UTF8;
-            }
+            //// ポスト・データの書き込み
+            //Stream reqStream = req.GetRequestStream();
+            //reqStream.Write(data, 0, data.Length);
+            //reqStream.Close();
 
-            // レスポンスの読み取り
-            Stream resStream = res.GetResponseStream();
-            StreamReader sr = new StreamReader(resStream, encoder);
-            string result = sr.ReadToEnd();
-            sr.Close();
-            resStream.Close();
+            //WebResponse res = req.GetResponse();
 
-            return result;
+            //if (encoder == null)
+            //{
+            //    encoder = System.Text.Encoding.UTF8;
+            //}
+
+            //// レスポンスの読み取り
+            //Stream resStream = res.GetResponseStream();
+            //StreamReader sr = new StreamReader(resStream, encoder);
+            //string result = sr.ReadToEnd();
+            //sr.Close();
+            //resStream.Close();
+
+            //return result;
         }
         /// <summary>
         /// ObjectのName。表示用
