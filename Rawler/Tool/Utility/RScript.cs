@@ -2,11 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Rawler.Tool;
 
 namespace Rawler.Tool
 {
-    public class ChangeCurrentDataRow : RawlerBase
+    public class RScript : RawlerBase
     {
         #region テンプレ
         /// <summary>
@@ -16,7 +15,7 @@ namespace Rawler.Tool
         /// <returns></returns>
         public override RawlerBase Clone(RawlerBase parent)
         {
-            return base.Clone<ChangeCurrentDataRow>(parent);
+            return base.Clone<RScript>(parent);
         }
 
         /// <summary>
@@ -34,23 +33,36 @@ namespace Rawler.Tool
         /// <param name="runChildren"></param>
         public override void Run(bool runChildren)
         {
-            var text = this.GetText();
-            this.SetText(text);
-            if (string.IsNullOrEmpty(text) == false)
+            string tmpFile = string.Empty;
+            string file = ScriptFile;
+            if (string.IsNullOrWhiteSpace(Script) == false)
             {
-                var data = this.GetAncestorRawler().OfType<Data>().FirstOrDefault();
-                if (data != null)
-                {
-                    data.ChangeCurrentDataRow(text);
-                }
-                else
-                {
-                    ReportManage.ErrReport(this, "上流にDataがありません");
-                }
+                tmpFile = System.IO.Path.GetTempFileName();
+                var st = System.IO.File.CreateText(tmpFile);
+                st.Write(Script);
+                st.Close();
+                file = tmpFile;
+            }
+
+            var process = System.Diagnostics.Process.Start(System.IO.Path.Combine(path, "Rscript.exe") +" "+file);
+            process.WaitForExit();
+            if (tmpFile != string.Empty)
+            {
+                System.IO.File.Delete(tmpFile);
             }
             base.Run(runChildren);
         }
 
+        private string path = @"C:\Program Files\R\R-2.15.3\bin\x64";
+
+        public string Path
+        {
+            get { return path; }
+            set { path = value; }
+        }
+
+        public string ScriptFile { get; set; }
+        public string Script { get; set; }
 
         /// <summary>
         /// 子が参照するテキスト。

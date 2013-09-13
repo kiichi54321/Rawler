@@ -6,46 +6,48 @@ using System.Windows.Markup;
 
 namespace Rawler.Tool
 {
-        [ContentProperty("Children")]
+    [ContentProperty("Children")]
     [Serializable]
     public class Page : RawlerBase
     {
-            public Page():base()
-            {
-            }
+        public Page()
+            : base()
+        {
+        }
 
-            public Page(string url):base()
-            {
-                this.Url = url;
-            }
-            public Page(string url,string encoding)
-                : base()
-            {
-                this.Url = url;
-                Encoding = encoding;
-            }
+        public Page(string url)
+            : base()
+        {
+            this.Url = url;
+        }
+        public Page(string url, string encoding)
+            : base()
+        {
+            this.Url = url;
+            Encoding = encoding;
+        }
 
-            //public Page( string encoding)
-            //    : base()
-            //{
-            //    Encoding = encoding;
+        //public Page( string encoding)
+        //    : base()
+        //{
+        //    Encoding = encoding;
 
-            //}
+        //}
 
         /// <summary>
         /// 初めに指定したURLを取得します。
-            /// 現在読み込んでいるURLを取得するには GetCurrentUrl()を使ってください
+        /// 現在読み込んでいるURLを取得するには GetCurrentUrl()を使ってください
         /// </summary>
         public string Url { get; set; }
 
-        private string currentUrl = string.Empty;
+        protected string currentUrl = string.Empty;
 
         //現在読み込んでいるURLを取得します。
         public string GetCurrentUrl()
         {
             return currentUrl;
         }
-//        public string CurrentUrl { get; set; }
+        //        public string CurrentUrl { get; set; }
 
         private string encoding = string.Empty;
         /// <summary>
@@ -154,7 +156,7 @@ namespace Rawler.Tool
                 {
                     if (visbleErr)
                     {
-                        ReportManage.ErrReport(this, "すでに読み込んだURLです。スルーします。　"+url);
+                        ReportManage.ErrReport(this, "すでに読み込んだURLです。スルーします。　" + url);
                     }
                 }
             }
@@ -162,6 +164,11 @@ namespace Rawler.Tool
             {
                 urlStack.Push(url);
             }
+        }
+
+        public void Reload()
+        {
+            urlStack.Push(this.GetCurrentUrl());
         }
 
         string pastUrl = string.Empty;
@@ -203,6 +210,14 @@ namespace Rawler.Tool
 
             if (this.Url != null && this.Url.Length > 0)
             {
+                if (this.Url.Contains("http") == false)
+                {
+                    var prePage = this.GetAncestorRawler().Skip(1).OfType<Page>();
+                    if (prePage.Any() == true)
+                    {
+                        this.Url = System.IO.Path.Combine(prePage.First().GetCurrentUrl(), this.Url);
+                    }
+                }
                 this.startUrl = this.Url;
                 PushUrl(this.Url);
             }
@@ -215,7 +230,7 @@ namespace Rawler.Tool
                 }
             }
 
-            while(urlStack.Count>0)
+            while (urlStack.Count > 0)
             {
                 if (ReadPage(urlStack.Pop()))
                 {
@@ -223,13 +238,31 @@ namespace Rawler.Tool
                 }
             }
         }
-        private bool ReadPage(string url)
+        protected bool ReadPage(string url)
         {
             var client = GetWebClient();
 
-            this.text = client.HttpGet(url);
-            this.pastUrl = this.currentUrl;
+            if (MethodType == Tool.MethodType.GET)
+            {
+                this.text = client.HttpGet(url);
+            }
+            else if (MethodType == Tool.MethodType.POST)
+            {
+                parameterDic.Clear();
+                if (InputParameterTree != null)
+                {                 
+                    RawlerBase.GetText(GetText(), InputParameterTree, this);
+                }
+                List<KeyValue> list = new List<KeyValue>();
+                foreach (var item in parameterDic)
+                {
+                    list.Add(new KeyValue() { Key = item.Key, Value = item.Value });
+                }
+                this.text = client.HttpPost(url, list);
+            }
+
             this.currentUrl = url;
+            this.pastUrl = this.currentUrl;
 
             if (this.Text.Length > 0)
             {
@@ -239,7 +272,7 @@ namespace Rawler.Tool
             {
                 if (client.ErrMessage.Contains("503"))
                 {
-                    ReportManage.Report(this,"待機します",true,true);
+                    ReportManage.Report(this, "待機します", true, true);
                     System.Threading.Thread.Sleep(new TimeSpan(0, 0, 30));
                     urlStack.Push(url);
                 }
@@ -286,19 +319,42 @@ namespace Rawler.Tool
             get { return this.GetType().Name; }
         }
 
+        public RawlerBase InputParameterTree { get; set; }
 
+        private Dictionary<string, string> parameterDic = new Dictionary<string, string>();
 
-        public void Run(string url)
+        public void AddParameter(string key, string value)
         {
-            var client = GetWebClient();
-            this.text = client.HttpGet(url);
-            this.currentUrl = url;
-
-
-            if(this.Text.Length>0)
+            if (parameterDic.ContainsKey(key))
             {
-                RunChildren(true);
+                parameterDic[key] = value;
             }
+            else
+            {
+                parameterDic.Add(key, value);
+            }
+
+        }
+
+        //public void Run(string url)
+        //{
+        //    var client = GetWebClient();
+        //    this.text = client.HttpGet(url);
+        //    this.currentUrl = url;
+
+
+        //    if(this.Text.Length>0)
+        //    {
+        //        RunChildren(true);
+        //    }
+        //}
+
+        bool useReferer = true;
+
+        public bool UseReferer
+        {
+            get { return useReferer; }
+            set { useReferer = value; }
         }
 
         private WebClient GetWebClient()
@@ -307,30 +363,36 @@ namespace Rawler.Tool
             IRawler current = this.Parent;
 
             var list = this.GetAncestorRawler().Skip(1);
-//            list.Remove(this);
+            //            list.Remove(this);
             var clients = list.Where(n => n is WebClient);
             if (clients.Count() > 0)
             {
                 client = (WebClient)clients.First();
             }
-
-            if (pastUrl == string.Empty)
+            if (useReferer)
             {
-                var pages = list.Where(n => n is Page);
-
-                if (pages.Count() > 0)
+                if (pastUrl == string.Empty)
                 {
-                    var prePage = (Page)pages.First();
-                    client.Referer = prePage.GetCurrentUrl();
+                    var pages = list.Where(n => n is Page);
+
+                    if (pages.Count() > 0)
+                    {
+                        var prePage = (Page)pages.First();
+                        client.Referer = prePage.GetCurrentUrl();
+                    }
+                }
+                else
+                {
+                    client.Referer = pastUrl;
+                }
+                if (referer != null && referer.Length > 0)
+                {
+                    client.Referer = referer;
                 }
             }
             else
             {
-                client.Referer = pastUrl;
-            }
-            if (referer != null && referer.Length > 0)
-            {
-                client.Referer = referer;
+                client.Referer = string.Empty;
             }
             //while (current != null)
             //{
@@ -342,13 +404,19 @@ namespace Rawler.Tool
             //    current = current.Parent;
             //}
             var enc = GetEncoding();
-            if(enc !=null)
+            if (enc != null)
             {
                 client.Encoding = encoding;
             }
             return client;
         }
+        private MethodType methodType = MethodType.GET;
 
+        public MethodType MethodType
+        {
+            get { return methodType; }
+            set { methodType = value; }
+        }
 
         public override RawlerBase Clone(RawlerBase parent)
         {
@@ -364,5 +432,10 @@ namespace Rawler.Tool
             }
             return clone;
         }
+    }
+
+    public enum MethodType
+    {
+        GET, POST
     }
 }

@@ -29,6 +29,7 @@ namespace RawlerTool
             InitializeComponent();
             ReportManage.ErrReportEvent += new EventHandler<ReportEvnetArgs>(ReportManage_ErrReportEvent);
             ReportManage.ReportEvnet += new EventHandler<ReportEvnetArgs>(ReportManage_ReportEvnet);
+            ReportManage.ChangeRowCount += new EventHandler<EventArgs>(ReportManage_ChangeRowCount);
             ReportManage.StockReport = false;
             init();
             System.Xaml.XamlSchemaContext x = new System.Xaml.XamlSchemaContext();
@@ -36,7 +37,10 @@ namespace RawlerTool
             tmp.Children.Add(new Rawler.Tool.Page());
             rawlerView1.SetRawler(tmp );
             this.Closed += (o, e) => { Dispose(); };
+            RawlerView.ViewTask.UISyncContext = System.Threading.Tasks.TaskScheduler.FromCurrentSynchronizationContext();
         }
+
+
 
         private void init()
         {
@@ -78,12 +82,11 @@ namespace RawlerTool
                 }
                 AddMessage(txt);
             }
-            if (e.Message.Contains("NextDataRow"))
-            {
-                AddRowCount();
-            }
+            //if (e.Message.Contains("NextDataRow"))
+            //{
+            //    AddRowCount();
+            //}
         }
-        int rowCount = 0;
         void ReportManage_ErrReportEvent(object sender, ReportEvnetArgs e)
         {
             string txt = e.DateTime.ToShortTimeString() + "\t" + e.Message;
@@ -94,14 +97,19 @@ namespace RawlerTool
             AddMessage(txt);
         }
 
+        void ReportManage_ChangeRowCount(object sender, EventArgs e)
+        {
+            AddRowCount();
+        }
+
         TaskScheduler UISyncContext = TaskScheduler.FromCurrentSynchronizationContext();
 
         void AddRowCount()
         {
             Task reportProgressTask = Task.Factory.StartNew(() =>
             {
-                rowCount++;
-                textBlock2.Text = rowCount.ToString();
+
+                textBlock2.Text = ReportManage.RowCount.ToString();
             },
                      CancellationToken.None,
                      TaskCreationOptions.None,
@@ -174,7 +182,7 @@ namespace RawlerTool
             try
             {
                 rawler = (obj as Rawler.Tool.RawlerBase);
-                rowCount = 0;
+                ReportManage.RowCount = 0;
                 rawler.SetParent();
                 startDate = DateTime.Now;
                 foreach (var item in rawler.GetConectAllRawler())

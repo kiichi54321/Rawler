@@ -38,19 +38,24 @@ namespace Rawler.Tool
         {
             return stack.ToList();
         }
-
+        public RawlerBase PushTree { get; set; }
 
         public override void Run(bool runChildren)
         {
-            if (StartUrl != null)
-            {
-                this.Push(StartUrl);
-            }
+
             foreach (var item in urls.Reverse<TextVaule>())
             {
                 this.Push(item.Value);
             }
-
+            if (PushTree != null)
+            {
+                PushTree.SetParent(this);
+                PushTree.Run();
+            }
+            if (StartUrl != null)
+            {
+                this.Push(StartUrl);
+            }
             OnPushUrlEvent();
 
             while (stack.Count > 0)

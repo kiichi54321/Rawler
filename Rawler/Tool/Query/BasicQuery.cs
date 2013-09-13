@@ -418,11 +418,11 @@ namespace Rawler.Tool
             int count = 0;
             foreach (var item in list)
             {
+                count++;
                 if (count % Quotient == Remainder)
                 {
                     yield return item;
                 }
-                count++;
             }
         }
     }

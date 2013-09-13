@@ -145,7 +145,7 @@ namespace Rawler.Tool
             }
             else if(type == DataWriteType.replace)
             {
-                
+                currentDataRow.ReplaceData(attribute, value);
             }
 
             if (attribute.ToLower() == "key")
@@ -191,8 +191,11 @@ namespace Rawler.Tool
             
         }
 
+        private bool sortAttribute = true;
+        protected bool doLastFileSave = true;
         private void FileSave()
         {
+            if (doLastFileSave == false) return;            
             string filename = this.FileName;
             if (this.FileNameTree != null)
             {
@@ -217,7 +220,13 @@ namespace Rawler.Tool
                         hash.Add(item3);
                     }
                 }
-                foreach (var key in hash)
+                var order = CreateOrderString();
+                var list = hash.ToList();
+
+                var except = list.Except(order).ToList();
+                except.Sort();
+                list = order.Union(except).ToList();
+                foreach (var key in list)
                 {
                     sw.Write(key);
                     sw.Write("\t");
@@ -226,7 +235,7 @@ namespace Rawler.Tool
 
                 foreach (var row in this.GetDataRows())
                 {
-                    foreach (var key in hash)
+                    foreach (var key in list)
                     {
                         if (row.DataDic.ContainsKey(key))
                         {
@@ -258,6 +267,38 @@ namespace Rawler.Tool
             }
                 
             
+        }
+
+        private List<string> CreateOrderString()
+        {
+            Queue<RawlerBase> stack = new Queue<RawlerBase>();
+            List<string> list = new List<string>();
+            foreach (var item in this.Children)
+            {
+                stack.Enqueue(item);
+            }
+
+
+            while (stack.Count > 0)
+            {
+                var rawler = stack.Dequeue();
+                if ((rawler is Data) == false)
+                {
+                    if (rawler is IDataWrite)
+                    {
+                        var dw = rawler as IDataWrite;
+                        if (string.IsNullOrEmpty(dw.Attribute) == false)
+                        {
+                            list.Add(dw.Attribute);
+                        }
+                    }
+                    foreach (var item in rawler.Children)
+                    {
+                        stack.Enqueue(item);
+                    }
+                }
+            }
+            return new List<string>(list.Distinct());
         }
 
         public string ToTsv()

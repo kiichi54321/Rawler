@@ -105,11 +105,18 @@ namespace Rawler.Tool
             {
                 if (data.Length >= attributeDic[columnName])
                 {
-                    return data[attributeDic[columnName]];
+                    try
+                    {
+                        return data[attributeDic[columnName]];
+                    }
+                    catch (Exception e)
+                    {
+                        ReportManage.ErrReport(this, e.Message + " ColumnName:" + columnName + " Text:" + this.Text);
+                    }
                 }
                 else
                 {
-                    ReportManage.ErrReport(this, "キーが圏外です。");
+                    ReportManage.ErrReport(this, "キーが圏外です。:"+columnName);
                 }
             }
             else

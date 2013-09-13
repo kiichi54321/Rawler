@@ -49,8 +49,8 @@ namespace Rawler.Tool
         {
             if (System.IO.File.Exists(FileName) == false)
             {
-               var f = System.IO.File.CreateText(FileName);
-               f.Close();
+                var f = System.IO.File.CreateText(FileName);
+                f.Close();
             }
             var txt = GetText();
             var flag = System.IO.File.ReadLines(FileName).Contains(txt);
@@ -68,6 +68,19 @@ namespace Rawler.Tool
             {
                 file.WriteLine(txt);
             }
+        }
+
+        public int GetCountLines()
+        {
+            try
+            {
+                return System.IO.File.ReadLines(FileName).Count();
+            }
+            catch
+            {
+                ReportManage.ErrReport(this, "ファイルが存在しません");
+            }
+            return -1;
         }
 
 
@@ -134,6 +147,63 @@ namespace Rawler.Tool
             get
             {
                 return GetText();
+            }
+        }
+
+
+    }
+
+    public class ContainTextInFileCountLines : RawlerBase
+    {
+        #region テンプレ
+        /// <summary>
+        /// Clone
+        /// </summary>
+        /// <param name="parent"></param>
+        /// <returns></returns>
+        public override RawlerBase Clone(RawlerBase parent)
+        {
+            return base.Clone<ContainTextInFileCountLines>(parent);
+        }
+
+        /// <summary>
+        /// ObjectのName。表示用
+        /// </summary>
+        public override string ObjectName
+        {
+            get { return this.GetType().Name; }
+        }
+        #endregion
+
+        /// <summary>
+        /// このクラスでの実行すること。
+        /// </summary>
+        /// <param name="runChildren"></param>
+        public override void Run(bool runChildren)
+        {
+
+
+            base.Run(runChildren);
+        }
+
+        /// <summary>
+        /// 子が参照するテキスト。
+        /// </summary>
+        public override string Text
+        {
+            get
+            {
+                var list = this.GetAncestorRawler().OfType<ContainTextInFile>();
+                if (list.Any())
+                {
+                    SetText(list.First().GetCountLines().ToString());
+                }
+                else
+                {
+                    ReportManage.ErrReport(this, "ContainTextInFileCountLinesは上流にContainTextInFilegaが必要です");
+                }
+
+                return text;
             }
         }
 

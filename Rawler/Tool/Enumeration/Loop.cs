@@ -36,10 +36,27 @@ namespace Rawler.Tool
         {
             while (isBreaked == false)
             {
-                base.Run(runChildren);                
-            }
+                base.Run(runChildren);
+                int time = Math.Max( (sleepTime + (int)(sleepWide * (randam.NextDouble() - 0.5) * 2))*1000,1000);
+                System.Threading.Thread.Sleep(time);
+               }
+        }
+        Random randam = new Random();
+        int sleepTime = 3;
+
+        int sleepWide = 0;
+
+        public int SleepWide
+        {
+            get { return sleepWide; }
+            set { sleepWide = value; }
         }
 
+        public int SleepTime
+        {
+            get { return sleepTime; }
+            set { sleepTime = value; }
+        }
 
         bool isBreaked = false;
 

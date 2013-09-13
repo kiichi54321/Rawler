@@ -76,6 +76,7 @@ namespace Rawler.Tool
 
         public string ClassName { get; set; }
         public string IdName { get; set; }
+        public string TargetName { get; set; }
 
         private bool emptyReport = false;
         /// <summary>
@@ -96,6 +97,7 @@ namespace Rawler.Tool
             get { return useRank; }
             set { useRank = value; }
         }
+
 
         public override void Run(bool runChildren)
         {
@@ -126,6 +128,10 @@ namespace Rawler.Tool
                 if (this.IdName != null && this.IdName.Length > 0)
                 {
                     list = new List<RawlerLib.MarkupLanguage.TagClass>(list.Where(n => n.CheckIdName(IdName)));                    
+                }
+                if (this.TargetName != null && this.TargetName.Length > 0)
+                {
+                    list = new List<RawlerLib.MarkupLanguage.TagClass>(list.Where(n => n.CheckName(TargetName)));
                 }
 
                 if (true)

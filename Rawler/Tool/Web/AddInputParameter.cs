@@ -6,7 +6,7 @@ using Rawler.Tool;
 
 namespace Rawler.Tool
 {
-    public class ChangeCurrentDataRow : RawlerBase
+    public class AddInputParameter : RawlerBase
     {
         #region テンプレ
         /// <summary>
@@ -16,7 +16,7 @@ namespace Rawler.Tool
         /// <returns></returns>
         public override RawlerBase Clone(RawlerBase parent)
         {
-            return base.Clone<ChangeCurrentDataRow>(parent);
+            return base.Clone<AddInputParameter>(parent);
         }
 
         /// <summary>
@@ -34,24 +34,34 @@ namespace Rawler.Tool
         /// <param name="runChildren"></param>
         public override void Run(bool runChildren)
         {
-            var text = this.GetText();
-            this.SetText(text);
-            if (string.IsNullOrEmpty(text) == false)
+            var list = this.GetAncestorRawler().OfType<Page>();
+            string key = this.Key;
+            if (KeyTree != null)
             {
-                var data = this.GetAncestorRawler().OfType<Data>().FirstOrDefault();
-                if (data != null)
+               key =  RawlerBase.GetText(this.Parent.Text, KeyTree,this.Parent);
+            }
+            if (list.Any())
+            {
+                if (string.IsNullOrEmpty(Value))
                 {
-                    data.ChangeCurrentDataRow(text);
+                    list.First().AddParameter(key, GetText());
                 }
                 else
                 {
-                    ReportManage.ErrReport(this, "上流にDataがありません");
+                    list.First().AddParameter(key, Value);
                 }
+            }
+            else
+            {
+                ReportManage.ErrReport(this, "上流にPageが必要です。");
             }
             base.Run(runChildren);
         }
 
+        public RawlerBase KeyTree { get; set; }
 
+        public string Key { get; set; }
+        public string Value { get; set; }
         /// <summary>
         /// 子が参照するテキスト。
         /// </summary>

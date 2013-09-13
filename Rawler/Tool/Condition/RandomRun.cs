@@ -6,7 +6,7 @@ using Rawler.Tool;
 
 namespace Rawler.Tool
 {
-    public class ChangeCurrentDataRow : RawlerBase
+    public class RandomRun : RawlerBase
     {
         #region テンプレ
         /// <summary>
@@ -16,7 +16,7 @@ namespace Rawler.Tool
         /// <returns></returns>
         public override RawlerBase Clone(RawlerBase parent)
         {
-            return base.Clone<ChangeCurrentDataRow>(parent);
+            return base.Clone<RandomRun>(parent);
         }
 
         /// <summary>
@@ -34,23 +34,19 @@ namespace Rawler.Tool
         /// <param name="runChildren"></param>
         public override void Run(bool runChildren)
         {
-            var text = this.GetText();
-            this.SetText(text);
-            if (string.IsNullOrEmpty(text) == false)
+            if (probability > random.NextDouble())
             {
-                var data = this.GetAncestorRawler().OfType<Data>().FirstOrDefault();
-                if (data != null)
-                {
-                    data.ChangeCurrentDataRow(text);
-                }
-                else
-                {
-                    ReportManage.ErrReport(this, "上流にDataがありません");
-                }
+                base.Run(runChildren);
             }
-            base.Run(runChildren);
         }
+        Random random = new Random();
+        double probability = 1;
 
+        public double Probability
+        {
+            get { return probability; }
+            set { probability = value; }
+        }
 
         /// <summary>
         /// 子が参照するテキスト。

@@ -66,6 +66,23 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Scheme\RawlerToolSchemeBase.cs" />
+    <Compile Include="ViewTask.cs" />
+    <Compile Include="ViewText.cs" />
+    <Compile Include="WPF\RawlerParameterControl.xaml.cs">
+      <DependentUpon>RawlerParameterControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="WPF\RawlerRunButton.cs" />
+    <Compile Include="WPF\RawlerRunMange.cs" />
+    <Compile Include="WPF\ReportControl.xaml.cs">
+      <DependentUpon>ReportControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="WPF\ViewTextControl.xaml.cs">
+      <DependentUpon>ViewTextControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="WPF\ViewTextWindow.xaml.cs">
+      <DependentUpon>ViewTextWindow.xaml</DependentUpon>
+    </Compile>
     <Page Include="RawlerControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -86,10 +103,27 @@
       <DependentUpon>RawlerRunControl.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Scheme\RawlerToolScheme.cs" />
     <Compile Include="RawlerView.xaml.cs">
       <DependentUpon>RawlerView.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="WPF\RawlerParameterControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="WPF\ReportControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="WPF\ViewTextWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="WPF\ViewTextControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs">

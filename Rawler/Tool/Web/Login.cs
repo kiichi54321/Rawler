@@ -14,6 +14,8 @@ namespace Rawler.Tool
         bool hasLogin = false;
         string loginPage = string.Empty;
 
+   
+
         /// <summary>
         /// ログインをするサイトでのWebClient
         /// </summary>

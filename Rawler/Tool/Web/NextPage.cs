@@ -78,6 +78,13 @@ namespace Rawler.Tool
         HashSet<string> urlHash = new HashSet<string>();
         string baseUrl = string.Empty;
 
+        bool allowSameUrl = false;
+
+        public bool AllowSameUrl
+        {
+            get { return allowSameUrl; }
+            set { allowSameUrl = value; }
+        }
 
         public override void Run(bool runChildren)
         {
@@ -100,10 +107,32 @@ namespace Rawler.Tool
                         urlHash.Clear();
                         count = 0;
                     }
-                    if (urlHash.Contains(url) == false)
+                    if (allowSameUrl ==false)
                     {
-                        count++;
-                        urlHash.Add(url);
+                        if (urlHash.Contains(url) == false)
+                        {
+                            count++;
+                            urlHash.Add(url);
+                            if (count < maxCount)
+                            {
+                                //    this.Text = this.Parent.Text;
+                                if (sleepTime > 0)
+                                {
+                                    System.Threading.Thread.Sleep(new TimeSpan(0, 0, sleepTime));
+                                }
+                                this.RunChildren(runChildren);
+                                ReportManage.Report(this, "NextPage:" + GetText());
+
+                                page.PushUrl(url);
+                            }
+                            else
+                            {
+                                ReportManage.Report(this, "NextPage:指定ページ数を取得しました");
+                            }
+                        }
+                    }
+                    else
+                    {
                         if (count < maxCount)
                         {
                             //    this.Text = this.Parent.Text;

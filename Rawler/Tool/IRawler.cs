@@ -395,6 +395,7 @@ namespace Rawler.Tool
         public void SetParent(RawlerBase rawler)
         {
             parent = rawler;
+            SetParent();
         }
 
         /// <summary>
@@ -500,6 +501,34 @@ namespace Rawler.Tool
             this.children = null;
             this.commnet = null;
             this.preTree = null;            
+        }
+
+        public static RawlerBase Parse(string xaml,out string err)
+        {
+            object obj = null;
+            err = string.Empty;
+            try
+            {
+                obj = System.Xaml.XamlServices.Parse(xaml);
+            }
+            catch (Exception ex)
+            {
+                err = "XAMLの形式がおかしいです" + ex.Message;
+            }
+            if (obj == null)
+            {
+                return null;
+            }
+            if ((obj is Rawler.Tool.RawlerBase) == false)
+            {
+                err = "キャストできませんでした。XAMLの形式がおかしいです";
+                return null;
+            }
+            else
+            {
+                return (RawlerBase)obj;
+            }
+            
         }
     }
 

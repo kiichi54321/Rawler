@@ -6,7 +6,7 @@ using Rawler.Tool;
 
 namespace Rawler.Tool
 {
-    public class ChangeCurrentDataRow : RawlerBase
+    public class CheckDataRow : RawlerBase
     {
         #region テンプレ
         /// <summary>
@@ -16,7 +16,7 @@ namespace Rawler.Tool
         /// <returns></returns>
         public override RawlerBase Clone(RawlerBase parent)
         {
-            return base.Clone<ChangeCurrentDataRow>(parent);
+            return base.Clone<CheckDataRow>(parent);
         }
 
         /// <summary>
@@ -28,29 +28,31 @@ namespace Rawler.Tool
         }
         #endregion
 
+        public int MinAttributeCount { get; set; }
+        public RawlerBase FailedTree { get; set; }
         /// <summary>
         /// このクラスでの実行すること。
         /// </summary>
         /// <param name="runChildren"></param>
         public override void Run(bool runChildren)
         {
-            var text = this.GetText();
-            this.SetText(text);
-            if (string.IsNullOrEmpty(text) == false)
+            var data = this.GetAncestorRawler().OfType<Data>().FirstOrDefault();
+            if (data != null)
             {
-                var data = this.GetAncestorRawler().OfType<Data>().FirstOrDefault();
-                if (data != null)
+                if (data.GetCurrentDataRow().DataDic.Count >= MinAttributeCount)
                 {
-                    data.ChangeCurrentDataRow(text);
+                    base.Run(runChildren);
                 }
                 else
                 {
-                    ReportManage.ErrReport(this, "上流にDataがありません");
+                    if (FailedTree != null)
+                    {
+                        FailedTree.SetParent(this);
+                        FailedTree.Run();
+                    }
                 }
             }
-            base.Run(runChildren);
         }
-
 
         /// <summary>
         /// 子が参照するテキスト。

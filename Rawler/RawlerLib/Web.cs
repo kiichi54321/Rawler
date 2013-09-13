@@ -639,7 +639,54 @@ namespace RawlerLib
 
         }
 
+        public static ICollection<Link> GetLinkForHTML(string HTML, string url,string targetTag)
+        {
 
+
+            System.Text.RegularExpressions.Regex regex = new System.Text.RegularExpressions.Regex(@"<"+targetTag+@"[^>]*?HREF\s*=(\s*|\s*[""])([^"">]+)([""][^>]*?|[^>]*?)(>([\s\S]*?)<\/"+targetTag+">|/>)", System.Text.RegularExpressions.RegexOptions.IgnoreCase);
+            System.Text.RegularExpressions.Regex regexHttp = new System.Text.RegularExpressions.Regex("^http", System.Text.RegularExpressions.RegexOptions.IgnoreCase);
+            List<Link> linkList = new List<Link>();
+
+            foreach (System.Text.RegularExpressions.Match match in regex.Matches(HTML))
+            {
+                Link link = new Link();
+                if (match.Groups.Count > 4)
+                {
+                    link.Label = match.Groups[4].Value;
+                }
+                link.Url = HtmlTagAllDelete(match.Groups[2].Value).Replace("'", "");
+                link.Tag = match.Value;
+
+                //HTTP‚ª“ü‚Á‚Ä‚¢‚é‚Æ‚«
+                if (regexHttp.IsMatch(link.Url) == false && url != null)
+                {
+                    string[] tmpUrl = url.Split('?');
+                    string[] tmpUrl2 = link.Url.Split('?');
+                    try
+                    {
+                        Uri baseUri = new Uri(tmpUrl[0]);
+                        Uri uri = new Uri(baseUri, tmpUrl2[0]);
+                        if (tmpUrl2.Length > 1)
+                        {
+                            link.Url = uri.AbsoluteUri + "?" + tmpUrl2[1];
+                        }
+                        else
+                        {
+                            link.Url = uri.AbsoluteUri;
+                        }
+                    }
+                    catch
+                    {
+
+                        link.Url = string.Empty;
+                    }
+                }
+                linkList.Add(link);
+            }
+
+            return linkList;
+
+        }
 
 
         /// <summary>

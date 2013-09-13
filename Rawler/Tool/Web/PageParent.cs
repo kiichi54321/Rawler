@@ -7,6 +7,8 @@ namespace Rawler.Tool
 {
     public class GetPageHtml:RawlerBase
     {
+        public string TargetName { get; set; }
+
         public override string Text
         {
             get
@@ -14,7 +16,22 @@ namespace Rawler.Tool
                 var pages = this.GetAncestorRawler().Where(n => n is Page);
                 if (pages.Count() > 0)
                 {
-                    return GetText(pages.First().Text);
+                    if (string.IsNullOrEmpty(TargetName) == false)
+                    {
+                        if(pages.Where(n=>n.Name == TargetName).Any())
+                        {
+                            return GetText(pages.Where(n => n.Name == TargetName).First().Text);
+                        }
+                        else
+                        {
+                            ReportManage.ErrReport(this, "TargetName「"+TargetName +"」が見つかりません");
+                            return string.Empty;
+                        }
+                    }
+                    else
+                    {
+                        return GetText(pages.First().Text);
+                    }
                 }
                 else
                 {
