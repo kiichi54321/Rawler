@@ -2,11 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Rawler.Tool;
 
 namespace Rawler.Tool
 {
-    public class WebForm : Page
+    public class UrlEncode : RawlerBase
     {
         #region テンプレ
         /// <summary>
@@ -16,7 +15,7 @@ namespace Rawler.Tool
         /// <returns></returns>
         public override RawlerBase Clone(RawlerBase parent)
         {
-            return base.Clone<WebForm>(parent);
+            return base.Clone<UrlEncode>(parent);
         }
 
         /// <summary>
@@ -34,7 +33,7 @@ namespace Rawler.Tool
         /// <param name="runChildren"></param>
         public override void Run(bool runChildren)
         {
-            
+            SetText(Uri.EscapeUriString(GetText()));
             base.Run(runChildren);
         }
 
@@ -48,8 +47,6 @@ namespace Rawler.Tool
                 return base.Text;
             }
         }
-
-        
 
 
     }

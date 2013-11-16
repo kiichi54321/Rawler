@@ -2,11 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Rawler.Tool;
+using System.Windows.Markup;
 
 namespace Rawler.Tool
 {
-    public class WebForm : Page
+  
+    public class StringFormat : RawlerBase
     {
         #region テンプレ
         /// <summary>
@@ -16,7 +17,7 @@ namespace Rawler.Tool
         /// <returns></returns>
         public override RawlerBase Clone(RawlerBase parent)
         {
-            return base.Clone<WebForm>(parent);
+            return base.Clone<StringFormat>(parent);
         }
 
         /// <summary>
@@ -34,9 +35,30 @@ namespace Rawler.Tool
         /// <param name="runChildren"></param>
         public override void Run(bool runChildren)
         {
-            
+            if (string.IsNullOrEmpty(Format))
+            {
+                ReportManage.ErrReport(this, "Formatが空です");
+            }
+            else if (Args == null)
+            {
+                ReportManage.ErrReport(this, "Argsが空です");
+            }
+            else
+            {
+                List<string> list = new List<string>();
+                foreach (var item in Args)
+                {
+                    item.SetParent(this.Parent);
+                    item.SetParent();
+                    list.Add(RawlerBase.GetText(GetText(), item,this.Parent));
+                }
+                SetText(string.Format(Format, list.ToArray()));
+            }
             base.Run(runChildren);
         }
+
+        public string Format { get; set; }
+        public IEnumerable<RawlerBase> Args { get; set; }
 
         /// <summary>
         /// 子が参照するテキスト。
@@ -48,8 +70,6 @@ namespace Rawler.Tool
                 return base.Text;
             }
         }
-
-        
 
 
     }

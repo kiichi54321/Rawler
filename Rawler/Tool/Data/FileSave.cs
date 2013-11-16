@@ -34,17 +34,17 @@ namespace Rawler.Tool
 
         private List<string> CreateOrderString()
         {
-            Queue<RawlerBase> stack = new Queue<RawlerBase>();
+            Stack<RawlerBase> stack = new Stack<RawlerBase>();
             List<string> list = new List<string>();
-            foreach (var item in this.Children)
+            foreach (var item in this.Children.Reverse())
             {
-                stack.Enqueue(item);
+                stack.Push(item);
             }
 
 
             while (stack.Count > 0)
             {
-                var rawler = stack.Dequeue();
+                var rawler = stack.Pop();
                 if ((rawler is Data) == false)
                 {
                     if (rawler is IDataWrite)
@@ -55,9 +55,9 @@ namespace Rawler.Tool
                             list.Add(dw.Attribute);
                         }
                     }
-                    foreach (var item in rawler.Children)
+                    foreach (var item in rawler.Children.Reverse())
                     {
-                        stack.Enqueue(item);
+                        stack.Push(item);
                     }
                 }
             }

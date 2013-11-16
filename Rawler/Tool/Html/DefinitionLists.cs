@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Rawler.Tool;
+
 
 namespace Rawler.Tool
 {
-    public class WebForm : Page
+    public class DefinitionLists : RawlerMultiBase
     {
         #region テンプレ
         /// <summary>
@@ -16,7 +16,7 @@ namespace Rawler.Tool
         /// <returns></returns>
         public override RawlerBase Clone(RawlerBase parent)
         {
-            return base.Clone<WebForm>(parent);
+            return base.Clone<DefinitionLists>(parent);
         }
 
         /// <summary>
@@ -34,9 +34,20 @@ namespace Rawler.Tool
         /// <param name="runChildren"></param>
         public override void Run(bool runChildren)
         {
-            
-            base.Run(runChildren);
+            var list = RawlerLib.MarkupLanguage.TagAnalyze.GetTag(GetText(), "dl").ToList();
+            if (ClassName != null) list = list.Where(n => n.Parameter.Contains("class=\"" + ClassName + "\"")).ToList();
+            if (IdName != null) list = list.Where(n => n.Parameter.Contains("id=\"" + IdName + "\"")).ToList();
+
+            List<string> txtList = new List<string>();
+            foreach (var item in list)
+            {
+                txtList.AddRange(RawlerLib.Web.GetTagContentList(item.Inner, "<dt", "</dd>", true));
+            }
+            base.RunChildrenForArray(true, txtList);
         }
+
+        public string ClassName { get; set; }
+        public string IdName { get; set; }
 
         /// <summary>
         /// 子が参照するテキスト。
@@ -48,8 +59,6 @@ namespace Rawler.Tool
                 return base.Text;
             }
         }
-
-        
 
 
     }

@@ -52,6 +52,7 @@ namespace Rawler.Tool
             }
             else
             {
+
                 if (data.TryGetMember(FieldName, out obj))
                 {
                     this.SetText(obj.ToString());
@@ -81,4 +82,169 @@ namespace Rawler.Tool
 
 
     }
+
+    public class DataWriteJsonData : RawlerBase,IDataWrite
+    {
+        #region テンプレ
+        /// <summary>
+        /// Clone
+        /// </summary>
+        /// <param name="parent"></param>
+        /// <returns></returns>
+        public override RawlerBase Clone(RawlerBase parent)
+        {
+            return base.Clone<DataWriteJsonData>(parent);
+        }
+
+        /// <summary>
+        /// ObjectのName。表示用
+        /// </summary>
+        public override string ObjectName
+        {
+            get { return this.GetType().Name; }
+        }
+        #endregion
+
+        /// <summary>
+        /// このクラスでの実行すること。
+        /// </summary>
+        /// <param name="runChildren"></param>
+        public override void Run(bool runChildren)
+        {
+            var t = GetText();
+            object obj;
+            Codeplex.Data.DynamicJson data = Codeplex.Data.DynamicJson.Parse(t);
+
+            {
+
+                if (data.TryGetMember(FieldName, out obj))
+                {
+                    this.SetText(obj.ToString());
+                    DataWrite dataWrite = new DataWrite();
+                    dataWrite.SetParent(this);
+                    dataWrite.Attribute = FieldName;
+                    dataWrite.WriteType = this.WriteType;
+                    dataWrite.Run();
+
+                    base.Run(runChildren);
+                }
+                else
+                {
+                    ReportManage.ErrReport(this, "FieldNameがありません。");
+                }
+            }
+        }
+
+        public string FieldName { get; set; }
+
+
+        /// <summary>
+        /// 子が参照するテキスト。
+        /// </summary>
+        public override string Text
+        {
+            get
+            {
+                return base.Text;
+            }
+        }
+
+
+
+
+        #region IDataWrite メンバー
+
+        public string Attribute
+        {
+            get
+            {
+                return FieldName;
+            }
+            set
+            {
+                FieldName = value;
+            }
+        }
+
+        public DataWriteType WriteType
+        {
+            get;
+            set;
+        }
+
+        #endregion
+    }
+
+    public class DataWriteAllJsonData : RawlerBase
+    {
+        #region テンプレ
+        /// <summary>
+        /// Clone
+        /// </summary>
+        /// <param name="parent"></param>
+        /// <returns></returns>
+        public override RawlerBase Clone(RawlerBase parent)
+        {
+            return base.Clone<DataWriteAllJsonData>(parent);
+        }
+
+        /// <summary>
+        /// ObjectのName。表示用
+        /// </summary>
+        public override string ObjectName
+        {
+            get { return this.GetType().Name; }
+        }
+        #endregion
+
+        /// <summary>
+        /// このクラスでの実行すること。
+        /// </summary>
+        /// <param name="runChildren"></param>
+        public override void Run(bool runChildren)
+        {
+            var t = GetText();
+            object obj;
+            Codeplex.Data.DynamicJson data = Codeplex.Data.DynamicJson.Parse(t);
+
+            {
+                foreach (var item in data.GetDynamicMemberNames())
+                {
+                    if (data.TryGetMember(item, out obj))
+                    {
+                        if (obj != null)
+                        {
+                            this.SetText(obj.ToString());
+                        }
+                        else
+                        {
+                            this.SetText("Null");
+                        }
+                        DataWrite dataWrite = new DataWrite();
+                        dataWrite.SetParent(this);
+                        dataWrite.Attribute = item;
+                        dataWrite.Run();
+                    }
+                }
+                base.Run(runChildren);
+            }
+        }
+
+
+
+        /// <summary>
+        /// 子が参照するテキスト。
+        /// </summary>
+        public override string Text
+        {
+            get
+            {
+                return base.Text;
+            }
+        }
+
+
+
+    }
+
 }
