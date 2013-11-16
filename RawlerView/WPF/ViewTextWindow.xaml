@@ -7,7 +7,7 @@
             <RowDefinition Height="28" />
             <RowDefinition Height="233*" />
         </Grid.RowDefinitions>
-        <TabControl Name="tabControl1" Grid.Row="1">
+        <TabControl Name="tabControl1"  Grid.Row="1" TabStripPlacement="Bottom">
 
         </TabControl>
         <Button Content="Clear" Name="button1" Click="button1_Click" />

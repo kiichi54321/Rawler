@@ -56,6 +56,8 @@ namespace Rawler.Tool
         public RawlerQuery Query { get; set; }
 
         public RawlerBase EmptyTree { get; set; }
+        public RawlerBase AnyTree { get; set; }
+        public RawlerBase ConvertTree { get; set; }
 
         /// <summary>
         /// 子を実行する。
@@ -67,7 +69,10 @@ namespace Rawler.Tool
 
             if (runChildren)
             {
-                
+                if (ConvertTree != null)
+                {
+                    list = Convert(list);
+                }
                 if (Query != null)
                 {
                     list = Query.RunQuery(list);
@@ -95,6 +100,34 @@ namespace Rawler.Tool
                         EmptyTree.Run();
                     }
                 }
+                if (AnyTree != null)
+                {
+                    if (list.Any() == true)
+                    {
+                        AnyTree.SetParent(this);
+                        AnyTree.Run();
+                    }
+                }
+            }
+        }
+
+        private IEnumerable<string> Convert(IEnumerable<string> list)
+        {
+            if (ConvertTree != null)
+            {
+                ConvertTree.SetParent(this.Parent);
+                foreach (var item in list)
+                {
+                    yield return RawlerBase.GetText(item, ConvertTree, this.Parent);
+                }
+            }
+            else
+            {
+                foreach (var item in list)
+                {
+                    yield return item;
+                }
+
             }
         }
 

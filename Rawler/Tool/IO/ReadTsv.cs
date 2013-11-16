@@ -168,7 +168,7 @@ namespace Rawler.Tool
             }
             else
             {
-                ReportManage.ErrReport(this, "GetCurrentFileReadLine の上流にFileReadLinesがありません");
+                ReportManage.ErrReport(this, "GetTsvValue の上流にTsvReadLinesがありません");
             }
             base.Run(runChildren);
         }

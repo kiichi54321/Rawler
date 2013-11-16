@@ -39,13 +39,24 @@ namespace Rawler.RawlerLib.WPF
         {
             IsClosed = true;
         }
+        Dictionary<string, TabItem> tagDic = new Dictionary<string, TabItem>();
 
         public void AddText(string name ,string text)
         {
-            var tab = new TabItem() { Header = name };
-            tab.Content = new ViewTextControl() { Text = text };
-
-            tabControl1.Items.Add(tab);
+            if (tagDic.ContainsKey(name))
+            {
+                ((ViewTextControl)tagDic[name].Content).Text = text;
+                tabControl1.SelectedItem = tagDic[name];
+            }
+            else
+            {
+                var tab = new TabItem() { Header = name };
+                tab.Content = new ViewTextControl() { Text = text };
+                tagDic.Add(name, tab);
+                tabControl1.Items.Add(tab);
+                tabControl1.SelectedItem = tagDic[name];
+            }
+          
         }
 
         private void button1_Click(object sender, RoutedEventArgs e)

@@ -6,7 +6,7 @@
       xmlns:t="clr-namespace:RawlerTwitter;assembly=RawlerTwitter"
       >
 
-    <SetWorkFolder SpecialFolder="MyDocuments" Folder="ORF2012"></SetWorkFolder>
+    <SetWorkFolder SpecialFolder="MyDocuments" Folder="天気"></SetWorkFolder>
     <FileSave FileName="天気データ.tsv">
         <Page Url="http://www.weather-eye.com/weatherchart/src/1201_47772.htm">
             <GetPageUrl UrlType="Current">
@@ -21,7 +21,7 @@
             </GetPageUrl>
             <Tags Tag="font" ClassName="sx">
                 <Tags.Query>
-                    <QuerySkipExtend Remainder="0" Quotient="2">
+                    <QuerySkipExtend Remainder="1" Quotient="2">
                         <QueryAddCounter></QueryAddCounter>
                     </QuerySkipExtend>
                 </Tags.Query>
@@ -93,8 +93,10 @@
                     </Split>
                 </GetTsvValue>
             </Iterator>
-        </TsvReadLines>    
+        </TsvReadLines>
     </Data>
+
+
 
 
     <SetWorkFolder SpecialFolder="MyDocuments" Folder="ORF2012/ももくろ"></SetWorkFolder>
@@ -124,6 +126,37 @@
             </GetTsvValue>
         </TsvReadLines>
     </FileSave>
+
+    <SetWorkFolder SpecialFolder="MyDocuments" Folder="ORF2012/ももくろ"></SetWorkFolder>
+    <Data FileName="ももくろクロス表.tsv" FileSaveMode="Append" >
+        <TsvReadLines FileName="ももくろ月ごと集計2.tsv">
+            <AppendText Value="-">
+                <AppendText.FooterTree>
+                    <GetTsvValue ColumnName="name"></GetTsvValue>
+                </AppendText.FooterTree>
+                <AppendText.HeaderTree>
+                    <GetTsvValue ColumnName="word"></GetTsvValue>
+                </AppendText.HeaderTree>
+                <ChangeCurrentDataRow>
+                    <GetTsvValue ColumnName="name">
+                        <DataWrite Attribute="name" WriteType="replace"/>
+                    </GetTsvValue>
+                    <GetTsvValue ColumnName="word">
+                        <DataWrite Attribute="word" WriteType="replace"/>
+                    </GetTsvValue>
+                    <DataWrite>
+                        <DataWrite.AttributeTree>
+                            <GetTsvValue ColumnName="date">
+                            </GetTsvValue>
+                        </DataWrite.AttributeTree>
+                        <DataWrite.PreTree>
+                            <GetTsvValue ColumnName="count"></GetTsvValue>
+                        </DataWrite.PreTree>
+                    </DataWrite>
+                </ChangeCurrentDataRow>
+            </AppendText>
+        </TsvReadLines>
+    </Data>
 
     <CountData DoSave="True" FileName="顔文字カウント.tsv">
         <TsvReadLines>
@@ -569,20 +602,6 @@
         </DataWrite>
     </Tags>
 
-    <Page>
-        <Links>
-            <Link.Query>
-                <QueryContain ContainText="aaaa" Result="False"></QueryContain>
-            </Link.Query>
-            <Page>
-                <Links>
-                    <Page>
-
-                    </Page>
-                </Links>
-            </Page>
-        </Links>
-    </Page>
 
 
     <SetWorkFolder Folder="ORF2012" SpecialFolder="MyDocuments"></SetWorkFolder>
@@ -627,6 +646,50 @@
             </Tags>
         </Page>
 
+    </LoginClient>
+
+
+    <SetWorkFolder SpecialFolder="MyDocuments" Folder="Mixi"></SetWorkFolder>
+    <LoginClient LoginUrl="http://mixi.jp/login.pl" Encoding="EUC-JP" AddUserAgent="True">
+        <LoginClient.LoginPostVals>
+            <KeyValue Key="email" Value="@@email"></KeyValue>
+            <KeyValue Key="password" Value="@@passwd"></KeyValue>
+            <KeyValue Key="next_url" Value="/home.pl"></KeyValue>
+        </LoginClient.LoginPostVals>
+        <FileSave FileName="imageData.tsv" FileSaveMode="Create" Stock="False">
+            <TsvReadLines FileName="コミュニティIDList.tsv" Enable="False">
+                <GetTsvValue ColumnName="id">
+                    <AppendText Header="http://mixi.jp/list_member.pl?id=" >
+                        <Page>
+                            <Tags Tag="div" ClassName="iconList03">
+                                <Tags Tag="div" ClassName="iconListImage">
+                                    <GetTsvValue ColumnName="id">
+                                        <DataWrite Attribute="id"/>
+                                    </GetTsvValue>
+                                    <GetTsvValue ColumnName="name">
+                                        <DataWrite Attribute="name"/>
+                                    </GetTsvValue>
+                                    <Links VisbleType="Url">
+                                        <GetUrlParameter ParameterName="id">
+                                            <DataWrite Attribute="userId"></DataWrite>
+                                        </GetUrlParameter>
+                                    </Links>
+                                    <ClipText StartClip="url(" EndClip=")">
+                                        <DataWrite Attribute="imageUrl"></DataWrite>
+                                    </ClipText>
+                                    <NextDataRow></NextDataRow>
+                                </Tags>
+                            </Tags>
+                            <Tags Tag="div" ClassName="pageList02" IsSingle="True">
+                                <Links LabelFilter="次を表示">
+                                    <NextPage SleepSecondTime="3"></NextPage>
+                                </Links>
+                            </Tags>
+                        </Page>
+                    </AppendText>
+                </GetTsvValue>
+            </TsvReadLines>
+        </FileSave>
     </LoginClient>
 
 
@@ -1346,9 +1409,10 @@
 
     <LoginClient LoginUrl="http://www.pixiv.net/login.php" >
         <LoginClient.LoginPostVals>
-            <KeyValue Key="pixiv_id" Value=""></KeyValue>
-            <KeyValue Key="pass" Value=""></KeyValue>
+            <KeyValue Key="pixiv_id" Value="ぴくしぶID"></KeyValue>
+            <KeyValue Key="pass" Value="ぱすわーど"></KeyValue>
             <KeyValue Key="mode" Value="login"></KeyValue>
+            <KeyValue Key="return_to" Value="/"></KeyValue>
         </LoginClient.LoginPostVals>
 
         <FileSave >

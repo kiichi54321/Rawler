@@ -6,7 +6,7 @@
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
     <Grid>
-        <TabControl Name="tabControl1" TabStripPlacement="Bottom">
+        <TabControl Name="tabControl1">
             <TabItem Header="Text" Name="tabItem1">
                 <Grid>
                     <TextBox Name="textBox1" />

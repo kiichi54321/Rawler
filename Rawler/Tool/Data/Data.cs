@@ -65,6 +65,14 @@ namespace Rawler.Tool
 
         }
 
+        bool endDataClear = false;
+
+        public bool EndDataClear
+        {
+            get { return endDataClear; }
+            set { endDataClear = value; }
+        }
+
         /// <summary>
         /// バイナリで保存したデータをロードします。
         /// </summary>
@@ -187,8 +195,14 @@ namespace Rawler.Tool
         {
             base.Run(runChildren);
             FileSave();
-            
-            
+
+            if (EndDataClear)
+            {
+                dataDic.Clear();
+                dataList.Clear();
+                currentDataRow = new DataRow();
+                dataList.Add(currentDataRow);
+            }
         }
 
         private bool sortAttribute = true;

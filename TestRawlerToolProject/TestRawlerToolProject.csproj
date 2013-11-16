@@ -69,6 +69,10 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\MeCabDotNet\MecabDotNet.csproj">
+      <Project>{A8364E94-8B3F-4C80-9CBF-3B7DE86FC60E}</Project>
+      <Name>MecabDotNet</Name>
+    </ProjectReference>
     <ProjectReference Include="..\RawlerMecab\RawlerMecab.csproj">
       <Project>{33B87A14-4DFB-40C1-8B75-367B4D09574E}</Project>
       <Name>RawlerMecab</Name>
@@ -76,6 +80,10 @@
     <ProjectReference Include="..\RawlerTool\RawlerTool.csproj">
       <Project>{2E85E164-1D2D-4125-95F9-3ABE2BE82968}</Project>
       <Name>RawlerTool</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\RawlerTwitter\RawlerTwitter.csproj">
+      <Project>{22251104-BC73-4FE6-A0E7-C63ECB6522DF}</Project>
+      <Name>RawlerTwitter</Name>
     </ProjectReference>
     <ProjectReference Include="..\RawlerView\RawlerView.csproj">
       <Project>{95413A4E-EFAC-4729-A329-3ACD5AF51D4D}</Project>

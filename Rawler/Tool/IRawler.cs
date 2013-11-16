@@ -535,11 +535,14 @@ namespace Rawler.Tool
     /// <summary>
     /// 子の集合クラス
     /// </summary>
-    [ContentProperty("Items")]
+    [ContentProperty()]
     [Serializable]
     public class RawlerCollection : System.Collections.ObjectModel.ObservableCollection<RawlerBase>
     {
-
+        public void test()
+        {
+            
+        }
     }
 
 

@@ -95,6 +95,7 @@ namespace Rawler.Tool
         }
         #endregion
 
+        public string ContainCSV { get; set; }
         public string ContainText { get; set; }
         private bool result = true;
 
@@ -106,13 +107,19 @@ namespace Rawler.Tool
         
         public override IEnumerable<string> Query(IEnumerable<string> list)
         {
-            if (string.IsNullOrEmpty(ContainText) == false)
+            if (string.IsNullOrEmpty(ContainCSV) == false || string.IsNullOrEmpty(ContainText) == false)
             {
-                return list.Where(n => n.Contains(ContainText) == Result);
+                if (string.IsNullOrEmpty(ContainText) == false)
+                {
+                    return list.Where(n => n.Contains(ContainText) == Result);
+                }
+                var array = ContainCSV.Split(',');
+
+                return list.Where(n => array.Any(m=> n.Contains(m))  == Result);
             }
             else
             {
-                ReportManage.ErrReport(null, "ContainTextが空です。");
+                ReportManage.ErrReport(null, "QueryContain で、ContainTextかContainCSVが空です。");
                 return new List<string>();
             }
         }
@@ -172,9 +179,18 @@ namespace Rawler.Tool
         }
         #endregion
 
+        public RawlerBase KeyTree { get; set; }
+
         public override IEnumerable<string> Query(IEnumerable<string> list)
         {
-            return list.OrderBy(n => n);
+            if (KeyTree == null)
+            {
+                return list.OrderBy(n => n);
+            }
+            else
+            {
+                return list.OrderBy(n => RawlerBase.GetText(n, KeyTree));
+            }
         }
     }
 

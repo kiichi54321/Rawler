@@ -38,19 +38,31 @@ namespace Rawler.Tool
                 {
                     if (this.Parent != null && this.Parent.Text != null)
                     {
-                        string oldText = OldText;
-                        string newText = NewText;
-                        if (newText == null) newText = string.Empty;
-                        if (this.OldTextTree != null)
+                        if (ReplaceTexts == null || ReplaceTexts.Count == 0)
                         {
-                            oldText = RawlerBase.GetText(this.Parent.Text, OldTextTree, this);
-                        }
-                        if (this.NewTextTree != null)
-                        {
-                            newText = RawlerBase.GetText(this.Parent.Text, NewTextTree, this);
-                        }
+                            string oldText = OldText;
+                            string newText = NewText;
+                            if (newText == null) newText = string.Empty;
+                            if (this.OldTextTree != null)
+                            {
+                                oldText = RawlerBase.GetText(this.Parent.Text, OldTextTree, this);
+                            }
+                            if (this.NewTextTree != null)
+                            {
+                                newText = RawlerBase.GetText(this.Parent.Text, NewTextTree, this);
+                            }
 
-                        return GetText().Replace(oldText, newText);
+                            return GetText().Replace(oldText, newText);
+                        }
+                        else
+                        {
+                            var t = GetText();
+                            foreach (var item in ReplaceTexts)
+                            {
+                                t = item.Replace(t);
+                            }
+                            return t;
+                        }
                     }
                     else
                     {
@@ -72,5 +84,33 @@ namespace Rawler.Tool
         {
             return base.Clone<Replace>(parent);
         }
+
+        public ReplaceTexts ReplaceTexts
+        {
+            get;
+            set;
+        }
+    }
+
+    public class ReplaceText
+    {
+        public string NewText { get; set; }
+        public string OldText { get; set; }
+        public string Replace(string text)
+        {
+            if (NewText == null) NewText = string.Empty;
+            if (OldText != null)
+            {
+                return text.Replace(OldText, NewText);
+            }
+            else
+            {
+                return text;
+            }
+        }
+    }
+
+    public class ReplaceTexts : List<ReplaceText>
+    {
     }
 }

@@ -1,0 +1,58 @@
+﻿<Data Comment="" 
+       xmlns="clr-namespace:Rawler.Tool;assembly=Rawler"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+       xmlns:view="clr-namespace:Rawler.View;assembly=RawlerView"
+     >
+    <SetWorkFolder SpecialFolder="MyDocuments" Folder="Pixiv艦これ"></SetWorkFolder>
+    <KeyValueStore>
+        <WebClient AddUserAgent="True">
+            <Page Url="http://www.pixiv.net/" >
+                <Page Url="http://www.pixiv.net/login.php" MethodType="POST">
+                    <Page.InputParameterTree>
+                        <Tags Tag="form" ParameterFilter="login.php">
+                            <AddHiddenInputParameter></AddHiddenInputParameter>
+                            <AddInputParameter Key="pixiv_id" Value="id"></AddInputParameter>
+                            <AddInputParameter Key="pass" Value="パスワード"></AddInputParameter>
+                            <AddInputParameter Key="skip" Value="1"></AddInputParameter>
+                        </Tags>
+                    </Page.InputParameterTree>
+                    <FileSave FileName="UserTagAll.tsv" FileSaveMode="Append">
+                        <TsvReadLines FileName="SearchData.tsv">
+                            <GetTsvValue ColumnName="UserId">
+                                <ContainTextInFile FileName="tmpTagAllUser.txt" Result="False">
+                                    <AppendText Header="http://www.pixiv.net/member_tag_all.php?id=">
+                                        <Report Header="Url:"></Report>
+                                        <Page>
+                                           
+                                            <DefinitionLists ClassName="tag-list">
+                                             
+                                                <Tags Tag="dt">
+                                                    <SetKeyValue Key="Count"></SetKeyValue>                                                    
+                                                </Tags>
+                                                <Tags Tag="dd">
+                                                    <Links VisbleType="Label">
+                                                        <GetTsvValue ColumnName="UserId">
+                                                            <DataWrite Attribute="UserId"></DataWrite>
+                                                        </GetTsvValue>
+                                                        <DataWrite Attribute="Tags"></DataWrite>
+                                                        <GetKeyValue Key="Count">
+                                                            <DataWrite Attribute="Count"></DataWrite>
+                                                        </GetKeyValue>
+                                                        <NextDataRow></NextDataRow>
+                                                    </Links>
+                                                </Tags>
+                                            </DefinitionLists>
+                                        </Page>
+                                    </AppendText>
+                                    <ContainTextInFileAddText></ContainTextInFileAddText>
+                                    <Sleep SleepSeconds="1"></Sleep>
+                                </ContainTextInFile>
+                            </GetTsvValue>
+                        </TsvReadLines>
+                    </FileSave>
+                </Page>
+            </Page>
+        </WebClient>
+    </KeyValueStore>
+</Data>
+

@@ -92,6 +92,7 @@
     <Compile Include="RawlerLib\Text.cs" />
     <Compile Include="RawlerLib\TxtEnc.cs" />
     <Compile Include="RawlerLib\UIData.cs" />
+    <Compile Include="RawlerLib\UrlEncode.cs" />
     <Compile Include="RawlerLib\Web.cs" />
     <Compile Include="RawlerLib\WebClientEx.cs">
       <SubType>Component</SubType>
@@ -104,6 +105,7 @@
     <Compile Include="Tool\Data\CheckDataRow.cs" />
     <Compile Include="Tool\Data\DataGrouping.cs" />
     <Compile Include="Tool\Enumeration\Loop.cs" />
+    <Compile Include="Tool\Html\DefinitionLists.cs" />
     <Compile Include="Tool\Html\GetScriptFunction.cs" />
     <Compile Include="Tool\Html\RemoveHtmlComment.cs" />
     <Compile Include="Tool\Html\XPath.cs" />
@@ -137,8 +139,10 @@
     <Compile Include="Tool\Text\GetJsonData.cs" />
     <Compile Include="Tool\Text\ConvertDateTime.cs" />
     <Compile Include="Tool\Text\RemoveWordByRegular.cs" />
+    <Compile Include="Tool\Text\StringFormat.cs" />
     <Compile Include="Tool\Text\StringLength.cs" />
     <Compile Include="Tool\Text\ToCharArray.cs" />
+    <Compile Include="Tool\Utility\Counter.cs" />
     <Compile Include="Tool\Utility\GetObject.cs" />
     <Compile Include="Tool\Utility\KeyValueStore.cs" />
     <Compile Include="Tool\Utility\RandomIntValue.cs" />
@@ -184,6 +188,7 @@
     <Compile Include="Tool\Text\Trim.cs" />
     <Compile Include="Tool\Dirt\View.cs" />
     <Compile Include="Tool\Dirt\ViewManage.cs" />
+    <Compile Include="Tool\Web\UrlEncode.cs" />
     <Compile Include="Tool\Web\UrlParameter.cs" />
     <Compile Include="Tool\Web\WebClient.cs" />
     <Compile Include="Tool\Web\WebForm.cs" />
