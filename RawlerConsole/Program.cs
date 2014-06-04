@@ -10,6 +10,8 @@ namespace RawlerConsole
     {
         static void Main(string[] args)
         {
+            Rawler.Tool.ReportManage.ErrReportEvent += ReportManage_ErrReportEvent;
+            Rawler.Tool.ReportManage.ReportEvnet += ReportManage_ReportEvnet;
             if(args.Length>0)
             {
                 try
@@ -23,6 +25,7 @@ namespace RawlerConsole
                         }
                     }
                     Rawler.Tool.RawlerBase rawler = (Rawler.Tool.RawlerBase)System.Xaml.XamlServices.Load(args[0]);
+                    rawler.SetParent();
                     rawler.Run();
                 }
                 catch(Exception e)
@@ -30,6 +33,27 @@ namespace RawlerConsole
                     System.Console.WriteLine(e.ToString());
                 }
             }
+        }
+
+        static void ReportManage_ReportEvnet(object sender, Rawler.Tool.ReportEvnetArgs e)
+        {
+            if(e.Visible)
+            {
+                if(e.ReturnCode)
+                {
+                    System.Console.WriteLine(e.Message);
+                }
+                else
+                {
+                    System.Console.Write(e.Message);
+                }
+
+            }
+        }
+
+        static void ReportManage_ErrReportEvent(object sender, Rawler.Tool.ReportEvnetArgs e)
+        {
+            System.Console.WriteLine(e.Message);
         }
     }
 }
