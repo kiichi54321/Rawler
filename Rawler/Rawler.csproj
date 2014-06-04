@@ -109,6 +109,7 @@
     <Compile Include="Tool\Data\ChangeCurrentDataRow.cs" />
     <Compile Include="Tool\Data\CheckDataRow.cs" />
     <Compile Include="Tool\Data\DataGrouping.cs" />
+    <Compile Include="Tool\Data\ReportDataRow2Json.cs" />
     <Compile Include="Tool\Enumeration\Loop.cs" />
     <Compile Include="Tool\Html\DefinitionLists.cs" />
     <Compile Include="Tool\Html\GetScriptFunction.cs" />
