@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -62,7 +63,21 @@ namespace Rawler.Tool
             list.Add(value);
         }
 
-
+        public string ToJson()
+        {
+            //StringBuilder sb = new StringBuilder();
+            //sb.Append("{");
+            //sb.Append(dataDic.Select(n => "\"" + n.Key + "\":\"" + n.Value + "\"").Aggregate((m,n)=>m+","+n));
+            //sb.Append("}");
+            //return sb.ToString();
+           return   JsonConvert.SerializeObject(dataDic);
+            
+         //   return Codeplex.Data.DynamicJson.Serialize(dataDic).Replace("\"Key\":", string.Empty).Replace(",\"Value\"",string.Empty);
+        }
+        //public RawlerLib.DynamicDictionary<List<string>> DynamicDictionary
+        //{
+        //    get { return new RawlerLib.DynamicDictionary<List<string>>(dataDic); }
+        //}
 
         /// <summary>
         /// 文字列に変換する。

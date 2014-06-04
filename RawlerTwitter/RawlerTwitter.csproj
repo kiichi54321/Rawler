@@ -29,6 +29,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -68,7 +69,6 @@
     <Compile Include="ChopMention.cs" />
     <Compile Include="DataWriteTweet.cs" />
     <Compile Include="DirectTwitter.cs" />
-    <Compile Include="DynamicJson.cs" />
     <Compile Include="PinDialog.xaml.cs">
       <DependentUpon>PinDialog.xaml</DependentUpon>
     </Compile>
@@ -79,10 +79,15 @@
     <Compile Include="TweetUser.cs" />
     <Compile Include="TwitterLogin.cs" />
     <Compile Include="TwitterSearch.cs" />
+    <Compile Include="TwitterStreaming.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\..\Users\kiichi\Documents\GitHub\Twitterizer\Twitterizer2.Streaming\Twitterizer2.Streaming.csproj">
+      <Project>{afdc57ed-c013-4581-9d06-54d8a42d696d}</Project>
+      <Name>Twitterizer2.Streaming</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\..\Users\kiichi\Documents\GitHub\Twitterizer\Twitterizer2\Twitterizer2.csproj">
-      <Project>{2FDC3492-6B9E-4771-9755-7892C9CB1E96}</Project>
+      <Project>{2fdc3492-6b9e-4771-9755-7892c9cb1e96}</Project>
       <Name>Twitterizer2</Name>
     </ProjectReference>
     <ProjectReference Include="..\Rawler\Rawler.csproj">

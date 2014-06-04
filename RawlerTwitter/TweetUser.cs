@@ -99,14 +99,15 @@ namespace RawlerTwitter
 
                         break;
                     }
-                    dynamic[] test = Codeplex.Data.DynamicJson.Parse(r.Item2);
+                //    dynamic[] test = Codeplex.Data.DynamicJson.Parse(r.Item2);
                     int c = 0;
 
 
-                    foreach (var item in test)
+                    foreach (var item in r.Item2)
                     {
                         c++;
-                        yield return item.ToString();
+                        yield return TweetData.ConvertXAML(item);
+                        //yield return Codeplex.Data.DynamicJson.Serialize(item);
                     }
                     if (c < userTimelineOptions.Count * 0.9) break;
                     userTimelineOptions.Page++;
@@ -123,7 +124,7 @@ namespace RawlerTwitter
         }
 
 
-        private Tuple<bool, string> GetData(TwitterLogin login, UserTimelineOptions userTimelineOptions)
+        private Tuple<bool,TwitterStatusCollection> GetData(TwitterLogin login, UserTimelineOptions userTimelineOptions)
         {
             var lines = Twitterizer.TwitterTimeline.UserTimeline(login.Token, userTimelineOptions);
             dynamic[] test = Codeplex.Data.DynamicJson.Parse(lines.Content);
@@ -135,7 +136,7 @@ namespace RawlerTwitter
                     ReportManage.ErrReport(this, test[1].ToString());
                     if (lines.Content.Contains("Not authorized"))
                     {
-                        return new Tuple<bool, string>(false, test[1].ToString());
+                        return new Tuple<bool, TwitterStatusCollection>(false, new TwitterStatusCollection());
                     }
                     else
                     {
@@ -145,7 +146,7 @@ namespace RawlerTwitter
                 }
             }
 
-            return new Tuple<bool, string>(true, lines.Content);
+            return new Tuple<bool, TwitterStatusCollection>(true, lines.ResponseObject);
         }
 
 

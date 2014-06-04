@@ -1,0 +1,17 @@
+﻿<Data
+                    xmlns="clr-namespace:Rawler.Tool;assembly=Rawler"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:t="clr-namespace:RawlerTwitter;assembly=RawlerTwitter">
+    <t:TwitterLogin>
+        <t:TwitterSearch SearchWord="検索語">
+            <t:DataWriteTweet DataElement="Date"></t:DataWriteTweet>
+            <t:DataWriteTweet DataElement="ScreenName"></t:DataWriteTweet>
+            <t:DataWriteTweet DataElement="Text">
+                <t:DataWriteTweet.PreTree>
+                    <Trim DoChopReturnCode="True"></Trim>
+                </t:DataWriteTweet.PreTree>
+            </t:DataWriteTweet>
+            <NextDataRow></NextDataRow>
+        </t:TwitterSearch>
+    </t:TwitterLogin>
+</Data>

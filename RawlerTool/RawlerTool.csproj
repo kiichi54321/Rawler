@@ -38,7 +38,7 @@
     <InstallUrl>http://web.sfc.keio.ac.jp/~kiichi/soft/rawler/</InstallUrl>
     <CreateWebPageOnPublish>true</CreateWebPageOnPublish>
     <WebPage>publish.htm</WebPage>
-    <ApplicationRevision>11</ApplicationRevision>
+    <ApplicationRevision>12</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>
@@ -64,10 +64,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup>
-    <ManifestCertificateThumbprint>89E476BA9E97C985B4EC8AF09CEB3CDCC808CC26</ManifestCertificateThumbprint>
+    <ManifestCertificateThumbprint>27448B49398F5FBF15BEF562D08A434BAD64AFA2</ManifestCertificateThumbprint>
   </PropertyGroup>
   <PropertyGroup>
-    <ManifestKeyFile>RawlerTool_TemporaryKey.pfx</ManifestKeyFile>
+    <ManifestKeyFile>RawlerTool_1_TemporaryKey.pfx</ManifestKeyFile>
   </PropertyGroup>
   <PropertyGroup>
     <GenerateManifests>true</GenerateManifests>
@@ -79,9 +79,9 @@
     <Reference Include="ICSharpCode.AvalonEdit">
       <HintPath>C:\Program Files (x86)\SharpDevelop\4.1\bin\ICSharpCode.AvalonEdit.dll</HintPath>
     </Reference>
-    <Reference Include="Newtonsoft.Json, Version=4.5.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+    <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Newtonsoft.Json.4.5.9\lib\net40\Newtonsoft.Json.dll</HintPath>
+      <HintPath>..\packages\Newtonsoft.Json.6.0.3\lib\net40\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
@@ -188,19 +188,24 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <None Include="app.config" />
     <None Include="packages.config" />
+    <None Include="Properties\app.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
     <AppDesigner Include="Properties\" />
+    <None Include="RawlerTool_1_TemporaryKey.pfx" />
     <None Include="RawlerTool_TemporaryKey.pfx" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\..\Users\kiichi\Documents\GitHub\Twitterizer\Twitterizer2\Twitterizer2.csproj">
+      <Project>{2fdc3492-6b9e-4771-9755-7892c9cb1e96}</Project>
+      <Name>Twitterizer2</Name>
+    </ProjectReference>
     <ProjectReference Include="..\RawlerMecab\RawlerMecab.csproj">
       <Project>{33B87A14-4DFB-40C1-8B75-367B4D09574E}</Project>
       <Name>RawlerMecab</Name>

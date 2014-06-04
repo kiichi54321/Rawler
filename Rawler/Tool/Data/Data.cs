@@ -194,7 +194,17 @@ namespace Rawler.Tool
         public override void Run(bool runChildren)
         {
             base.Run(runChildren);
-            FileSave();
+            if(doLastFileSave)
+            {
+                if (SaveFileType == FileType.Tsv)
+                {
+                    TsvFileSave();
+                }
+                if(saveFileType == FileType.Json || saveFileType == FileType.改行区切りJson)
+                {
+                    JsonFileSave();
+                }
+            }
 
             if (EndDataClear)
             {
@@ -207,7 +217,46 @@ namespace Rawler.Tool
 
         private bool sortAttribute = true;
         protected bool doLastFileSave = true;
-        private void FileSave()
+
+        FileType saveFileType = FileType.Tsv;
+
+        public FileType SaveFileType { get { return saveFileType; } set { saveFileType = value; } }
+
+        public void JsonFileSave()
+        {
+            string filename = this.FileName;
+            if (this.FileNameTree != null)
+            {
+                filename = RawlerBase.GetText(this.GetText(), this.FileNameTree, this);
+            }
+            if (string.IsNullOrEmpty(filename) == false)
+            {
+                System.IO.StreamWriter sw = null;
+                if (this.FileSaveMode == Tool.FileSaveMode.Create)
+                {
+                    sw = System.IO.File.CreateText(filename);
+                }
+                else if (this.FileSaveMode == Tool.FileSaveMode.Append)
+                {
+                    sw = System.IO.File.AppendText(filename);
+                }
+                if (saveFileType == FileType.Json)
+                {
+                    sw.WriteLine( Codeplex.Data.DynamicJson.Serialize( this.GetDataRows().Select(n=>n.DataDic)));
+                }
+                if(saveFileType == FileType.改行区切りJson)
+                {                    
+                    foreach (var item in this.GetDataRows())
+                    {
+                        sw.WriteLine(item.ToJson().Replace("\r", " ").Replace("\n", " "));
+                    }
+                }
+                sw.Close();
+                ReportManage.Report(this, filename + "作成完了", true, true);
+            }
+        }
+
+        private void TsvFileSave()
         {
             if (doLastFileSave == false) return;            
             string filename = this.FileName;
@@ -472,5 +521,6 @@ namespace Rawler.Tool
 
     }
 
+        public enum FileType { Tsv, Json ,改行区切りJson}
 
 }

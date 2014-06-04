@@ -18,6 +18,8 @@ namespace RawlerTwitter
         public string Source { get; set; }
         public string Language { get; set; }
         public Dictionary<string, string> Annotations { get; set; }
+        public string FavoriteCount { get; set; }
+        public string RetweetCount { get; set; }
 
         public void SetDate(string create_at)
         {
@@ -34,21 +36,14 @@ namespace RawlerTwitter
 
         public static TweetData Parse(string json)
         {
-            dynamic item = Codeplex.Data.DynamicJson.Parse(json);
+        
+           
             TweetData t = new TweetData();
             try
             {
-                 t = new TweetData()
-                {
-                    Text = item.text,
-                    ScreenName = item.user.screen_name,
-                    Id = decimal.Parse(item.id_str),
-                    Location = item.user.location,
-                    UsetId = item.user.id_str,
-                    ProfileImageLocation = item.user.profile_image_url
 
-                };
-                t.SetDate(item.created_at);
+                t = (TweetData)System.Xaml.XamlServices.Parse(json);
+
             }
             catch
             {
@@ -57,9 +52,29 @@ namespace RawlerTwitter
             return t;
         }
 
+        public static string ConvertXAML(Twitterizer.TwitterStatus ts)
+        {
+            TweetData t = new TweetData()
+            {
+                Text = ts.Text,
+                Date = ts.CreatedDate,
+                FavoriteCount = ts.FavoriteCount.ToString(),
+                Id = ts.Id,
+                Language = ts.User.Language,
+                Location = ts.User.Location,
+                UsetId = ts.User.Id.ToString(),
+                ScreenName = ts.User.ScreenName,
+                RetweetCount = ts.RetweetCount.ToString(),
+                ProfileImageLocation = ts.User.ProfileImageLocation,
+                Source = ts.Source
+            };
+
+            return System.Xaml.XamlServices.Save(t);
+        }
+
         public enum TweetDataElements
         {
-            Id, Text, Date, ScreenName, UsetId, Location, ProfileImageLocation, Source, Language, Annotations
+            Id, Text, Date, ScreenName, UsetId, Location, ProfileImageLocation, Source, Language, Annotations, FavoriteCount, RetweetCount
         }
 
         public string GetTweetDataElement(TweetDataElements element)
@@ -73,6 +88,8 @@ namespace RawlerTwitter
             else if (element == TweetDataElements.Source) return Source;
             else if (element == TweetDataElements.Text) return Text;
             else if (element == TweetDataElements.UsetId) return UsetId;
+            else if (element == TweetDataElements.FavoriteCount) return FavoriteCount;
+            else if (element == TweetDataElements.RetweetCount) return RetweetCount;
             else { return "TweetDataElementsが不正です"; }
         }
     }
