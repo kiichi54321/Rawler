@@ -26,7 +26,13 @@ namespace Rawler.Tool
             }
         }
 
-        
+        ReplaceType replaceType = ReplaceType.Space;
+
+        public ReplaceType ReplaceType
+        {
+            get { return replaceType; }
+            set { replaceType = value; }
+        }
 
         /// <summary>
         /// HTMLのタグを全部削除。また文字参照（&lt;など）も置換します
@@ -47,7 +53,14 @@ namespace Rawler.Tool
                     {
                         tagStart = false;
                         //tagの終了時にはスペースを加える
-                        strBuilder.Append(' ');
+                        if (ReplaceType == Tool.ReplaceType.Space)
+                        {
+                            strBuilder.Append(' ');
+                        }
+                        if(ReplaceType == Tool.ReplaceType.Tab)
+                        {
+                            strBuilder.Append('\t');                            
+                        }
                     }
                 }
                 else
@@ -89,5 +102,10 @@ namespace Rawler.Tool
         {
             return base.Clone<TagClear>(parent);
         }
+    }
+
+    public enum ReplaceType
+    {
+        None,Tab,Space
     }
 }

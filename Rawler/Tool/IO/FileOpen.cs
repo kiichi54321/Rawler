@@ -22,6 +22,17 @@ namespace Rawler.Tool
         ///　読み込むファイル名　Nullの時、ダイアログが開きます。
         /// </summary>
         public string FileName { get; set; }
+        public RawlerBase FileNameTree { get; set; }
+
+        protected string GetFileName()
+        {
+            if(FileNameTree !=null)
+            {
+                return  RawlerBase.GetText(this.GetText(), FileNameTree, this);
+            }
+            return this.FileName;
+        }
+
 
         protected int skip = 0;
 
@@ -49,7 +60,8 @@ namespace Rawler.Tool
 
         public override void Run(bool runChildren)
         {
-            if (this.FileName == null)
+            string filename = this.GetFileName();
+            if (filename == null)
             {
                 Microsoft.Win32.OpenFileDialog dialog = new Microsoft.Win32.OpenFileDialog();
                 if(string.IsNullOrEmpty(ExtendFilter)==false)
@@ -58,7 +70,7 @@ namespace Rawler.Tool
                 }
                 if (dialog.ShowDialog() == true)
                 {
-                    this.FileName = dialog.FileName;           
+                    filename = dialog.FileName;           
                 }
             }
 
@@ -66,7 +78,7 @@ namespace Rawler.Tool
             {
                 if (readEnd)
                 {
-                    string t = System.IO.File.ReadAllText(FileName);
+                    string t = System.IO.File.ReadAllText(filename);
                     System.IO.StringReader sr = new System.IO.StringReader(t);
                     List<string> list = new List<string>();
                     while (sr.Peek() > -1)
@@ -82,7 +94,7 @@ namespace Rawler.Tool
                 }
                 else
                 {
-                    var lines = System.IO.File.ReadLines(FileName);
+                    var lines = System.IO.File.ReadLines(filename);
                     if (skip > 0)
                     {
                         lines = lines.Skip(skip);

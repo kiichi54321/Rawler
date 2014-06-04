@@ -1,0 +1,70 @@
+﻿<Data Comment="" 
+      xmlns="clr-namespace:Rawler.Tool;assembly=Rawler"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      >
+    <SetTempVar Key="email" Value="kiichi@sfc.keio.ac.jp"></SetTempVar>
+    <SetTempVar Key="passwd" Value="mizo55"></SetTempVar>
+
+    <SetTempVar Key="遠征URL_1_水雷艇" Value="http://s9.bmcaxis.jp/facility/castle_send_troop.php?x=19&amp;y=-37"></SetTempVar>
+    <SetTempVar Key="遠征URL_1_軽戦闘機" Value="http://s9.bmcaxis.jp/facility/castle_send_troop.php?x=19&amp;y=-37"></SetTempVar>
+    <SetTempVar Key="遠征URL_1_軽戦車" Value="http://s9.bmcaxis.jp/facility/castle_send_troop.php?x=19&amp;y=-37"></SetTempVar>
+    <SetTempVar Key="街Id_1" Value="10358"></SetTempVar>
+    <SetTempVar Key="自動レベルUP_1" Value="0"></SetTempVar>
+    <SetTempVar Key="重戦闘機数" Value=""></SetTempVar>
+    <SetTempVar Key="駆逐艦" Value="1000"></SetTempVar>
+
+
+    <Loop SleepTime="300" SleepWide="120">
+        <Report Header="ループ開始" ViewParentText="False"></Report>
+        <WebClient UserAgent="Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.31 (KHTML, like Gecko) Chrome/26.0.1410.64 Safari/537.31" SleepSeconds="2">
+            <Page Url="https://sec.moog-games.jp/users/sign_in" Name="sign_in">
+                <Page Url="https://sec.moog-games.jp/users/sign_in" MethodType="POST">
+                    <Page.InputParameterTree>
+                        <GetPageHtml TargetName="sign_in">
+                            <Tags Tag="form">
+                                <AddHiddenInputParameter></AddHiddenInputParameter>
+                            </Tags>
+                            <GetTempVar Key="email">
+                                <AddInputParameter Key="user[email]"></AddInputParameter>
+                            </GetTempVar>
+                            <GetTempVar Key="passwd">
+                                <AddInputParameter Key="user[password]"></AddInputParameter>
+                            </GetTempVar>
+                        </GetPageHtml>
+                    </Page.InputParameterTree>
+                    <Page Url="http://s0.bmcaxis.jp/world/if/axis_start_if.php">
+                        <Link TagFilter="s9ワールド" IsSingle="True">
+                            <Page>
+                                <Loop SleepTime="5">
+                                    <Page Url="http://s9.bmcaxis.jp/busyodas/busyodas.php">
+                                        <Page MethodType="POST" Url="http://s9.bmcaxis.jp/busyodas/busyodas.php">
+                                            <Page.InputParameterTree>
+                                                <Tags Tag="form" ParameterFilter="busyodasgirlslink">
+                                                    <AddAllInputParameter></AddAllInputParameter>
+                                                </Tags>
+                                            </Page.InputParameterTree>
+                                            <Page MethodType="POST"  Url="http://s9.bmcaxis.jp/busyodas/busyodas.php">
+                                                <Page.InputParameterTree>
+                                                    <Tags Tag="form"  ContextFilter="10回連続イベントダス銀を引く">
+                                                        <AddAllInputParameter></AddAllInputParameter>
+                                                    </Tags>
+                                                </Page.InputParameterTree>
+                                            </Page>
+                                            <Contains ContainsText="ユニットカードの所持上限を超えてしまいます">
+                                                <Sleep SleepSeconds="5"></Sleep>
+                                                <Report Header="Sleep"></Report>
+                                            </Contains>
+                                        </Page>
+                                        
+                                    </Page>
+                                </Loop>
+                                
+                            </Page>
+                        </Link>
+                    </Page>
+                </Page>
+            </Page>
+        </WebClient>
+    </Loop>
+</Data>
+

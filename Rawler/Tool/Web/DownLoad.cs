@@ -48,6 +48,11 @@ namespace Rawler.Tool
             }
             if (path != null)
             {
+                if (System.IO.Path.IsPathRooted(path) ==false)
+                {
+                    path = System.IO.Path.Combine(System.IO.Directory.GetCurrentDirectory(), path);
+                }
+
                 if (System.IO.Directory.Exists(path) == false)
                 {
                     try
@@ -59,9 +64,14 @@ namespace Rawler.Tool
                         ReportManage.ErrReport(this, "ディレクトリーの作成に失敗しました" + e.Message);
                     }
                 }
-
+               
+            }
+            else
+            {
+                path = System.IO.Directory.GetCurrentDirectory();
             }
             string ex = System.IO.Path.GetExtension(url);
+            if (ex.Split('?').Length > 0) ex = ex.Split('?').First();
             string fileName = string.Empty;
             if (SaveNameTree != null)
             {
@@ -71,7 +81,7 @@ namespace Rawler.Tool
             {
                 fileName = System.IO.Path.GetFileNameWithoutExtension(url);
             }
-            path = path +"\\"+ fileName + ex;
+            path = System.IO.Path.Combine( path , fileName + ex);
 
             try
             {
@@ -83,7 +93,7 @@ namespace Rawler.Tool
             }
             catch(Exception e)
             {
-                ReportManage.ErrReport(this, "ファイルの保存に失敗しました" + e.Message);
+                ReportManage.ErrReport(this, "ファイルの保存に失敗しました" + e.Message +" Path:"+ path);
             }
             SetText(fileName + ex);
 

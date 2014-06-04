@@ -1,0 +1,15 @@
+﻿<Data Comment="" 
+      xmlns="clr-namespace:Rawler.Tool;assembly=Rawler"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      >
+    <SetWorkFolder SpecialFolder="MyDocuments"></SetWorkFolder>
+    <Data FileName="save.tsv">
+        <TsvReadLines FileName="target.tsv">
+            <GetTsvValue ColumnName="i_aaaa">
+                <DataWrite Attribute="i_aaaa"></DataWrite>
+            </GetTsvValue>
+            <NextDataRow></NextDataRow>
+        </TsvReadLines>
+    </Data>
+</Data>
+
