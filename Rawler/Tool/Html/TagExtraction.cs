@@ -97,7 +97,7 @@ namespace Rawler.Tool
             get { return useRank; }
             set { useRank = value; }
         }
-
+        public string Itemprop { get; set; }
 
         public override void Run(bool runChildren)
         {
@@ -124,6 +124,10 @@ namespace Rawler.Tool
                 if (this.ClassName != null && this.ClassName.Length > 0)
                 {
                     list = new List<RawlerLib.MarkupLanguage.TagClass>(list.Where(n => n.CheckClassName(ClassName)));                    
+                }
+                if(string.IsNullOrEmpty(Itemprop) == false)
+                {
+                    list = new List<RawlerLib.MarkupLanguage.TagClass>(list.Where(n => n.CheckItempropName(Itemprop)));                    
                 }
                 if (this.IdName != null && this.IdName.Length > 0)
                 {
