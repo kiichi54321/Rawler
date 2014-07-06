@@ -113,6 +113,7 @@
     <Compile Include="Tool\Enumeration\Loop.cs" />
     <Compile Include="Tool\Html\DefinitionLists.cs" />
     <Compile Include="Tool\Html\GetScriptFunction.cs" />
+    <Compile Include="Tool\Html\GetTagParameters.cs" />
     <Compile Include="Tool\Html\RemoveHtmlComment.cs" />
     <Compile Include="Tool\Html\XPath.cs" />
     <Compile Include="Tool\IO\ContainLineInFile.cs" />

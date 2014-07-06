@@ -60,6 +60,20 @@ namespace RawlerLib.MarkupLanguage
             }
         }
 
+        public bool CheckItempropName(string name)
+        {
+            System.Text.RegularExpressions.Regex regex = new System.Text.RegularExpressions.Regex("itemprop[ ]*=[\"|\'| ]*" + name + "[\"|\'| |$]", System.Text.RegularExpressions.RegexOptions.IgnoreCase);
+            var r = regex.Match(parameter);
+            if (r.Success)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
         public bool CheckIdName(string name)
         {
             System.Text.RegularExpressions.Regex regex = new System.Text.RegularExpressions.Regex("id[ ]*=[\"|\'| ]*" + name + "[\"|\'| |$]", System.Text.RegularExpressions.RegexOptions.IgnoreCase);
