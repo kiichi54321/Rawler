@@ -11,12 +11,12 @@ namespace Rawler.Tool
     /// </summary>
     [ContentProperty("Children")]
     [Serializable]
-    public class Link : RawlerMultiBase
+    public class Links : RawlerMultiBase
     {
         /// <summary>
         ///  Linkを取得するRawlerオブジェクト
         /// </summary>
-        public Link()
+        public Links()
             : base()
         {
         }
@@ -345,26 +345,6 @@ namespace Rawler.Tool
         /// <returns></returns>
         public override RawlerBase Clone(RawlerBase parent)
         {
-            return base.Clone<Link>(parent);
-        }
-        /// <summary>
-        /// ObjectのName。表示用
-        /// </summary>
-        public override string ObjectName
-        {
-            get { return this.GetType().Name; }
-        }
-    }
-
-    public class Links : Link
-    {
-        /// <summary>
-        /// クローンを作る
-        /// </summary>
-        /// <param name="parent"></param>
-        /// <returns></returns>
-        public override RawlerBase Clone(RawlerBase parent)
-        {
             return base.Clone<Links>(parent);
         }
         /// <summary>
@@ -375,6 +355,26 @@ namespace Rawler.Tool
             get { return this.GetType().Name; }
         }
     }
+
+    //public class Links : Link
+    //{
+    //    /// <summary>
+    //    /// クローンを作る
+    //    /// </summary>
+    //    /// <param name="parent"></param>
+    //    /// <returns></returns>
+    //    public override RawlerBase Clone(RawlerBase parent)
+    //    {
+    //        return base.Clone<Links>(parent);
+    //    }
+    //    /// <summary>
+    //    /// ObjectのName。表示用
+    //    /// </summary>
+    //    public override string ObjectName
+    //    {
+    //        get { return this.GetType().Name; }
+    //    }
+    //}
 
 
 

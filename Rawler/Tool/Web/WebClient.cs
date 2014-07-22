@@ -166,7 +166,7 @@ namespace Rawler.Tool
             get { return visbleErr; }
             set { visbleErr = value; }
         }
-        private string userAgent = "Mozilla/4.0 (compatible; MSIE 6.0; Windows XP)";
+        private string userAgent = "Mozilla/5.0 (compatible; MSIE 10.0; Windows NT 6.2; Win64; x64; Trident/6.0)";
 
         public string UserAgent
         {

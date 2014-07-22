@@ -151,6 +151,7 @@
     <Compile Include="Tool\Text\ToCharArray.cs" />
     <Compile Include="Tool\Utility\Counter.cs" />
     <Compile Include="Tool\Utility\GetObject.cs" />
+    <Compile Include="Tool\Utility\GlobalVar.cs" />
     <Compile Include="Tool\Utility\KeyValueStore.cs" />
     <Compile Include="Tool\Utility\RandomIntValue.cs" />
     <Compile Include="Tool\Utility\RScript.cs" />
@@ -227,6 +228,7 @@
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
     <AppDesigner Include="Properties\" />
+    <None Include="Rawler.nuspec" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.0">

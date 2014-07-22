@@ -9,7 +9,7 @@ namespace Rawler.Tool
     /// <summary>
     /// 一時変数という扱いにしたかったけど、便利すぎたから名前を変える予定。
     /// </summary>
-    public static class TempVar
+    public static class GlobalVar
     {
         static Dictionary<string, string> dic = new Dictionary<string, string>();
         public static void SetVar(string key, string val)
@@ -32,17 +32,17 @@ namespace Rawler.Tool
             }
             else
             {
-                ReportManage.ErrReport(null, "TempVarクラスのGetVarで「"+key+"」がありませんでした。");
+                ReportManage.ErrReport(null, "TempVarクラスのGetVarで「" + key + "」がありませんでした。");
                 return string.Empty;
             }
-            
+
         }
 
     }
 
 
 
-    public class SetTempVar : RawlerBase
+    public class SetGlobalVar : RawlerBase
     {
         #region テンプレ
         /// <summary>
@@ -80,12 +80,12 @@ namespace Rawler.Tool
             {
                 if (string.IsNullOrEmpty(Value))
                 {
-                    TempVar.SetVar(Key, GetText());
+                    GlobalVar.SetVar(Key, GetText());
                     this.SetText(GetText());
                 }
                 else
                 {
-                    TempVar.SetVar(Key, Value);
+                    GlobalVar.SetVar(Key, Value);
                     this.SetText(Value);
                 }
             }
@@ -104,7 +104,7 @@ namespace Rawler.Tool
         }
     }
 
-    public class GetTempVar : RawlerBase
+    public class GetGlobalVar : RawlerBase
     {
         #region テンプレ
         /// <summary>
@@ -139,8 +139,8 @@ namespace Rawler.Tool
             }
             else
             {
-                this.SetText(TempVar.GetVar(Key));
-            } 
+                this.SetText(GlobalVar.GetVar(Key));
+            }
             base.Run(runChildren);
         }
 
@@ -156,7 +156,7 @@ namespace Rawler.Tool
         }
     }
 
-    public class CheckTempVar : RawlerBase
+    public class CheckGlobalVar : RawlerBase
     {
         #region テンプレ
         /// <summary>
@@ -198,13 +198,13 @@ namespace Rawler.Tool
             }
             else
             {
-                if ((TempVar.GetVar(Key) == Value) == result)
+                if ((GlobalVar.GetVar(Key) == Value) == result)
                 {
                     this.SetText(this.GetText());
                     base.Run(runChildren);
                 }
             }
-         
+
         }
 
         /// <summary>
@@ -219,7 +219,7 @@ namespace Rawler.Tool
         }
     }
 
-    public class GetTempVarCsv : RawlerBase
+    public class GetGlobalVarCsv : RawlerBase
     {
         #region テンプレ
         /// <summary>
@@ -250,18 +250,18 @@ namespace Rawler.Tool
         {
             if (string.IsNullOrEmpty(Key))
             {
-                ReportManage.ErrReport(this, "GetTempVarのKeyが空です。");
+                ReportManage.ErrReport(this, "GetGlobalVarCsvのKeyが空です。");
             }
             else
             {
-                var d = TempVar.GetVar(Key).Split(',');
-                if (d.Length > Num && Num >-1)
+                var d = GlobalVar.GetVar(Key).Split(',');
+                if (d.Length > Num && Num > -1)
                 {
                     this.SetText(d.ElementAt(Num));
                 }
                 else
                 {
-                    ReportManage.ErrReport(this, "GetTempVarのNumが範囲外です。");
+                    ReportManage.ErrReport(this, "GetGlobalVarCsvのNumが範囲外です。");
                 }
             }
             base.Run(runChildren);

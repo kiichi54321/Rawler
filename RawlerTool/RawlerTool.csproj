@@ -38,7 +38,7 @@
     <InstallUrl>http://web.sfc.keio.ac.jp/~kiichi/soft/rawler/</InstallUrl>
     <CreateWebPageOnPublish>true</CreateWebPageOnPublish>
     <WebPage>publish.htm</WebPage>
-    <ApplicationRevision>13</ApplicationRevision>
+    <ApplicationRevision>14</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>
@@ -109,12 +109,6 @@
     <Compile Include="RawlerTree.xaml.cs">
       <DependentUpon>RawlerTree.xaml</DependentUpon>
     </Compile>
-    <Compile Include="RawlerTree1.xaml.cs">
-      <DependentUpon>RawlerTree1.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="RawlerTree2.xaml.cs">
-      <DependentUpon>RawlerTree2.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Tool\InsertParameterWindow.xaml.cs">
       <DependentUpon>InsertParameterWindow.xaml</DependentUpon>
     </Compile>
@@ -138,26 +132,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="RawlerTree.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="RawlerTree1.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="RawlerTree2.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="RawlerTree3.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="RawlerTree4.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="RawlerTree5.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

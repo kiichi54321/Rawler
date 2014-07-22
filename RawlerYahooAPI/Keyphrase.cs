@@ -41,7 +41,7 @@ namespace RawlerYahooAPI
             string apiId = ApiId;
             if (string.IsNullOrEmpty(ApiId))
             {
-                apiId = Rawler.Tool.TempVar.GetVar("YahooApiId");
+                apiId = Rawler.Tool.GlobalVar.GetVar("YahooApiId");
             }
             if (string.IsNullOrEmpty(apiId))
             {

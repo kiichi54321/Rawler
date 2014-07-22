@@ -1,0 +1,13 @@
+﻿<WebClient Comment="" 
+      xmlns="clr-namespace:Rawler.Tool;assembly=Rawler"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      AddUserAgent="True"           
+      >
+    <SetWorkFolder SpecialFolder="MyDocuments" Folder="Rawler"></SetWorkFolder>
+    <Data FileName="test.tsv">
+        <Page>
+            
+        </Page>
+    </Data>
+</WebClient>
+

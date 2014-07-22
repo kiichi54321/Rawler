@@ -11,9 +11,9 @@ namespace Rawler.Tool
     /// </summary>
     [Serializable]
     [ContentProperty("Children")]
-    public class TagExtraction : RawlerMultiBase
+    public class Tags : RawlerMultiBase
     {
-        public TagExtraction()
+        public Tags()
             : base()
         {
         }
@@ -218,7 +218,7 @@ namespace Rawler.Tool
 
         public override RawlerBase Clone(RawlerBase parent)
         {
-            return base.Clone<TagExtraction>(parent);
+            return base.Clone<Tags>(parent);
         }
     }
     /// <summary>
@@ -229,18 +229,5 @@ namespace Rawler.Tool
         Inner,Outer, Parameter
     }
 
-    public class Tags : TagExtraction
-    {
-        public override RawlerBase Clone(RawlerBase parent)
-        {
-            return base.Clone<Tags>(parent);
-        }
-        /// <summary>
-        /// ObjectのName。表示用
-        /// </summary>
-        public override string ObjectName
-        {
-            get { return this.GetType().Name; }
-        }
-    }
+
 }

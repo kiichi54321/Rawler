@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>Rawler</id>
+    <version>1.0.3</version>
+    <title>Rawler</title>
+    <authors>Takaichi Ito</authors>
+    <owners>Takaichi Ito</owners>
+    <licenseUrl>https://rawler.codeplex.com/license</licenseUrl>
+    <projectUrl>https://github.com/kiichi54321/Rawler</projectUrl>
+    <!--
+    <iconUrl></iconUrl>
+    -->
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>programing framework for web crawler by XAML</description>
+    <releaseNotes>使いやすくするために、Treeファイルを追加した。</releaseNotes>
+    <copyright>Copyright 2014</copyright>
+    <tags>Web </tags>
+    <dependencies>
+      <dependency id="Newtonsoft.Json" version="6.0.3" />
+    </dependencies>   
+  </metadata>
+  <files>
+    <file src="bin/Debug/Rawler.dll" target="Lib/net40" />
+    <file src="RawlerTree1.xaml" target="Content" />
+  </files>
+</package>
