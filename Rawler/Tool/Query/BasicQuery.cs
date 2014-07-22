@@ -392,6 +392,9 @@ namespace Rawler.Tool
         }
     }
 
+    /// <summary>
+    /// 割り算をして、余りが一致するか？
+    /// </summary>
     public class QuerySkipExtend : RawlerQuery
     {
         #region テンプレ

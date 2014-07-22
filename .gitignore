@@ -68,3 +68,6 @@ Test
 UpgradeLog.XML
 _UpgradeReport_Files/
 RawlerSample/
+
+*.nupkg
+
