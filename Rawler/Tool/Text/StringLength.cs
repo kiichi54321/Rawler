@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Rawler.Tool.Text;
+using Rawler.Tool;
 
-namespace Rawler.Tool.Text
+namespace Rawler.Tool
 {
 
     /// <summary>

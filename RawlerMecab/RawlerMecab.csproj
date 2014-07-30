@@ -52,12 +52,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="kanaxs-1.0.0.cs" />
-    <Compile Include="LevenshteinDistance.cs" />
     <Compile Include="Mecab.cs" />
-    <Compile Include="MecabPreprocessing.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="WordsCount.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\MeCabDotNet\MecabDotNet.csproj">

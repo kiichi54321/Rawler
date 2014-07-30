@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using Rawler.Tool;
 
-namespace RawlerMecab
+namespace Rawler.NPL
 {
     public class LevenshteinDistance : RawlerBase
     {

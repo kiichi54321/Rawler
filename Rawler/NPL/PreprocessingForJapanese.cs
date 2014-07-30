@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using Rawler.Tool;
 
-namespace RawlerMecab
+namespace Rawler.NPL
 {
-    public class MecabPreprocessing : RawlerBase
+    public class PreprocessingForJapanese : RawlerBase
     {
         #region テンプレ
         /// <summary>
@@ -16,7 +16,7 @@ namespace RawlerMecab
         /// <returns></returns>
         public override RawlerBase Clone(RawlerBase parent)
         {
-            return base.Clone<MecabPreprocessing>(parent);
+            return base.Clone<PreprocessingForJapanese>(parent);
         }
 
         /// <summary>

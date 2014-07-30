@@ -52,25 +52,25 @@ namespace RawlerTwitter
             return t;
         }
 
-        public static string ConvertXAML(Twitterizer.TwitterStatus ts)
-        {
-            TweetData t = new TweetData()
-            {
-                Text = ts.Text,
-                Date = ts.CreatedDate,
-                FavoriteCount = ts.FavoriteCount.ToString(),
-                Id = ts.Id,
-                Language = ts.User.Language,
-                Location = ts.User.Location,
-                UsetId = ts.User.Id.ToString(),
-                ScreenName = ts.User.ScreenName,
-                RetweetCount = ts.RetweetCount.ToString(),
-                ProfileImageLocation = ts.User.ProfileImageLocation,
-                Source = ts.Source
-            };
+        //public static string ConvertXAML(Twitterizer.TwitterStatus ts)
+        //{
+        //    TweetData t = new TweetData()
+        //    {
+        //        Text = ts.Text,
+        //        Date = ts.CreatedDate,
+        //        FavoriteCount = ts.FavoriteCount.ToString(),
+        //        Id = ts.Id,
+        //        Language = ts.User.Language,
+        //        Location = ts.User.Location,
+        //        UsetId = ts.User.Id.ToString(),
+        //        ScreenName = ts.User.ScreenName,
+        //        RetweetCount = ts.RetweetCount.ToString(),
+        //        ProfileImageLocation = ts.User.ProfileImageLocation,
+        //        Source = ts.Source
+        //    };
 
-            return System.Xaml.XamlServices.Save(t);
-        }
+        //    return System.Xaml.XamlServices.Save(t);
+        //}
 
         public enum TweetDataElements
         {

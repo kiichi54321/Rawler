@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Rawler.Tool;
-using Twitterizer;
 
 namespace RawlerTwitter
 {
@@ -39,8 +38,10 @@ namespace RawlerTwitter
             var login = this.GetAncestorRawler().OfType<TwitterLogin>().First();
             if (login != null)
             {
-                TwitterResponse<TwitterStatus> tweetResponse = TwitterStatus.Update(login.Token, this.Text);
-                if (tweetResponse.Result == RequestResult.Success)
+
+
+                var r = login.Token.Statuses.Update(status => GetText());
+                if (r !=null )
                 {
                     // Tweet posted successfully!
                 }

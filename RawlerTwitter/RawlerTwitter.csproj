@@ -29,7 +29,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <PlatformTarget>x86</PlatformTarget>
+    <PlatformTarget>AnyCPU</PlatformTarget>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -43,9 +43,15 @@
     <Reference Include="Accessibility">
       <EmbedInteropTypes>True</EmbedInteropTypes>
     </Reference>
-    <Reference Include="Newtonsoft.Json, Version=4.0.5.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+    <Reference Include="CoreTweet">
+      <HintPath>..\packages\CoreTweet.0.3.4\lib\net40\CoreTweet.dll</HintPath>
+    </Reference>
+    <Reference Include="CoreTweet.Streaming.Reactive">
+      <HintPath>..\packages\CoreTweet.Streaming.Reactive.0.3.4\lib\net40\CoreTweet.Streaming.Reactive.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\twitterizer.2.4.1.1\lib\net40\Newtonsoft.Json.dll</HintPath>
+      <HintPath>..\packages\Newtonsoft.Json.6.0.3\lib\net40\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
@@ -54,6 +60,15 @@
     <Reference Include="System.Core" />
     <Reference Include="System.Deployment" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Reactive.Core">
+      <HintPath>..\packages\Rx-Core.2.2.5\lib\net40\System.Reactive.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Reactive.Interfaces">
+      <HintPath>..\packages\Rx-Interfaces.2.2.5\lib\net40\System.Reactive.Interfaces.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Reactive.Linq">
+      <HintPath>..\packages\Rx-Linq.2.2.5\lib\net40\System.Reactive.Linq.dll</HintPath>
+    </Reference>
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Xaml" />
     <Reference Include="System.Xml.Linq" />
@@ -67,14 +82,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ChopMention.cs" />
-    <Compile Include="DataWriteTweet.cs" />
-    <Compile Include="DirectTwitter.cs" />
     <Compile Include="PinDialog.xaml.cs">
       <DependentUpon>PinDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ReadTweetData.cs" />
-    <Compile Include="TweetData.cs" />
     <Compile Include="TweetPost.cs" />
     <Compile Include="TweetUser.cs" />
     <Compile Include="TwitterLogin.cs" />
@@ -82,14 +93,6 @@
     <Compile Include="TwitterStreaming.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\Users\kiichi\Documents\GitHub\Twitterizer\Twitterizer2.Streaming\Twitterizer2.Streaming.csproj">
-      <Project>{afdc57ed-c013-4581-9d06-54d8a42d696d}</Project>
-      <Name>Twitterizer2.Streaming</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\Users\kiichi\Documents\GitHub\Twitterizer\Twitterizer2\Twitterizer2.csproj">
-      <Project>{2fdc3492-6b9e-4771-9755-7892c9cb1e96}</Project>
-      <Name>Twitterizer2</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Rawler\Rawler.csproj">
       <Project>{D0FF1894-5D72-40C4-91FD-774A8D87D34F}</Project>
       <Name>Rawler</Name>

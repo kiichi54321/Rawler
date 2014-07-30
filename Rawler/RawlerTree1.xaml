@@ -1,10 +1,14 @@
 ﻿<WebClient Comment="" 
       xmlns="clr-namespace:Rawler.Tool;assembly=Rawler"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:NPL="clr-namespace:Rawler.NPL;assembly=Rawler"
       AddUserAgent="True"           
       >
+　  <!--作業フォルダの指定-->
     <SetWorkFolder SpecialFolder="MyDocuments" Folder="Rawler"></SetWorkFolder>
+  　<!--最終的にtest.tsvというファイルで保存します-->
     <Data FileName="test.tsv">
+      　<!--ここ以降にツリーを組み立てる-->
         <Page>
             
         </Page>

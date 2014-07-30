@@ -5,6 +5,7 @@ using System.Text;
 using Rawler.Tool;
 using Microsoft.CSharp.RuntimeBinder;
 using System.Runtime.CompilerServices;
+using System.Reflection;
 
 
 namespace Rawler.Tool
@@ -52,9 +53,19 @@ namespace Rawler.Tool
             }
             else
             {
-
-                if (data.TryGetMember(FieldName, out obj))
-                {
+                obj = data;
+                bool flag = true;
+                foreach (var item in this.FieldName.Split('.'))
+                {                                    
+                    try
+                    {
+                        var type = obj.GetType();
+                        PropertyInfo property = type.GetProperty(item);
+                        obj = property.GetValue(obj, null);
+                    }
+                    catch { flag = false; }
+                }
+                if(flag){
                     this.SetText(obj.ToString());
                     base.Run(runChildren);
                 }

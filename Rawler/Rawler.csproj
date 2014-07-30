@@ -40,7 +40,7 @@
     <BootstrapperEnabled>true</BootstrapperEnabled>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
-    <PlatformTarget>x86</PlatformTarget>
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -83,6 +83,10 @@
     <Reference Include="PresentationFramework" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="NPL\LevenshteinDistance.cs" />
+    <Compile Include="NPL\PreprocessingForJapanese.cs" />
+    <Compile Include="NPL\RawlerTinySegmenter.cs" />
+    <Compile Include="NPL\WordsCount.cs" />
     <Compile Include="RawlerLib\BackgroundWorker.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -90,11 +94,13 @@
     <Compile Include="RawlerLib\DynamicJson.cs" />
     <Compile Include="RawlerLib\EventStringArgs.cs" />
     <Compile Include="RawlerLib\Io.cs" />
+    <Compile Include="RawlerLib\kanaxs-1.0.0.cs" />
     <Compile Include="RawlerLib\ObjectLib.cs" />
     <Compile Include="RawlerLib\Pair.cs" />
     <Compile Include="RawlerLib\TagAnalyze.cs" />
     <Compile Include="RawlerLib\TagClass.cs" />
     <Compile Include="RawlerLib\Text.cs" />
+    <Compile Include="RawlerLib\TinySegmenter.cs" />
     <Compile Include="RawlerLib\TxtEnc.cs" />
     <Compile Include="RawlerLib\UIData.cs" />
     <Compile Include="RawlerLib\UrlEncode.cs" />

@@ -3,12 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Rawler.Tool;
-using Twitterizer;
-using Twitterizer.Streaming;
+using CoreTweet.Streaming;
+using CoreTweet.Streaming.Reactive;
+using System.Reactive.Linq;
 
 namespace RawlerTwitter
 {
-    public class TwitterStreaming:RawlerBase
+    public class TwitterStreamingFilter : RawlerBase
     {
         #region テンプレ
         /// <summary>
@@ -18,7 +19,7 @@ namespace RawlerTwitter
         /// <returns></returns>
         public override RawlerBase Clone(RawlerBase parent)
         {
-            return base.Clone<TwitterStreaming>(parent);
+            return base.Clone<TwitterStreamingFilter>(parent);
         }
 
         /// <summary>
@@ -34,76 +35,53 @@ namespace RawlerTwitter
 
         int tryCount = 0;
         bool restart = true;
-        System.Threading.Tasks.Task task;
-        TwitterStream Stream;
-        void StartStream()
-        {
-            task = System.Threading.Tasks.Task.Factory.StartNew(() =>
-                {
-                    while (true)
-                    {
-                        if (restart)
-                        {
-                            var login = this.GetAncestorRawler().OfType<TwitterLogin>().First();
-                            if (login == null)
-                            {
-                                ReportManage.ErrReport(this, "上流にTwitterLoginがありません");
-                            }
-                            Stream = new TwitterStream(login.Token, "Rawler", new StreamOptions() { Track = GetText().Split(',').ToList(), UseCompression = true });
+        IDisposable disposable;
 
-
-                            Stream.StartUserStream((x) => { ReportManage.Report(this, "ストリームを開始します", true, true); },
-                                (x) =>
-                                {
-                                    ReportManage.ErrReport(this, "ストリームが停止しました" + x.ToString());
-
-                                    if (StopTree != null)
-                                    {
-                                        StopTree.SetParent(this);
-                                        StopTree.Run();
-                                    }
-                                    if (x == StopReasons.TwitterServerError || x == StopReasons.WebConnectionFailed)
-                                    {
-                                        System.Threading.Thread.Sleep(tryCount * tryCount * 1000);
-                                    }
-                                    else
-                                    {
-                                        System.Threading.Thread.Sleep(tryCount * 250);
-                                    }
-                                    restart = true;
-                                    tryCount++;
-                                }
-                                ,
-                                    (x) =>
-                                    {
-                                        tryCount = 0;
-                                        Document d = new Document() { TextValue = TweetData.ConvertXAML(x) };
-                                        d.SetParent(this);
-                                        d.SetChildren(this.Children);
-                                        d.Run();
-                                    },
-                                    null, null, null, null, null);
-                            restart = false;
-                        }
-                        System.Threading.Thread.Sleep(100);
-                    }
-                });
-        }
-
+        public string Track { get; set; }
+        public RawlerBase TrackTree { get; set; }
         /// <summary>
         /// このクラスでの実行すること。
         /// </summary>
         /// <param name="runChildren"></param>
         public override void Run(bool runChildren)
         {
-            StartStream();
+            var login = this.GetAncestorRawler().OfType<TwitterLogin>().First();
+            bool flag = true;
+             Dictionary<string, object> dic = new Dictionary<string, object>();
+            string track;
+            if(TrackTree !=null)
+            {
+                TrackTree.SetParent(this);
+                track = RawlerBase.GetText(GetText(), TrackTree,this);                
+            }
+            else
+            {
+                track = Track;
+            }
+                dic.Add("track",track);
+            var stream = login.Token.Streaming.StartObservableStream(StreamingType.Filter,new StreamingParameters(dic)).Publish();
+
+            stream.OfType<StatusMessage>()
+                .Subscribe(x => {
+                    Document d = new Document() { TextValue = Codeplex.Data.DynamicJson.Serialize(x.Status) };
+                    d.SetParent(this);
+                    foreach (var item in this.Children)
+                    {
+                        d.AddChildren(item);
+                    }
+                    d.Run();
+                });
+            stream.OfType<WarningMessage>().Subscribe(x => ReportManage.ErrReport(this, x.Message));
+            
+          ////  stream.OfType<EventMessage>()
+          //      .Subscribe(x => Console.WriteLine("{0} by @{1}", x.Event, x.Source.ScreenName));
+            disposable = stream.Connect();
         }
 
         public override void Dispose()
-        {
-            if(task !=null)task.Dispose();
-            if (Stream != null) Stream.Dispose();
+        {  
             base.Dispose();
+            if (disposable != null) disposable.Dispose();
         }
     }
 }

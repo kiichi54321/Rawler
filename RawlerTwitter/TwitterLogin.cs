@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Rawler.Tool;
-using Twitterizer;
 using System.Threading.Tasks;
 using System.Threading;
+using CoreTweet;
 
 namespace RawlerTwitter
 {
@@ -34,11 +34,9 @@ namespace RawlerTwitter
         string ConsumerKey = "gHVupgapEXlTZdu7rf3oOg";
         string ConsumerSecret = "YOicLtW8utx3NJyy88wtzq8QN3ilXeQoEGCPIJNzo";
 
-        OAuthTokenResponse oatr;
-
-
-        protected OAuthTokens token;
-        public OAuthTokens Token { get { return token; } }
+  
+        protected Tokens token;
+        public Tokens Token { get { return token; } protected set { token = value; } }
         public TokenData TokenData { get; set; }
 
         private string tokenSettingFileName = "RawlerTwitterToken.setting";
@@ -48,12 +46,17 @@ namespace RawlerTwitter
         /// <param name="runChildren"></param>
         public override void Run(bool runChildren)
         {
-            if (GetOAuthTokens() == null)
+
+          //  OAuth2Token apponly = OAuth2.GetToken("consumer key", "consumer secret");
+
+               if (GetOAuthTokens() == null)
             {
-                oatr = OAuthUtility.GetRequestToken(ConsumerKey, ConsumerSecret, "oob");
-                Uri uri = Twitterizer.OAuthUtility.BuildAuthorizationUri(oatr.Token);
-                ReportManage.Report(this, "PINがありません。ブラウザに表示されているPINの値を入力してください。PIN=\"(表示されているPIN)\"　とTwitterLoginクラスに情報を追加してください");
-                System.Diagnostics.Process.Start(uri.ToString());
+                var session = OAuth.Authorize(ConsumerKey, ConsumerSecret);
+         //       Console.WriteLine("access here: {0}", session.AuthorizeUri);
+               // var tokens = session.GetTokens("PINCODE");
+
+                      ReportManage.Report(this, "PINがありません。ブラウザに表示されているPINの値を入力してください。PIN=\"(表示されているPIN)\"　とTwitterLoginクラスに情報を追加してください");
+                      System.Diagnostics.Process.Start(session.AuthorizeUri.ToString());
 
 
 
@@ -62,23 +65,17 @@ namespace RawlerTwitter
                     PinDialog pin = new PinDialog();
                     if (pin.ShowDialog() == true)
                     {
-                        OAuthTokenResponse res = OAuthUtility.GetAccessToken(ConsumerKey, ConsumerSecret, oatr.Token, pin.PIN);
+                    var    tokens = session.GetTokens(pin.PIN);
+                  
 
-                        token = new OAuthTokens
-                        {
-                            ConsumerKey = ConsumerKey,
-                            ConsumerSecret = ConsumerSecret,
-                            AccessToken = res.Token,
-                            AccessTokenSecret = res.TokenSecret
-                        };
                         TokenData td = new TokenData()
                         {
                             ConsumerKey = ConsumerKey,
                             ConsumerSecret = ConsumerSecret,
-                            AccessToken = res.Token,
-                            AccessTokenSecret = res.TokenSecret
+                            AccessToken = tokens.AccessToken,
+                            AccessTokenSecret = tokens.AccessTokenSecret
                         };
-
+                        this.Token = new Tokens(tokens);
                         this.TokenData = td;
                         System.Xaml.XamlServices.Save(tokenSettingFileName, td);
                     }
@@ -97,7 +94,7 @@ namespace RawlerTwitter
             base.Run(runChildren);
         }
 
-        public OAuthTokens GetOAuthTokens()
+        public Tokens GetOAuthTokens()
         {
             if (System.IO.File.Exists(tokenSettingFileName))
             {
@@ -108,13 +105,14 @@ namespace RawlerTwitter
                     {
                         var td = t as TokenData;
 
-                        token = new OAuthTokens()
+                        token = new Tokens()
                         {
                             AccessToken = td.AccessToken,
                             AccessTokenSecret = td.AccessTokenSecret,
                             ConsumerKey = td.ConsumerKey,
                             ConsumerSecret = td.ConsumerSecret
                         };
+                         
                         this.TokenData = t as TokenData;
                     }
                     else

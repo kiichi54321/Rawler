@@ -4,10 +4,12 @@ using System.Linq;
 using System.Text;
 using Rawler.Tool;
 
-namespace RawlerMecab
+namespace Rawler.NPL
 {
-
-    public class GetWords : RawlerMultiBase
+    /// <summary>
+    /// SouceIterator にある文字列のみを取得し、子に流します（複数）
+    /// </summary>
+    public class GetWordsInSouce : RawlerMultiBase
     {
         #region テンプレ
         /// <summary>
@@ -17,7 +19,7 @@ namespace RawlerMecab
         /// <returns></returns>
         public override RawlerBase Clone(RawlerBase parent)
         {
-            return base.Clone<GetWords>(parent);
+            return base.Clone<GetWordsInSouce>(parent);
         }
 
         /// <summary>
@@ -48,6 +50,7 @@ namespace RawlerMecab
         /// <param name="runChildren"></param>
         public override void Run(bool runChildren)
         {
+           
             if (SouceIterator != null)
             {
                 SouceIterator.SetParent(this);
@@ -57,6 +60,7 @@ namespace RawlerMecab
                 int count = 0;
                 if (createOnceFlag == false || createOnce == false)
                 {
+                    //辞書の作成
                     dic = new Dictionary<string, List<string>>();
                     var wordList = SouceIterator.Texts.GetList().OrderByDescending(n => n.Length).ToArray();
                     foreach (var item in wordList)
