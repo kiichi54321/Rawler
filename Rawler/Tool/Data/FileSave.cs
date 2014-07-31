@@ -147,16 +147,21 @@ namespace Rawler.Tool
                 }
                 if (string.IsNullOrEmpty( fileName))
                 {
-                    Microsoft.Win32.SaveFileDialog saveDialog = new Microsoft.Win32.SaveFileDialog();
-                    saveDialog.Title = "保存ファイルの指定　FileSave:" + this.Comment;
-                    if (string.IsNullOrEmpty(ExtendFilter) == false)
+                    if (string.IsNullOrEmpty(fileName))
                     {
-                        saveDialog.Filter = RawlerLib.Io.FilterStringCreate(ExtendFilter);
+                        ReportManage.ErrReport(this, "FileNameが空です。");
+                        return;
                     }
-                    if (saveDialog.ShowDialog() == true)
-                    {
-                        fileName = saveDialog.FileName;
-                    }
+                    //Microsoft.Win32.SaveFileDialog saveDialog = new Microsoft.Win32.SaveFileDialog();
+                    //saveDialog.Title = "保存ファイルの指定　FileSave:" + this.Comment;
+                    //if (string.IsNullOrEmpty(ExtendFilter) == false)
+                    //{
+                    //    saveDialog.Filter = RawlerLib.Io.FilterStringCreate(ExtendFilter);
+                    //}
+                    //if (saveDialog.ShowDialog() == true)
+                    //{
+                    //    fileName = saveDialog.FileName;
+                    //}
                 }
                 var existflag =  System.IO.File.Exists(fileName);
                     

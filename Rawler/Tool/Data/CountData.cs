@@ -182,20 +182,26 @@ namespace Rawler.Tool
                 }
                 else
                 {
-                    Microsoft.Win32.SaveFileDialog saveDialog = new Microsoft.Win32.SaveFileDialog();
-                    saveDialog.Title = "保存ファイルの指定　CountData:" + this.Comment;
-                    if (string.IsNullOrEmpty(ExtendFilter) == false)
+                    if (string.IsNullOrEmpty(filename))
                     {
-                        saveDialog.Filter = RawlerLib.Io.FilterStringCreate(ExtendFilter);
+                        ReportManage.ErrReport(this, "FileNameが空です。");
+                        return;
                     }
-                    if (saveDialog.ShowDialog() == true)
-                    {
-                        filename = saveDialog.FileName;
-                    }
-                    using (var file = System.IO.File.CreateText(filename))
-                    {
-                        file.WriteLine("Group\tKey\tCount");
-                    }
+
+                    //Microsoft.Win32.SaveFileDialog saveDialog = new Microsoft.Win32.SaveFileDialog();
+                    //saveDialog.Title = "保存ファイルの指定　CountData:" + this.Comment;
+                    //if (string.IsNullOrEmpty(ExtendFilter) == false)
+                    //{
+                    //    saveDialog.Filter = RawlerLib.Io.FilterStringCreate(ExtendFilter);
+                    //}
+                    //if (saveDialog.ShowDialog() == true)
+                    //{
+                    //    filename = saveDialog.FileName;
+                    //}
+                    //using (var file = System.IO.File.CreateText(filename))
+                    //{
+                    //    file.WriteLine("Group\tKey\tCount");
+                    //}
                 }
             }
             base.Run(runChildren);

@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>Rawler</id>
-    <version>1.0.4</version>
+    <version>1.0.5</version>
     <title>Rawler</title>
     <authors>Takaichi Ito</authors>
     <owners>Takaichi Ito</owners>
@@ -14,7 +14,7 @@
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>programing framework for web crawler by XAML</description>
     <releaseNotes>NPL命令群の追加</releaseNotes>
-    <copyright>Copyright 2014</copyright>
+    <copyright>Takaichi Ito Copyright 2014</copyright>
     <tags>Web </tags>
     <dependencies>
       <dependency id="Newtonsoft.Json" version="6.0.3" />

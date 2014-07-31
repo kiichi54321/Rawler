@@ -35,21 +35,22 @@ namespace Rawler.Tool
         public override void Run(bool runChildren)
         {
             string filename = GetFileName();
-            if (filename == null)
+            if (string.IsNullOrEmpty( filename))
             {
-                Microsoft.Win32.OpenFileDialog dialog = new Microsoft.Win32.OpenFileDialog();
-                if (string.IsNullOrEmpty(ExtendFilter) == false)
-                {
-                    dialog.Filter = FilterStringCreate(ExtendFilter);
-                }
-                else
-                {
-                    dialog.Filter = FilterStringCreate("tsv");
-                }
-                if (dialog.ShowDialog() == true)
-                {
-                    filename = dialog.FileName;
-                }
+                ReportManage.ErrReport(this, "FileNameが空です。");
+             //   Microsoft.Win32.OpenFileDialog dialog = new Microsoft.Win32.OpenFileDialog();
+                //if (string.IsNullOrEmpty(ExtendFilter) == false)
+                //{
+                //    dialog.Filter = FilterStringCreate(ExtendFilter);
+                //}
+                //else
+                //{
+                //    dialog.Filter = FilterStringCreate("tsv");
+                //}
+                //if (dialog.ShowDialog() == true)
+                //{
+                //    filename = dialog.FileName;
+                //}
             }
 
             try

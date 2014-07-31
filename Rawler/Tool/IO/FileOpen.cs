@@ -61,19 +61,23 @@ namespace Rawler.Tool
         public override void Run(bool runChildren)
         {
             string filename = this.GetFileName();
-            if (filename == null)
+            //if (filename == null)
+            //{
+            //    Microsoft.Win32.OpenFileDialog dialog = new Microsoft.Win32.OpenFileDialog();
+            //    if(string.IsNullOrEmpty(ExtendFilter)==false)
+            //    {
+            //        dialog.Filter = FilterStringCreate(ExtendFilter);
+            //    }
+            //    if (dialog.ShowDialog() == true)
+            //    {
+            //        filename = dialog.FileName;           
+            //    }
+            //}
+            if (string.IsNullOrEmpty(filename))
             {
-                Microsoft.Win32.OpenFileDialog dialog = new Microsoft.Win32.OpenFileDialog();
-                if(string.IsNullOrEmpty(ExtendFilter)==false)
-                {
-                    dialog.Filter = FilterStringCreate(ExtendFilter);
-                }
-                if (dialog.ShowDialog() == true)
-                {
-                    filename = dialog.FileName;           
-                }
+                ReportManage.ErrReport(this, "FileNameが空です。");
+                return;
             }
-
             try
             {
                 if (readEnd)
