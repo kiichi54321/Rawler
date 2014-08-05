@@ -214,77 +214,11 @@ namespace Rawler.Tool
                         RunChildren(runChildren);
                     }
                 }
-                //else
-                //{
-                //    List<RawlerLib.Web.Link> list;
-                //    if (useAbsolutetLink)
-                //    {
-                //        list = new List<RawlerLib.Web.Link>(RawlerLib.Web.GetLinkForHTML(GetText(), GetPageUrl()));
-                //    }
-                //    else
-                //    {
-                //        list = new List<RawlerLib.Web.Link>(RawlerLib.Web.GetLinkForHTML(GetText()));
-                //    }
-                //    if (LabelFilter != null && LabelFilter.Length > 0)
-                //    {
-                //        list = new List<RawlerLib.Web.Link>(list.Where(n => n.Label.Contains(LabelFilter)));
-                //    }
-                //    if (UrlFilter != null && UrlFilter.Length > 0)
-                //    {
-                //        list = new List<RawlerLib.Web.Link>(list.Where(n => n.Url.Contains(UrlFilter)));
-
-                //    }
-                //    if (TagFilter != null && TagFilter.Length > 0)
-                //    {
-                //        list = new List<RawlerLib.Web.Link>(list.Where(n => n.Tag.Contains(TagFilter)));
-                //    }
-                //    if (list.Count > 0)
-                //    {
-                //        if (VisbleType == LinkVisbleType.Label)
-                //        {
-                //            this.text = list.First().Label;
-                //        }
-                //        else if (VisbleType == LinkVisbleType.Url)
-                //        {
-                //            this.text = list.First().Url;
-                //        }
-                //        else
-                //        {
-                //            this.text = list.First().Tag;
-                //        }
-                //    }
-                //    else
-                //    {
-                //        this.text = string.Empty;
-                //        if (emptyReport )
-                //        {
-                //            ReportManage.ErrReport(this, "対象が見つかりませんでした");
-                //        }
-                //    }
-
-                //    RunChildren(runChildren);
-                //}
+           
             }
         }
 
 
-
-
-        //bool isMulti = false;
-        ///// <summary>
-        ///// 複数か？
-        ///// </summary>
-        //public bool IsMulti
-        //{
-        //    get
-        //    {
-        //        return isMulti;
-        //    }
-        //    set
-        //    {
-        //        isMulti = value;
-        //    }
-        //}
 
         private string GetPageUrl()
         {
@@ -300,41 +234,7 @@ namespace Rawler.Tool
             }
             return string.Empty;
         }
-        ///// <summary>
-        ///// このオブジェクトのテキスト
-        ///// </summary>
-        //public override string Text
-        //{
-        //    get
-        //    {
-
-        //        if (text == string.Empty && doClone == false)
-        //        {
-        //            Run(false);
-        //        }
-        //        return text;
-        //    }
-
-        //}
-
-
-
-        //private List<string> texts = new List<string>();
-        ///// <summary>
-        ///// このオブジェクトのテキスト（複数）
-        ///// </summary>
-        //public List<string> Texts
-        //{
-        //    get
-        //    {
-        //        if (texts.Count == 0 && doClone == false)
-        //        {
-        //            Run(false);
-        //        }
-        //        return texts;
-        //    }
-
-        //}
+ 
 
 
         bool doClone = false;
@@ -356,25 +256,7 @@ namespace Rawler.Tool
         }
     }
 
-    //public class Links : Link
-    //{
-    //    /// <summary>
-    //    /// クローンを作る
-    //    /// </summary>
-    //    /// <param name="parent"></param>
-    //    /// <returns></returns>
-    //    public override RawlerBase Clone(RawlerBase parent)
-    //    {
-    //        return base.Clone<Links>(parent);
-    //    }
-    //    /// <summary>
-    //    /// ObjectのName。表示用
-    //    /// </summary>
-    //    public override string ObjectName
-    //    {
-    //        get { return this.GetType().Name; }
-    //    }
-    //}
+
 
 
 

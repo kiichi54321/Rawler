@@ -8,23 +8,13 @@ namespace RawlerLib
     /// <summary>
     /// Web の概要の説明です。
     /// </summary>
-    internal class Web
+    public class Web
     {
         public Web()
         {
 
         }
-        ///// <summary>
-        ///// グーグルで対象語を検索し、ブラウザで表示させます。
-        ///// </summary>
-        ///// <param name="word"></param>
-        //public static void SerchGoogle(string word)
-        //{
-        //    string name = System.Web.HttpUtility.UrlEncode(word); 
-        //    string url = "http://www.google.co.jp/search?hl=ja&c2coff=1&q="+name+"&lr=lang_ja";
-        //    System.Diagnostics.Process process = System.Diagnostics.Process.Start(url); 
 
-        //}
 
         /// <summary>
         /// URLをブラウザに表示させる。URLチェックをしないとまずいよなぁ・・・
@@ -178,227 +168,6 @@ namespace RawlerLib
         }
 
 
-        //        #region GetTag
-        //        private enum TagType
-        //        {
-        //            Start,End
-        //        }
-
-        //        /// <summary>
-        //        /// txtのから、tagで挟まれた要素を入れ子関係も含めて取ってくる。
-        //        /// </summary>
-        //        /// <param name="txt"></param>
-        //        /// <param name="tag"></param>
-        //        /// <returns></returns>
-        //        public static ICollection<TagClass> GetTag(string txt, string tag)
-        //        {
-        //            List<MyLib.Collections.Pair<int, TagType>> list = new List<MyLib.Collections.Pair<int, TagType>>();
-        ////            string startTag = "<" + tag + " " ;
-        //            string endTag = "</"+tag+">";
-        //            var startList = StringIndexList(txt, new string[]{ "<"+tag+" ","<"+tag+">"});
-        //            var endList = StringIndexList(txt, endTag);
-        //            Dictionary<int, TagClass> dic = new Dictionary<int, TagClass>();
-        //            foreach (var item in startList)
-        //            {
-        //                list.Add(new MyLib.Collections.Pair<int, TagType>(item, TagType.Start));
-        //                dic.Add(item, new TagClass(tag, item, txt));
-        //            }
-        //            foreach (var item in endList)
-        //            {
-        //                list.Add(new MyLib.Collections.Pair<int, TagType>(item,TagType.End));
-        //            }
-        //            list.Sort();
-
-        //            while (list.Count > 0)
-        //            {
-        //                List<MyLib.Collections.Pair<int, TagType>> tmpList = new List<MyLib.Collections.Pair<int, TagType>>();
-
-        //                for (int i = 0; i < list.Count - 1; i++)
-        //                {
-        //                    if (list[i].Value == TagType.Start && list[i + 1].Value == TagType.End)
-        //                    {
-        //                        var tagClass = dic[list[i].Key];
-        //                        tagClass.End = list[i + 1].Key;
-        //                        tmpList.Add(list[i]);
-        //                        tmpList.Add(list[i + 1]);
-
-        //                        if (i > 0 && list[i - 1].Value == TagType.Start)
-        //                        {
-        //                            var tagParent = dic[list[i - 1].Key];
-        //                            tagParent.Children.Add(tagClass);
-        //                            tagClass.Parent = tagParent;
-        //                        }
-        //                    }
-        //                }
-
-        //                foreach (var item in tmpList)
-        //                {
-        //                    list.Remove(item);
-        //                }
-
-        //                int s = 0;
-        //                int e = 0;
-        //                foreach (var item in list)
-        //                {
-        //                    if (item.Value == TagType.Start) s++;
-        //                    else if (item.Value == TagType.End) e++;
-        //                }
-        //                if (s == 0 || e == 0)
-        //                {
-        //                    if (e == 0)
-        //                    {
-        //                        //開始タグばかりの時
-        //                        for (int i = 0; i < list.Count-1; i++)
-        //                        {
-        //                            dic[list[i].Key].End = dic[list[i + 1].Key].Start - 1;
-        //                        }
-        //                    }
-        //                    break;
-        //                }
-        //            }
-
-        //            List<TagClass> result = new List<TagClass>();
-        //            foreach (var item in dic.Values)
-        //            {
-        //                if (item.Parent == null)
-        //                {
-        //                    result.Add(item);
-        //                }
-        //            }
-        //            return result;
-        //        }
-
-        //        /// <summary>
-        //        /// 文章に対して単語を探して見つかった場所のリストです。
-        //        /// </summary>
-        //        /// <param name="text"></param>
-        //        /// <param name="search"></param>
-        //        /// <returns></returns>
-        //        public static List<int> StringIndexList(string text, string word)
-        //        {
-        //            List<int> list = new List<int>();
-        //            int idx = 0;
-        //            int s = 0;
-        //            int e = 0;
-
-        //            while (idx > -1)
-        //            {
-        //                s = text.IndexOf(word, idx);
-        //                if (s > -1)
-        //                {
-        //                    list.Add(s);
-        //                }
-        //                else
-        //                {
-        //                    break;
-        //                }
-        //                idx = s + 1;
-        //            }
-
-        //            return list;
-        //        }
-
-        //        /// <summary>
-        //        /// 文章に対して単語を探して見つかった場所のリストです。
-        //        /// </summary>
-        //        /// <param name="text"></param>
-        //        /// <param name="search"></param>
-        //        /// <returns></returns>
-        //        public static List<int> StringIndexList(string text, string[] words)
-        //        {
-        //            List<int> list = new List<int>();
-
-        //            foreach (var item in words)
-        //            {
-        //                list.AddRange(StringIndexList(text, item));
-        //            }
-
-        //            return list;
-        //        }
-
-        //        public class TagClass
-        //        {
-        //            public int Start { get; set; }
-        //            public int End { get; set; }
-        //            public string StartTag { get; set; }
-        //            public string EndTag { get; set; }
-        //            private string baseText;
-        //            private string parameter = string.Empty;
-
-        //            public string Parameter
-        //            {
-        //                get { return parameter; }
-        //                set { parameter = value; }
-        //            }
-        //            public TagClass(string tag, int start, string text)
-        //            {
-        //                this.Start = start;
-        //                //                this.StartTag = startTag;
-        //                this.EndTag = "</" + tag + ">";
-        //                this.baseText = text;
-        //                if (baseText != null)
-        //                {
-        //                    int s = baseText.IndexOf('>', start);
-        //                    this.StartTag = baseText.Substring(start, s - start);
-        //                }
-        //            }
-        //            public TagClass Parent { get; set; }
-        //            private List<TagClass> children = new List<TagClass>();
-
-        //            public List<TagClass> Children
-        //            {
-        //                get { return children; }
-        //                set { children = value; }
-        //            }
-
-        //            public string Inner
-        //            {
-        //                get
-        //                {
-        //                    if (baseText != null)
-        //                    {
-        //                        if (this.End > 0)
-        //                        {
-        //                            return baseText.Substring(Start + StartTag.Length, End - (Start + StartTag.Length));
-        //                        }
-        //                        else
-        //                        {
-        //                            return baseText.Substring(Start + StartTag.Length);
-        //                        }
-        //                    }
-        //                    else
-        //                    {
-        //                        return null;
-        //                    }
-        //                }
-        //            }
-
-        //            public string Outer
-        //            {
-        //                get
-        //                {
-        //                    if (baseText != null)
-        //                    {
-        //                        if (this.End > 0)
-        //                        {
-        //                            return baseText.Substring(Start, End + EndTag.Length - (Start));
-        //                        }
-        //                        else
-        //                        {
-        //                            return baseText.Substring(Start + StartTag.Length);
-        //                        }
-        //                    }
-        //                    else
-        //                    {
-        //                        return null;
-        //                    }
-        //                }
-        //            }
-
-        //        }
-
-        //        #endregion 
-
         public static List<string> GetTagContentList(string txt, string start)
         {
             List<string> list = new List<string>();
@@ -546,31 +315,7 @@ namespace RawlerLib
         }
 
 
-        public struct Link
-        {
-            private string url;
-
-            public string Url
-            {
-                get { return url; }
-                set { url = value; }
-            }
-            private string label;
-
-            public string Label
-            {
-                get { return label; }
-                set { label = value; }
-            }
-            private string tag;
-
-            public string Tag
-            {
-                get { return tag; }
-                set { tag = value; }
-            }
-
-        }
+        
         /// <summary>
         /// HTMLファイルからリンクを抜き出します。返すのはURLとLabelのセットのコレクションです。
         /// </summary>
@@ -727,45 +472,7 @@ namespace RawlerLib
             }
         }
 
-        /// <summary>
-        /// htmlの中から目的のラベルに沿ったURLをゲットする。ないときは空の文字列。
-        /// </summary>
-        /// <param name="html">対象のhtml</param>
-        /// <param name="label">欲しいラベル</param>
-        /// <returns></returns>
-        public static string GetUrlForHTML(string html, string label)
-        {
-            string url = "";
-            foreach (RawlerLib.Web.Link link in RawlerLib.Web.GetLinkForHTML(html))
-            {
-                if (link.Label.Equals(label))
-                {
-                    url = link.Url;
-                    break;
-                }
-            }
-            return url;
-        }
 
-        /// <summary>
-        /// htmlの中から目的のラベルに沿ったURLをゲットする。ないときは空の文字列。
-        /// </summary>
-        /// <param name="html">対象のhtml</param>
-        /// <param name="label">欲しいラベル</param>
-        /// <returns></returns>
-        public static string GetUrlForHTML(string html, string label, string url)
-        {
-            string url1 = "";
-            foreach (RawlerLib.Web.Link link in RawlerLib.Web.GetLinkForHTML(html, url))
-            {
-                if (link.Label.Equals(label))
-                {
-                    url1 = link.Url;
-                    break;
-                }
-            }
-            return url1;
-        }
 
         /// <summary>
         /// HTML内の相対パスを絶対パスに
@@ -874,45 +581,7 @@ namespace RawlerLib
             }
         }
 
-        //public struct Table
-        //{
-        //    public ICollection<ICollection<string>> contents;
-        //}
-
-        ///// <summary>
-        ///// 入れ子状態の抜き出しはできないけれど、tableタグを読みとってコレクションで保持してくれるメソッド
-        ///// </summary>
-        ///// <param name="HTML"></param>
-        ///// <returns></returns>
-        //public static ICollection<Table> GetTableForHTML(string HTML)
-        //{
-        //    System.Text.RegularExpressions.Regex regex_table = new System.Text.RegularExpressions.Regex(@"<table[^>]*?>([\s\S]*?)<\/table>", System.Text.RegularExpressions.RegexOptions.IgnoreCase);
-        //    System.Text.RegularExpressions.Regex regex_tr = new System.Text.RegularExpressions.Regex(@"<tr[^>]*?>([\s\S]*?)<\/tr>", System.Text.RegularExpressions.RegexOptions.IgnoreCase);
-        //    System.Text.RegularExpressions.Regex regex_td = new System.Text.RegularExpressions.Regex(@"<td[^>]*?>([\s\S]*?)<\/td>", System.Text.RegularExpressions.RegexOptions.IgnoreCase);
-
-        //    List<Table> tableList = new List<Table>();
-        //    foreach (System.Text.RegularExpressions.Match match in regex_table.Matches(HTML))
-        //    {
-        //        string table_html = match.Groups[0].Value;
-        //        List<List<string>> tr_list = new List<List<string>>();
-        //        foreach (System.Text.RegularExpressions.Match match1 in regex_tr.Matches(table_html))
-        //        {
-        //            string tr_html = match1.Groups[0].Value;
-        //            List<string> td_list = new List<string>();
-        //            foreach (System.Text.RegularExpressions.Match match2 in regex_td.Matches(table_html))
-        //            {
-        //                td_list.Add(match2.Groups[0]);
-        //            }
-        //            tr_list.Add(td_list);
-        //        }
-        //        Table table = new Table();
-        //        table.contents = tr_list;
-        //        tableList.Add(table);
-
-        //    }
-        //    return tableList;
-
-        //}
+ 
 
 
         public static string GetHTML(string url)
@@ -1043,29 +712,7 @@ namespace RawlerLib
                 Referer = referer;
             }
         }
-        ///// <summary>
-        ///// webBrowserコントロールから指定エンコードを用い読み込みます。
-        ///// </summary>
-        ///// <param name="webBrowser"></param>
-        ///// <param name="enc"></param>
-        ///// <returns></returns>
-        //public static string GetHTML(System.Windows.Forms.WebBrowser webBrowser, Encoding enc)
-        //{
-        //    System.IO.StreamReader reader = new System.IO.StreamReader(webBrowser.DocumentStream,enc);
-        //    return reader.ReadToEnd();
-        //}
 
-        ///// <summary>
-        ///// webBrowserコントロールから指定エンコードを用い読み込みます。
-        ///// </summary>
-        ///// <param name="webBrowser"></param>
-        ///// <param name="enc"></param>
-        ///// <returns></returns>
-        //public static string GetHTML(System.Windows.Forms.WebBrowser webBrowser)
-        //{
-        //    System.IO.StreamReader reader = new System.IO.StreamReader(webBrowser.DocumentStream, Encoding.GetEncoding(webBrowser.Document.Encoding));
-        //    return reader.ReadToEnd();
-        //}
 
         public static string GetMailAddress(string txt)
         {
@@ -1134,108 +781,7 @@ namespace RawlerLib
         }
 
 
-        /// <summary>
-        /// 指定したタグの範囲を調べてその範囲にある文字列を返す。(大失敗)
-        /// 
-        /// </summary>
-        /// <param name="html"></param>
-        /// <param name="tag"></param>
-        /// <param name="tagString"></param>
-        /// <returns></returns>
-        public static string GetTagRange(string html, string tag, string tagString, int startIndex, out int endIndex)
-        {
-            int start = html.IndexOf(tagString, startIndex);
-            endIndex = start;
-            if (start < 0)
-            {
-                return string.Empty;
-            }
-            int p = start + 1;
-            int tmp, end = 0;
-            int count = 0;
-            while (count >= 0)
-            {
-                string tagend = "</" + tag;
-                tmp = html.IndexOf(tagend, p);
-                //  tmp = html.IndexOf(  tag, p,StringComparison.CurrentCultureIgnoreCase);
-                if (tmp > 0)
-                {
-                    count--;
-                    end = tmp;
 
-                }
-                else
-                {
-                    p = start;
-                    break;
-                }
-                while (tmp > 0)
-                {
-                    tmp = html.IndexOf("<" + tag, p);
-                    if (tmp > 0)
-                    {
-                        if (end > tmp)
-                        {
-                            count++;
-                            p = tmp + 1;
-                        }
-                        else
-                        {
-                            break;
-                        }
-                    }
-                }
-                p = end + 1;
-
-            }
-            if (start == p)
-            {
-                return string.Empty;
-            }
-            else
-            {
-                string endTag = "</" + tag + ">";
-                endIndex = end + endTag.Length;
-
-                return html.Substring(start, endIndex - start);
-            }
-        }
-        /// <summary>
-        /// 指定したタグの範囲を調べてその範囲にある文字列を返す。(大失敗)
-        /// </summary>
-        /// <param name="html"></param>
-        /// <param name="tag"></param>
-        /// <param name="tagString"></param>
-        /// <returns></returns>
-        public static string GetTagRange(string html, string tag, string tagString)
-        {
-            int i;
-            return GetTagRange(html, tag, tagString, 0, out i);
-        }
-
-        /// <summary>
-        /// 指定したタグに囲まれた文字列のリストを返す(大失敗)
-        /// </summary>
-        /// <param name="html"></param>
-        /// <param name="tag"></param>
-        /// <param name="tagString"></param>
-        /// <returns></returns>
-        public static List<string> GetTagRangeList(string html, string tag, string tagString)
-        {
-            List<string> list = new List<string>();
-            int startIndex = 0;
-            int endIndex = 0;
-            while (startIndex > -1)
-            {
-                string str = GetTagRange(html, tag, tagString, startIndex, out endIndex);
-                if (str.Length > 0)
-                {
-                    list.Add(str);
-                    startIndex = endIndex;
-                }
-            }
-            return list;
-        }
 
         /// <summary>
         /// スクリプトを削除する。
@@ -1277,5 +823,33 @@ namespace RawlerLib
         //    }
         //    return dic;
         //}
+
+
+        public struct Link
+        {
+            private string url;
+
+            public string Url
+            {
+                get { return url; }
+                set { url = value; }
+            }
+            private string label;
+
+            public string Label
+            {
+                get { return label; }
+                set { label = value; }
+            }
+            private string tag;
+
+            public string Tag
+            {
+                get { return tag; }
+                set { tag = value; }
+            }
+
+        }
     }
+
 }

@@ -83,6 +83,7 @@
     <Compile Include="NPL\LevenshteinDistance.cs" />
     <Compile Include="NPL\PreprocessingForJapanese.cs" />
     <Compile Include="NPL\RawlerTinySegmenter.cs" />
+    <Compile Include="NPL\TFIDF.cs" />
     <Compile Include="NPL\WordsCount.cs" />
     <Compile Include="RawlerLib\BackgroundWorker.cs">
       <SubType>Component</SubType>
@@ -90,8 +91,10 @@
     <Compile Include="RawlerLib\DynamicDictionary.cs" />
     <Compile Include="RawlerLib\DynamicJson.cs" />
     <Compile Include="RawlerLib\EventStringArgs.cs" />
+    <Compile Include="RawlerLib\Extend.cs" />
     <Compile Include="RawlerLib\Io.cs" />
     <Compile Include="RawlerLib\kanaxs-1.0.0.cs" />
+    <Compile Include="RawlerLib\MyExtend.cs" />
     <Compile Include="RawlerLib\ObjectLib.cs" />
     <Compile Include="RawlerLib\Pair.cs" />
     <Compile Include="RawlerLib\TagAnalyze.cs" />
@@ -202,7 +205,6 @@
     <Compile Include="Tool\Web\UrlEncode.cs" />
     <Compile Include="Tool\Web\UrlParameter.cs" />
     <Compile Include="Tool\Web\WebClient.cs" />
-    <Compile Include="Tool\Web\WebForm.cs" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs">
@@ -231,7 +233,9 @@
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
     <AppDesigner Include="Properties\" />
-    <None Include="Rawler.nuspec" />
+    <None Include="Rawler.nuspec">
+      <SubType>Designer</SubType>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.0">

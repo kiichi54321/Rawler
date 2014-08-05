@@ -78,6 +78,7 @@ namespace Rawler.Tool
                     list = Query.RunQuery(list);
                 }
                 SetTexts(list);
+        
                 foreach (var item in list)
                 {
                     this.SetText(item);
@@ -110,6 +111,8 @@ namespace Rawler.Tool
                 }
             }
         }
+
+
 
         private IEnumerable<string> Convert(IEnumerable<string> list)
         {

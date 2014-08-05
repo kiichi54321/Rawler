@@ -2,10 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-
+using RawlerLib.MyExtend;
 
 namespace Rawler.Tool
 {
+    /// <summary>
+    /// 定義リストを取得する。
+    /// </summary>
     public class DefinitionLists : RawlerMultiBase
     {
         #region テンプレ
@@ -35,8 +38,8 @@ namespace Rawler.Tool
         public override void Run(bool runChildren)
         {
             var list = RawlerLib.MarkupLanguage.TagAnalyze.GetTag(GetText(), "dl").ToList();
-            if (ClassName != null) list = list.Where(n => n.Parameter.Contains("class=\"" + ClassName + "\"")).ToList();
-            if (IdName != null) list = list.Where(n => n.Parameter.Contains("id=\"" + IdName + "\"")).ToList();
+            if (ClassName.IsNullOrEmpty() ==false) list = list.Where(n => n.Parameter.Contains("class=\"" + ClassName + "\"")).ToList();
+            if (IdName.IsNullOrEmpty()==false) list = list.Where(n => n.Parameter.Contains("id=\"" + IdName + "\"")).ToList();
 
             List<string> txtList = new List<string>();
             foreach (var item in list)
@@ -48,6 +51,8 @@ namespace Rawler.Tool
 
         public string ClassName { get; set; }
         public string IdName { get; set; }
+
+
 
         /// <summary>
         /// 子が参照するテキスト。

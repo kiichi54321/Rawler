@@ -420,6 +420,40 @@ namespace Rawler.Tool
             rawler.SetParent(this);
         }
 
+        /// <summary>
+        /// 子たちを追加する。返りは、自分自身。
+        /// </summary>
+        /// <param name="children"></param>
+        /// <returns></returns>
+        public RawlerBase AddRange(params Rawler.Tool.RawlerBase[] children)
+        {
+            foreach (var item in children)
+            {
+                this.AddChildren(item);
+            }
+            return this;
+        }
+
+        /// <summary>
+        /// 子を追加する。メソッドチェーン用。
+        /// </summary>
+        /// <param name="child"></param>
+        /// <returns></returns>
+        public RawlerBase Add( Rawler.Tool.RawlerBase child)
+        {
+            this.AddChildren(child);
+            return child;
+        }
+
+        /// <summary>
+        /// rootとなるRawlerBaseを取得する
+        /// </summary>
+        /// <returns></returns>
+        public RawlerBase GetRoot()
+        {
+            return this.GetAncestorRawler().Last();
+        }
+
         public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
 
         protected void OnPropertyChanged(string name)

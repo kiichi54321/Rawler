@@ -24,6 +24,35 @@ namespace Rawler.Tool
             return list2;
         }
 
+        /// <summary>
+        /// メソッドチェーン的にクエリーを作る
+        /// </summary>
+        /// <param name="query"></param>
+        /// <returns></returns>
+        public RawlerQuery Add(RawlerQuery query)
+        {
+            this.Child = query;
+            query.Parent = this;
+            return query;
+        }
+
+        /// <summary>
+        /// メソッドチェーンの最後に使い、起点をを取得する。
+        /// </summary>
+        /// <returns></returns>
+        public RawlerQuery GetRoot()
+        {
+            RawlerQuery q = this;
+            while(true)
+            {
+                if (q.Parent == null) break;
+                q = q.Parent;
+            }
+            return q;
+        }
+
+        protected RawlerQuery Parent { get; set; }
+
         public RawlerQuery Child { get; set; }
 
         /// <summary>

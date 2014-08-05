@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Windows.Markup;
+using RawlerLib.Extend;
 
 namespace Rawler.Tool
 {
@@ -18,13 +19,7 @@ namespace Rawler.Tool
         {
         }
 
-        //public TagExtraction(string Tag, bool isMulti, string ParameterFilter, string ContextFilter):base()
-        //{
-        //    this.Tag = Tag;
-        //    this.isMulti = isMulti;
-        //    this.ParameterFilter = ParameterFilter;
-        //    this.ContextFilter = ContextFilter;
-        //}
+
 
         public string Tag { get; set; }
 
@@ -35,18 +30,7 @@ namespace Rawler.Tool
         {
             get { return this.GetType().Name; }
         }
-        //bool isMulti = false;
-        //public bool IsMulti
-        //{
-        //    get
-        //    {
-        //        return isMulti;
-        //    }
-        //    set
-        //    {
-        //        isMulti = value;
-        //    }
-        //}
+
 
         List<string> texts = new List<string>();
         public List<string> Texts
@@ -98,20 +82,115 @@ namespace Rawler.Tool
             set { useRank = value; }
         }
         public string Itemprop { get; set; }
+        bool useHtmlAgilityPack = false;
 
-        public override void Run(bool runChildren)
+        //public bool UseHtmlAgilityPack
+        //{
+        //    get { return useHtmlAgilityPack; }
+        //    set { useHtmlAgilityPack = value; }
+        //}
+
+        //private void UsingHtmlAgilityPack(bool runChildren)
+        //{
+        //                        IEnumerable<HtmlNode> list;
+        //            HtmlDocument doc = new HtmlDocument();
+        //            doc.LoadHtml(GetText());
+        //            if (UseTagRank)
+        //            {
+        //                list = doc.DocumentNode.ChildNodes.Where(n => n.Name == Tag);
+        //            }
+        //            else
+        //            {
+        //                list = GetAllTag(doc.DocumentNode.ChildNodes, Tag);
+        //            }
+
+        //            if (this.ParameterFilter != null && this.ParameterFilter.Length > 0)
+        //            {
+        //                if (ParameterFilter.Contains(":"))
+        //                {
+        //                    list = list.Where(n => n.Attributes.Select(m => m.Name + ":" + m.Value).Contains(ParameterFilter));
+        //                }
+        //                else
+        //                {
+        //                    list = list.Where(n => n.Attributes.Select(m => m.Name + ":" + m.Value).JoinText(" ").Contains(ParameterFilter));
+        //                }
+        //            }
+        //            if (this.ContextFilter != null && this.ContextFilter.Length > 0)
+        //            {
+        //                list = list.Where(n => n.InnerHtml.Contains(this.ContextFilter));
+        //            }
+        //            if (this.ClassName != null && this.ClassName.Length > 0)
+        //            {
+        //                list = list.Where(n => n.Attributes.Where(m => m.Name == "class" && m.Value == ClassName).Any());
+        //            }
+        //            if (string.IsNullOrEmpty(Itemprop) == false)
+        //            {
+        //                list = list.Where(n => n.Attributes.Where(m => m.Name == "itemprop" && m.Value == Itemprop).Any());
+        //            }
+        //            if (this.IdName != null && this.IdName.Length > 0)
+        //            {
+        //                list = list.Where(n => n.Attributes.Where(m => m.Name == "id" && m.Value == IdName).Any());
+        //            }
+        //            if (this.TargetName != null && this.TargetName.Length > 0)
+        //            {
+        //                list = list.Where(n => n.Attributes.Where(m => m.Name == "name" && m.Value == TargetName).Any());
+        //            }
+
+        //            if (true)
+        //            {
+        //                List<string> list2 = new List<string>();
+        //                foreach (var tag in list)
+        //                {
+        //                    string txt = string.Empty;
+        //                    switch (tagVisbleType)
+        //                    {
+        //                        case TagVisbleType.Inner:
+        //                            txt = tag.InnerHtml;
+        //                            break;
+        //                        case TagVisbleType.Outer:
+        //                            txt = tag.OuterHtml;
+        //                            break;
+        //                        case TagVisbleType.Parameter:
+        //                            txt = tag.Attributes.Select(n => n.Name + ":" + n.Value).JoinText(" ");
+        //                            break;
+        //                        default:
+        //                            txt = tag.InnerHtml;
+        //                            break;
+        //                    }
+        //                    list2.Add(txt);
+        //                }
+        //                if (emptyReport && list2.Count == 0)
+        //                {
+        //                    ReportManage.ErrReport(this, "該当するものは一つも見つかりませんでした。");
+        //                }
+        //                texts = list2;
+
+        //                if (IsSingle)
+        //                {
+        //                    if (list2.Count > 0)
+        //                    {
+        //                        SetText(list2.First());
+        //                        RunChildren(runChildren);
+        //                    }
+        //                }
+        //                else
+        //                {
+        //                    RunChildrenForArray(runChildren, list2);
+        //                }
+        //            }
+        //}
+        private  void OldMethod(bool runChildren)
         {
-            if (this.Parent != null)
-            {
-                List<RawlerLib.MarkupLanguage.TagClass> list;
+                                       List<RawlerLib.MarkupLanguage.TagClass> list;
                 if (UseTagRank)
                 {
-                    list = new List<RawlerLib.MarkupLanguage.TagClass>(RawlerLib.MarkupLanguage.TagAnalyze.GetTag(GetText(), Tag));
+                    list = new List<RawlerLib.MarkupLanguage.TagClass>(RawlerLib.MarkupLanguage.TagAnalyze.GetTopTag(GetText(), Tag));
                 }
                 else
                 {
-                    list = new List<RawlerLib.MarkupLanguage.TagClass>(RawlerLib.MarkupLanguage.TagAnalyze.GetAllTag(GetText(), Tag));
+                    list = new List<RawlerLib.MarkupLanguage.TagClass>(RawlerLib.MarkupLanguage.TagAnalyze.GetTag(GetText(), Tag));
                 }
+
 
                 if (this.ParameterFilter != null && this.ParameterFilter.Length > 0)
                 {
@@ -137,6 +216,7 @@ namespace Rawler.Tool
                 {
                     list = new List<RawlerLib.MarkupLanguage.TagClass>(list.Where(n => n.CheckName(TargetName)));
                 }
+
 
                 if (true)
                 {
@@ -167,52 +247,32 @@ namespace Rawler.Tool
                     }
                     texts = list2;
 
+
                     if (IsSingle)
                     {
                         if (list2.Count > 0)
                         {
-                            SetText( list2.First());
+                            SetText(list2.First());
                             RunChildren(runChildren);
-                        } 
+                        }
                     }
                     else
                     {
                         RunChildrenForArray(runChildren, list2);
                     }
                 }
+        }
 
-                //else
-                //{
-                //    if (list.Count > 0)
-                //    {
-                //        var tag = list.First();
-                //        switch (tagVisbleType)
-                //        {
-                //            case TagVisbleType.Inner:
-                //                this.text = tag.Inner;
-                //                break;
-                //            case TagVisbleType.Outer:
-                //                this.text = tag.Outer;
-                //                break;
-                //            case TagVisbleType.Parameter:
-                //                this.text = tag.Parameter;
-                //                break;
-                //            default:
-                //                this.text = tag.Inner;
-                //                break;
-                //        }
+        public override void Run(bool runChildren)
+        {
+            if (this.Parent != null)
+            {
 
-                //        this.RunChildren(runChildren);
-                //    }
-                //    else
-                //    {
-                //        if (emptyReport)
-                //        {
-                //            ReportManage.ErrReport(this, "該当するものは一つも見つかりませんでした。");
-                //        }
-                //    }
-                //}
+                    OldMethod(runChildren);
             }
+
+
+
         }
 
 
@@ -220,6 +280,82 @@ namespace Rawler.Tool
         {
             return base.Clone<Tags>(parent);
         }
+
+        ///// <summary>
+        ///// RawlerのTagsと同機能を提供する拡張メソッド
+        ///// </summary>
+        ///// <param name="html">target HTML</param>
+        ///// <param name="tagname">target Tag </param>
+        ///// <param name="dic">class , id , Parameter,Context に対応</param>
+        ///// <param name="type">Inner,Outer, Parameter </param>
+        ///// <returns>tags result</returns>
+        //public static IEnumerable<string> Tags(this string html, string tagname,IDictionary<string,string> dic, TagVisbleType type)
+        //{
+        //    Tags tags = new Tags() { Tag = tagname, tagVisbleType = type };
+        //    foreach (var pair in dic)
+        //    {
+        //        if (pair.Key == "class") { tags.ClassName = pair.Value.ToString(); }
+        //        else if (pair.Key == "id") { tags.IdName = pair.Value.ToString(); }
+        //        else if (pair.Key == "Parameter") { tags.ParameterFilter = pair.Value.ToString(); }
+        //        else if (pair.Key == "Context") { tags.ContextFilter = pair.Value.ToString(); }                               
+        //    }          
+
+        //    RawlerBase.GetText(html, tags);
+
+        //    return tags.Texts;
+        //}
+        ///// <summary>
+        ///// RawlerのTagsと同機能を提供する拡張メソッド
+        ///// </summary>
+        ///// <param name="html">target HTML</param>
+        ///// <param name="tagname">target Tag </param>
+        ///// <param name="dic">class , id , Parameter,Context に対応</param>
+        ///// <returns>tags result</returns>
+        //public static IEnumerable<string> Tags(this string html, string tagname, IDictionary<string, string> dic)
+        //{
+        //    return Tags(html, tagname, dic, TagVisbleType.Inner);
+        //}
+        ///// <summary>
+        ///// RawlerのTagsと同機能を提供する拡張メソッド
+        ///// </summary>
+        ///// <param name="html">target HTML</param>
+        ///// <param name="tagname">target Tag </param>
+        ///// <param name="className">target class</param>
+        ///// <param name="dic">class , id , Parameter,Context に対応</param>
+        ///// <returns>tags result</returns>       
+        //public static IEnumerable<string> Tags(this string html, string tagname, string className, TagVisbleType type)
+        //{        
+        //    return Tags(html, tagname,new Dictionary<string,string>(){ {"class" , className}  } , type);
+        //}
+        ///// <summary>
+        ///// RawlerのTagsと同機能を提供する拡張メソッド
+        ///// </summary>
+        ///// <param name="html">target HTML</param>
+        ///// <param name="tagname">target Tag </param>
+        ///// <param name="className">target class</param>
+        ///// <param name="dic">class , id , Parameter,Context に対応</param>
+        ///// <returns>tags result</returns> 
+        //public static IEnumerable<string> Tags(this string html, string tagname, string className)
+        //{
+        //    return Tags(html, tagname, new Dictionary<string, string>() { { "class", className } }, TagVisbleType.Inner);
+        //}
+
+
+        //public IEnumerable<HtmlNode> GetAllTag(HtmlNodeCollection list, string tag)
+        //{
+        //    foreach (var item in list)
+        //    {
+        //        if(item.Name == tag)
+        //        {
+        //            yield return item;
+        //        }
+        //        foreach (var item2 in  GetAllTag( item.ChildNodes,tag))
+        //        {
+        //            yield return item2;
+        //        }
+        //    }
+        //}
+
     }
     /// <summary>
     /// Tagを取得する部分。
@@ -228,6 +364,5 @@ namespace Rawler.Tool
     {
         Inner,Outer, Parameter
     }
-
 
 }

@@ -6,7 +6,7 @@ using Rawler.Tool;
 
 namespace Rawler.Tool
 {
-    public class WebForm : Page
+    internal class WebForm : Page
     {
         #region テンプレ
         /// <summary>

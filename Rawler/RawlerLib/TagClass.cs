@@ -5,7 +5,7 @@ using System.Text;
 
 namespace RawlerLib.MarkupLanguage
 {
-    internal class TagClass
+    public class TagClass
     {
         public int Start { get; set; }
         public int End { get; set; }

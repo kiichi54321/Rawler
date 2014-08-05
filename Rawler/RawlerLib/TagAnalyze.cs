@@ -5,7 +5,7 @@ using System.Text;
 
 namespace RawlerLib.MarkupLanguage
 {
-    internal class TagAnalyze
+    public class TagAnalyze
     {
         private enum TagType
         {
@@ -20,7 +20,7 @@ namespace RawlerLib.MarkupLanguage
         /// <param name="tag"></param>
         /// <param name="change"></param>
         /// <returns></returns>
-        public static ICollection<TagClass> GetTag(string txt, string tag,bool change)
+        public static IEnumerable<TagClass> GetTag(string txt, string tag,bool change)
         {
             if (change)
             {
@@ -43,7 +43,7 @@ namespace RawlerLib.MarkupLanguage
         /// <param name="txt"></param>
         /// <param name="tag"></param>
         /// <returns></returns>
-        public static ICollection<TagClass> GetTag(string txt, string tag)
+        public static IEnumerable<TagClass> GetTag(string txt, string tag)
         {
             List<RawlerLib.Collections.Pair<int, TagType>> list = new List<RawlerLib.Collections.Pair<int, TagType>>();
             //            string startTag = "<" + tag + " " ;
@@ -51,7 +51,7 @@ namespace RawlerLib.MarkupLanguage
             var startList = StringIndexList(txt, new string[] { "<" + tag + " ", "<" + tag + ">" });
             var endList = StringIndexList(txt, endTag);
             Dictionary<int, TagClass> dic = new Dictionary<int, TagClass>();
-            foreach (var item in startList)
+            foreach (var item in startList.OrderBy(n=>n))
             {
                 list.Add(new RawlerLib.Collections.Pair<int, TagType>(item, TagType.Start));
                 dic.Add(item, new TagClass(tag, item, txt));
@@ -113,8 +113,23 @@ namespace RawlerLib.MarkupLanguage
                 }
             }
 
+            return dic.Values.OrderBy(n=>n.Start);
+
+            //List<TagClass> result = new List<TagClass>();
+            //foreach (var item in dic.Values)
+            //{
+            //    if (item.Parent == null)
+            //    {
+            //        result.Add(item);
+            //    }
+            //}
+            //return result;
+        }
+
+        public static IEnumerable<TagClass>　GetTopTag(string txt,string tag)
+        {
             List<TagClass> result = new List<TagClass>();
-            foreach (var item in dic.Values)
+            foreach (var item in GetTag(txt,tag))
             {
                 if (item.Parent == null)
                 {
@@ -124,25 +139,25 @@ namespace RawlerLib.MarkupLanguage
             return result;
         }
 
-        public static ICollection<TagClass> GetAllTag(string txt, string tag)
-        {
-            var top = GetTag(txt, tag);
-            List<TagClass> list = new List<TagClass>();
-            Queue<TagClass> queue = new Queue<TagClass>(top);
-            TagClass current;
-            while (queue.Count>0)
-            {
-                current = queue.Dequeue();
-                list.Add(current);
-                foreach (var item in current.Children)
-                {
-                    queue.Enqueue(item);
+        //public static ICollection<TagClass> GetAllTag(string txt, string tag)
+        //{
+        //    var top = GetTag(txt, tag);
+        //    List<TagClass> list = new List<TagClass>();
+        //    Queue<TagClass> queue = new Queue<TagClass>(top);
+        //    TagClass current;
+        //    while (queue.Count>0)
+        //    {
+        //        current = queue.Dequeue();
+        //        list.Add(current);
+        //        foreach (var item in current.Children)
+        //        {
+        //            queue.Enqueue(item);
 
-                }
+        //        }
 
-            }
-            return list;
-        }
+        //    }
+        //    return list;
+        //}
         /// <summary>
         /// 文章に対して単語を探して見つかった場所のリストです。
         /// </summary>
