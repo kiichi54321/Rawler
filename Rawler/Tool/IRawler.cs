@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Windows.Markup;
+using System.Xml;
+using System.Xml.Linq;
 
 namespace Rawler.Tool
 {
@@ -493,6 +495,36 @@ namespace Rawler.Tool
         }
 
         /// <summary>
+        /// 直近の上流に指定の型があったら取得する。
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <returns></returns>
+        public T GetUpperRawler<T>()
+            where T:RawlerBase 
+        {
+            T result = null;
+            RawlerBase rawler = this;
+            while(true)
+            {
+                if(rawler is T)
+                {
+                    result = rawler as T;
+                    break;
+                }
+                else if(rawler.Parent == null)
+                {
+                    break;
+                }
+                else
+                {
+                    rawler = rawler.Parent;
+                }
+            }
+            return result;
+        }
+
+
+        /// <summary>
         /// 自身を含む、すべての祖先を取得する。
         /// </summary>
         /// <returns></returns>
@@ -537,6 +569,12 @@ namespace Rawler.Tool
             this.preTree = null;            
         }
 
+        /// <summary>
+        /// XAMLを解釈してオブジェクトを返す。
+        /// </summary>
+        /// <param name="xaml"></param>
+        /// <param name="err"></param>
+        /// <returns></returns>
         public static RawlerBase Parse(string xaml,out string err)
         {
             object obj = null;
@@ -563,6 +601,57 @@ namespace Rawler.Tool
                 return (RawlerBase)obj;
             }
             
+        }
+
+        /// <summary>
+        /// XAML化する。
+        /// </summary>
+        /// <returns></returns>
+        public string ToXAML()
+        {
+            return System.Xaml.XamlServices.Save(this);
+        }
+        /// <summary>
+        /// 子供なしでXAML化する。
+        /// </summary>
+        /// <returns></returns>
+        public string ToXAMLWithoutChildren()
+        {
+            string xaml = this.ToXAML();
+            var xml = XElement.Parse(xaml);
+            xml.RemoveNodes();
+            return xml.ToString();
+        }
+
+        /// <summary>
+        /// 子のrawlerをマージする。
+        /// </summary>
+        public void MargeChildren()
+        {
+            List<KeyValuePair<string, RawlerBase>> list = new List<KeyValuePair<string, RawlerBase>>();
+            foreach (var item in this.Children)
+            {
+                list.Add(new KeyValuePair<string, RawlerBase>(item.ToXAMLWithoutChildren(), item));
+            }
+            List<RawlerBase> delList = new List<RawlerBase>();
+            foreach (var group in list.GroupBy(n=>n.Key))
+            {
+                var r = group.First();
+                foreach (var item in group.Where(n=>n.Value != r.Value))
+                {
+                    r.Value.AddRange(item.Value.Children.ToArray());
+                    delList.Add(item.Value);
+                }
+            }
+            foreach (var item in delList)
+            {
+                this.Children.Remove(item);
+            }
+            foreach (var item in this.Children)
+            {
+                item.MargeChildren();
+            }
+           
         }
     }
 

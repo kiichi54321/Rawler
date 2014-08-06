@@ -78,7 +78,6 @@ namespace Rawler.NPL
             public double TF { get; set; }
             public double IDF { get; set; }
             public double TFIDF { get{return TF*IDF;}}
-
         }
         public class DocumentData
         {

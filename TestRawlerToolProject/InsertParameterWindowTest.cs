@@ -1,6 +1,8 @@
 ﻿﻿using RawlerTool.Tool;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
+using Rawler.Tool;
+
 
 namespace TestRawlerToolProject
 {
@@ -77,6 +79,35 @@ namespace TestRawlerToolProject
             //actual = target.GetParameterList(xaml);
             //Assert.AreEqual<string[]>(expected, actual);
             //Assert.Inconclusive("このテストメソッドの正確性を確認します。");
+        }
+        [TestMethod()]
+        [TestCategory("RawlerBase")]
+        public void RawlerBaseXAMLTest()
+        {
+            var page = new Page().Add(new DataWrite() { Attribute = "test" }).GetRoot();
+            System.Console.WriteLine("Page ToXAML");
+            System.Console.WriteLine(page.ToXAML());
+            System.Console.WriteLine("Page ToXAMLWithOutChiled");
+            System.Console.WriteLine(page.ToXAMLWithoutChildren());
+        }
+
+        [TestMethod()]
+        [TestCategory("RawlerBase")]
+        public void RawlerBaseMargeTest()
+        {
+            var page = new Page().AddRange(
+                new DataWrite() { Attribute = "test" },
+                new DataWrite() { Attribute = "test2" },
+                new Tags().Add(new DataWrite(){Attribute = "Test"}).GetRoot(),
+                new DataWrite() { Attribute = "test2"},
+                new Tags().Add(new DataWrite(){Attribute = "Test"}).Add(new Tags()).GetRoot(),
+                new Tags().Add(new DataWrite(){Attribute = "Test"}).Add(new TagClear()).GetRoot()
+                );
+            System.Console.WriteLine("Page ToXAML");
+            System.Console.WriteLine(page.ToXAML());
+            System.Console.WriteLine("Page Marge");
+            page.MargeChildren();
+            System.Console.WriteLine(page.ToXAML());
         }
     }
 }

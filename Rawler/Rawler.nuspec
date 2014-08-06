@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>Rawler</id>
-    <version>1.0.5</version>
+    <version>1.0.6</version>
     <title>Rawler</title>
     <authors>Takaichi Ito</authors>
     <owners>Takaichi Ito</owners>
@@ -13,7 +13,7 @@
     -->
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>programing framework for web crawler by XAML</description>
-    <releaseNotes>NPL命令群の追加</releaseNotes>
+    <releaseNotes>メソッドチェーン化した。</releaseNotes>
     <copyright>Takaichi Ito Copyright 2014</copyright>
     <tags>Web </tags>
     <dependencies>
