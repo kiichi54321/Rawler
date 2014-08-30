@@ -74,10 +74,6 @@ namespace Rawler.Tool
             
          //   return Codeplex.Data.DynamicJson.Serialize(dataDic).Replace("\"Key\":", string.Empty).Replace(",\"Value\"",string.Empty);
         }
-        //public RawlerLib.DynamicDictionary<List<string>> DynamicDictionary
-        //{
-        //    get { return new RawlerLib.DynamicDictionary<List<string>>(dataDic); }
-        //}
 
         /// <summary>
         /// 文字列に変換する。
@@ -101,14 +97,6 @@ namespace Rawler.Tool
             return base.ToString();
         }
 
-        ///// <summary>
-        ///// 標準のライブラリーのDictionary に変換する。
-        ///// </summary>
-        ///// <returns></returns>
-        //public Dictionary<string, List<string>> ToDictionary()
-        //{
-        //    return dataDic.ToDic();
-        //}
 
 
         /// <summary>

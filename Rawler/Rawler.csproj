@@ -47,7 +47,7 @@
     <DocumentationFile>bin\Debug\Rawler.XML</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
-    <PlatformTarget>x86</PlatformTarget>
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
@@ -160,6 +160,7 @@
     <Compile Include="Tool\Utility\SetTempVar.cs" />
     <Compile Include="Tool\Utility\FunctionTree.cs" />
     <Compile Include="Tool\Utility\SetWorkFolder.cs" />
+    <Compile Include="Tool\Utility\ThrowCatch.cs" />
     <Compile Include="Tool\Web\AddAllInputParameter.cs" />
     <Compile Include="Tool\Web\AddHiddenInputParameter.cs" />
     <Compile Include="Tool\Web\AddInputParameter.cs" />

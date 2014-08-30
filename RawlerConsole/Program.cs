@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Rawler.Tool;
 
 namespace RawlerConsole
 {
@@ -24,7 +25,7 @@ namespace RawlerConsole
                             Rawler.Tool.TempVar.SetVar(d[0], d[1]);
                         }
                     }
-                    Rawler.Tool.RawlerBase rawler = (Rawler.Tool.RawlerBase)System.Xaml.XamlServices.Load(args[0]);
+                    RawlerBase rawler = (RawlerBase)System.Xaml.XamlServices.Load(args[0]);
                     rawler.SetParent();
                     rawler.Run();
                 }

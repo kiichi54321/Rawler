@@ -24,6 +24,17 @@ namespace Rawler.Tool
             return list2;
         }
 
+        public IEnumerable<string> RunQuery(IEnumerable<string> list,RawlerMultiBase rawler)
+        {
+            this.Rawler = rawler;
+            IEnumerable<string> list2 = Query(list);
+            if (Child != null)
+            {
+                list2 = Child.RunQuery(list2);
+            }
+            return list2;
+        }
+
         /// <summary>
         /// メソッドチェーン的にクエリーを作る
         /// </summary>
@@ -62,7 +73,8 @@ namespace Rawler.Tool
         {
             get { return this.GetType().Name; }
         }
-        
+
+        public RawlerBase Rawler { get; set; }
 
         public T Clone<T>()
             where T:RawlerQuery

@@ -52,6 +52,10 @@ namespace Rawler.Tool
             {
                 data = GetText().Split(',');
             }
+            else if (separatorType == SeparatorType.Space)
+            {
+                data = GetText().Split(' ');
+            }
             else
             {
                 if (separator.Length > 0)
@@ -107,6 +111,17 @@ namespace Rawler.Tool
 
     public enum SeparatorType
     {
-        Tab, Comma,Other
+        Tab, Comma,Space,Other
+    }
+
+    public static partial class Extend
+    {
+        public static string GetSeparator(this SeparatorType s,string other)
+        {
+            if (s == SeparatorType.Comma) return ",";
+            if (s == SeparatorType.Tab) return "\t";
+            if (s == SeparatorType.Space) return " ";
+            return other;
+        }
     }
 }

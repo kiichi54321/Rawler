@@ -43,6 +43,12 @@ namespace Rawler.NPL
 
         Dictionary<string, CountData> idfDic;
 
+        public Dictionary<string, CountData> IDFDic
+        {
+            get { return idfDic; }
+           
+        }
+
         public Dictionary<string, CountData> CreateIDFdic()
         {
             idfDic = docDic.Values.AsParallel().SelectMany(n => n.GetWordList()).GroupBy(n => n).Select(n => new CountData() { Word = n.Key, Count = n.Count(), Value = Math.Log(docDic.Count / (double)(n.Count() + 1)) }).ToDictionary(n => n.Word);

@@ -173,7 +173,7 @@ namespace Rawler.Tool
                 }
                 if (TagFilter != null && TagFilter.Length > 0)
                 {
-                    list = new List<RawlerLib.Web.Link>(list.Where(n => n.Tag.Contains(TagFilter)));
+                    list = new List<RawlerLib.Web.Link>(list.Where(n => n.TagWithoutUrl.Contains(TagFilter)));
                 }
 
 

@@ -74,8 +74,8 @@ namespace Rawler.Tool
                     list = Convert(list);
                 }
                 if (Query != null)
-                {
-                    list = Query.RunQuery(list);
+                {                    
+                    list = Query.RunQuery(list,this);
                 }
                 SetTexts(list);
         

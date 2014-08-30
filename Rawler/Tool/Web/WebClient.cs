@@ -5,6 +5,8 @@ using System.Text;
 using System.Net;
 using System.IO;
 using System.Windows.Markup;
+using RawlerLib.MyExtend;
+using System.Text.RegularExpressions;
 
 namespace Rawler.Tool
 {
@@ -15,14 +17,17 @@ namespace Rawler.Tool
     [Serializable]
     public class WebClient : RawlerBase
     {
+        private bool onceEncodingCheck = true;
+        /// <summary>
+        /// 初めだけエンコードのチェックをする。
+        /// </summary>
+        public bool OnceEncodingCheck
+        {
+            get { return onceEncodingCheck; }
+            set { onceEncodingCheck = value; }
+        }
 
-        private Encoding encoder = System.Text.Encoding.UTF8;
-
-        //public Encoding Encoding
-        //{
-        //    get { return encoder; }
-        //    set { encoder = value; }
-        //}
+        private Encoding encoder = null;
 
         private string encoding = string.Empty;
         /// <summary>
@@ -37,8 +42,7 @@ namespace Rawler.Tool
             set
             {
                 encoding = value;
-                encoder = GetEncoding();
-                
+                encoder = GetEncoding();                
             }
         }
         double sleepSeconds = 0;
@@ -92,17 +96,6 @@ namespace Rawler.Tool
         {
             return cc.Count;
         }
-        //private string id = "あなたのメールアドレス";
-        //private string password = "あなたのパスワード";
-        private bool hasLogin = false;
-
-
-        //public void SetIdPasswd(string id, string pass)
-        //{
-        //    this.id = id;
-        //    this.password = pass;
-        //}
-
 
 
         /// <summary>
@@ -148,16 +141,7 @@ namespace Rawler.Tool
             get { return referer; }
             set { referer = value; }
         }
-        //protected void OnLogin()
-        //{
-        //    if (useLogin)
-        //    {
-        //        if (LoginEvent != null)
-        //        {
-        //            LoginEvent(this, new EventArgs());
-        //        }
-        //    }
-        //}
+      
 
         private bool visbleErr = true;
 
@@ -180,6 +164,13 @@ namespace Rawler.Tool
                 }
             }
         }
+
+        /// <summary>
+        /// Basic認証用
+        /// </summary>
+        public RawlerLib.BasicAuthorization BasicAuthorization { get; set; }
+
+
         RawlerLib.WebClientEx wc = new RawlerLib.WebClientEx();
         /// <summary>
         /// HttpGet
@@ -196,64 +187,35 @@ namespace Rawler.Tool
             bool retry = false;
             try
             {
+                wc.Referer = referer;
+                wc.UserAgent = userAgent;
+                wc.BasicAuthorization = BasicAuthorization;
 
-                if (enc != null)
+                if (OnceEncodingCheck == false)
                 {
-                    wc.Referer = referer;
-                    wc.UserAgent = userAgent;
-
-                  //  wc.CookieContainer = cc;
-                    wc.Encoding = enc;
-
-                    result = wc.DownloadString(url);
-
-                   // return result;
+                    var data = wc.DownloadData(url);
+                    result = GetAutoEncoding(data, out encoder);
                 }
-                //// リクエストの作成
-                //HttpWebRequest req = (HttpWebRequest)WebRequest.Create(Uri.EscapeUriString(url));
-                //req.CookieContainer = cc;
+                else
+                {
+                    if (enc != null)
+                    {
+                        wc.Encoding = enc;
+                        result = wc.DownloadString(url);
+                    }
+                    else
+                    {
+                        var data = wc.DownloadData(url);
+                        result = GetAutoEncoding(data, out encoder);
 
-                //if (addUserAgent)
-                //{
-                //    req.UserAgent = userAgent;
-                //}
-                //if (referer != string.Empty)
-                //{
-                //    req.Referer = referer;
-                //}
+                        //RawlerLib.Text.TxtEnc txtEnc = new RawlerLib.Text.TxtEnc();
+                        //byte[] byteArray2 = wc.DownloadData(url);
+                        //txtEnc.SetFromByteArray(ref byteArray2);
 
-                //WebResponse res = req.GetResponse();
-
-                //// レスポンスの読み取り
-                //Stream resStream = res.GetResponseStream();
-
-                //if (encoder != null)
-                //{
-                //    StreamReader sr = new StreamReader(resStream, enc);
-                //    result = sr.ReadToEnd();
-
-                //    sr.Close();
-                //}
-                //else
-                //{
-                //    //応答データを受信するためのStreamを取得
-
-                //    List<byte> byteArray = new List<byte>();
-                //    int b;
-                //    while ((b = resStream.ReadByte()) > -1)
-                //    {
-                //        byteArray.Add((byte)b);
-                //    }
-
-                //    RawlerLib.Text.TxtEnc txtEnc = new RawlerLib.Text.TxtEnc();
-                //    byte[] byteArray2 = byteArray.ToArray();
-                //    txtEnc.SetFromByteArray(ref byteArray2);
-
-                //    txtEnc.Codec = "shift_jis";
-                //    result = txtEnc.Text;
-                //}
-                //resStream.Close();
-                //count = 0;
+                        //txtEnc.Codec = "shift_jis";
+                        //result = txtEnc.Text;
+                    }
+                }
             }
             catch (Exception e)
             {
@@ -261,14 +223,8 @@ namespace Rawler.Tool
                 {
                     ReportManage.ErrReport(this, "Url:" + url + " " + e.Message);
                 }
-                //if (e is System.UriFormatException)
-                //{
-                //    ReportManage.ErrReport(this,"["+url+"]は無効なURLです。");
-                //}
                 ErrMessage = e.Message;
                 retry = false;
-                //                throw new Exception("HttpGet:"+url+"に失敗しました");
-
             }
             if (retry)
             {
@@ -292,6 +248,42 @@ namespace Rawler.Tool
 
         public string ErrMessage { get; set; }
 
+        
+
+        public string GetAutoEncoding(byte[] data,out Encoding encoding)
+        {
+            var utf8 = System.Text.Encoding.UTF8.GetString(data);
+
+            var p1 = "<meta http-equiv=\"content-type\" content=\"text/html; charset=(.*)\">";   
+            var p2 ="<meta charset=\"(.*)\">";
+            encoding = System.Text.Encoding.UTF8;
+            try
+            {
+                var head =utf8.Substring(0, 600);
+                var m1 = Regex.Match(head, p1, RegexOptions.IgnoreCase);
+                if (m1 != null)
+                {
+                    encoding = System.Text.Encoding.GetEncoding(m1.Groups[1].Value);
+                    return encoding.GetString(data);
+                }
+                else
+                {
+                    var m2 = Regex.Match(head, p2, RegexOptions.IgnoreCase);
+                    if (m2 != null)
+                    {
+                        encoding = System.Text.Encoding.GetEncoding(m2.Groups[1].Value);
+                        return encoding.GetString(data);
+                    }
+                }
+            }
+            catch(Exception e)
+            {
+                ReportManage.ErrReport(this, "エンコードの取得に失敗しました。"+e.Message);
+            }
+            return utf8;
+        }
+
+
         /// <summary>
         /// Image用　失敗時NULL
         /// </summary>
@@ -301,49 +293,60 @@ namespace Rawler.Tool
         {
             Sleep();
 
-            List<byte> data = new List<byte>();
+            byte[] data;
             try
             {
-                // リクエストの作成
-                HttpWebRequest req = (HttpWebRequest)WebRequest.Create(Uri.EscapeUriString(url));
-                req.CookieContainer = cc;
+                wc.Referer = referer;
+                wc.UserAgent = userAgent;
+                wc.BasicAuthorization = BasicAuthorization;
+                data = wc.DownloadData(url);
 
-                if (addUserAgent)
-                {
-                    req.UserAgent = userAgent;
-                }
-                if (referer != string.Empty)
-                {
-                    req.Referer = referer;
-                }
 
-                //             req.Referer = "http://www.pixiv.net/";
-                WebResponse res = req.GetResponse();
+                //// リクエストの作成
+                //HttpWebRequest req = (HttpWebRequest)WebRequest.Create(Uri.EscapeUriString(url));
+                //req.CookieContainer = cc;
 
-                // レスポンスの読み取り
-                Stream resStream = res.GetResponseStream();
-                //b = new StreamReader(resStream);
-                //StreamReader sr = new StreamReader(resStream);
-                while (true)
-                {
-                    int b = resStream.ReadByte();
+                //if (addUserAgent)
+                //{
+                //    req.UserAgent = userAgent;
+                //}
+                //if (referer != string.Empty)
+                //{
+                //    req.Referer = referer;
+                //}
+          
 
-                    if (b == -1)
-                    {
-                        break;
-                    }
-                    data.Add((byte)b);
-                }
-                //sr.Close();
-                resStream.Close();
+                ////             req.Referer = "http://www.pixiv.net/";
+                //WebResponse res = req.GetResponse();
+
+                //// レスポンスの読み取り
+                //Stream resStream = res.GetResponseStream();
+                ////b = new StreamReader(resStream);
+                ////StreamReader sr = new StreamReader(resStream);
+                //while (true)
+                //{
+                //    int b = resStream.ReadByte();
+
+                //    if (b == -1)
+                //    {
+                //        break;
+                //    }
+                //    data.Add((byte)b);
+                //}
+                ////sr.Close();
+                //resStream.Close();
             }
             catch (Exception e)
             {
+                if (visbleErr)
+                {
+                    ReportManage.ErrReport(this, "Url:" + url + " " + e.Message);
+                }
                 data = null;
             }
             if (data != null)
             {
-                return data.ToArray();
+                return data;
             }
             else
             {
@@ -365,6 +368,7 @@ namespace Rawler.Tool
                 Sleep();
                 wc.Referer = referer;
                 wc.UserAgent = userAgent;
+                wc.BasicAuthorization = BasicAuthorization;
 
                 System.Collections.Specialized.NameValueCollection list = new System.Collections.Specialized.NameValueCollection();
                 foreach (var item in vals)
@@ -390,49 +394,7 @@ namespace Rawler.Tool
 
             }
             return string.Empty;
-            //string param = "";
-            //foreach (var k in vals)
-            //{
-            //    param += String.Format("{0}={1}&", k.Key, k.Value);
-            //}
-            //byte[] data = System.Text.Encoding.UTF8.GetBytes(param);
-
-            //// リクエストの作成
-            //HttpWebRequest req = (HttpWebRequest)WebRequest.Create(Uri.EscapeUriString(url));
-            //req.Method = "POST";
-            //req.ContentType = "application/x-www-form-urlencoded";
-            //req.ContentLength = data.Length;
-            //req.CookieContainer = cc;
-
-            //if (addUserAgent)
-            //{
-            //    req.UserAgent = userAgent;
-            //}
-            //if (referer != string.Empty)
-            //{
-            //    req.Referer = referer;
-            //}
-
-            //// ポスト・データの書き込み
-            //Stream reqStream = req.GetRequestStream();
-            //reqStream.Write(data, 0, data.Length);
-            //reqStream.Close();
-
-            //WebResponse res = req.GetResponse();
-
-            //if (encoder == null)
-            //{
-            //    encoder = System.Text.Encoding.UTF8;
-            //}
-
-            //// レスポンスの読み取り
-            //Stream resStream = res.GetResponseStream();
-            //StreamReader sr = new StreamReader(resStream, encoder);
-            //string result = sr.ReadToEnd();
-            //sr.Close();
-            //resStream.Close();
-
-            //return result;
+        
         }
         /// <summary>
         /// ObjectのName。表示用
@@ -442,39 +404,6 @@ namespace Rawler.Tool
             get { return this.GetType().Name; }
         }
 
-        //public string Login(string id, string password)
-        //{
-        //    // ログイン・ページへのアクセス
-        //    Dictionary<string, string> vals = new Dictionary<string, string>();
-        //    vals.Add("mode", "login");
-        //    vals.Add("pixiv_id", id);
-        //    vals.Add("pass", password);
-
-        //    this.id = id;
-        //    this.password = password;
-
-        //    string login = "http://www.pixiv.net/index.php";
-        //    string html = HttpPost(login, vals);
-
-
-        //    if (cc.Count > 0)
-        //    {
-        //        hasLogin = true;
-        //        MyLib.Log.LogWriteLine("Login成功！");
-        //    }
-
-        //    //        html = HttpGet("http://www.pixiv.net/");
-        //    return html;
-        //}
-
-        ///// <summary>
-        ///// 再ログイン用
-        ///// </summary>
-        ///// <returns></returns>
-        //public string Login()
-        //{
-        //    return Login(this.id, this.password);
-        //}
 
         /// <summary>
         /// イベントをコピーする。

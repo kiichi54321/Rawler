@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace RawlerLib.MyExtend
 {
@@ -76,6 +77,44 @@ namespace RawlerLib.MyExtend
         }
     }
 
+    public static class StringRegexExtentions
+    {
+        public static string Match(this string target, string pattern)
+        {
+            var rx = new Regex(pattern);
+            var mc = rx.Matches(target);
+            return (mc.Count == 0) ? null : mc[0].Value;
+        }
+
+        public static string Match(this string target, string pattern,int group)
+        {
+            var rx = new Regex(pattern);
+            var mc = rx.Matches(target);
+            return (mc.Count == 0) ? null : mc[0].Groups[group].Value;
+        }
+
+        public static string Match(this string target, string pattern, int group,RegexOptions regexOption)
+        {
+            var rx = new Regex(pattern,regexOption);
+            var mc = rx.Matches(target);
+            return (mc.Count == 0) ? null : mc[0].Groups[group].Value;
+        }
+
+
+        public static IEnumerable<Match> Matches(this string target,string pattern)
+        {
+            var rx = new Regex(pattern);
+            var mc = rx.Matches(target);
+            return mc.Cast<Match>();
+        }
+
+        public static bool IsMatch(this string target, string pattern)
+        {
+            var rx = new Regex(pattern);
+            return rx.IsMatch(target);
+        }
+    }
+
     public static class Text
     {
 
@@ -84,5 +123,28 @@ namespace RawlerLib.MyExtend
             return string.IsNullOrEmpty(text);
         }
 
+        public static IEnumerable<string> ReadLines(this string text)
+        {
+            return ReadLines(text, true);
+        }
+
+        public static IEnumerable<string> ReadLines(this string text,bool skipEmpty)
+        {
+            using (System.IO.StringReader sr = new System.IO.StringReader(text))
+            {
+                while (sr.Peek() > -1)
+                {
+                    string line = sr.ReadLine();
+                    if(skipEmpty == false)
+                    {
+                        yield return line;
+                    }
+                    else if (skipEmpty && line.Length > 0)
+                    {
+                        yield return line;
+                    }
+                }
+            }
+        }
     }
 }

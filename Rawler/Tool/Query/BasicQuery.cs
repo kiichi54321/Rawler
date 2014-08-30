@@ -392,6 +392,60 @@ namespace Rawler.Tool
         }
     }
 
+    public class QuerySelect:RawlerQuery
+    {
+        public RawlerBase SelectTree { get; set; }
+
+        public override IEnumerable<string> Query(IEnumerable<string> list)
+        {          
+            var root = this.GetRoot().Rawler;
+            if(SelectTree !=null)
+            {
+                foreach (var item in list)
+                {
+                    yield return RawlerBase.GetText(item, SelectTree, root);
+                }
+            }
+            else
+            {
+                ReportManage.ErrReport(root, "SelectTreeがありません");
+              //  yield return base.Query(list);
+            }
+            
+            
+        }
+    }
+
+    public class QueryCount:RawlerQuery
+    {
+        public override IEnumerable<string> Query(IEnumerable<string> list)
+        {
+            yield return list.Count().ToString();
+        }
+    }
+
+    public class QueryJoinText : RawlerQuery
+    {
+        private SeparatorType separator = SeparatorType.Tab;
+
+        public SeparatorType Separator
+        {
+            get { return separator; }
+            set { separator = value; }
+        }
+       
+        public string SeparatorText { get; set; }
+        public override IEnumerable<string> Query(IEnumerable<string> list)
+        {
+            StringBuilder sb = new StringBuilder();
+            foreach (var item in list)
+            {
+                
+            }
+            yield return list.Aggregate((n,m)=> n + Separator.GetSeparator(SeparatorText)+m);
+        }
+    }
+
     /// <summary>
     /// 割り算をして、余りが一致するか？
     /// </summary>

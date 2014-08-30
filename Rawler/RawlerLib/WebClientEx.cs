@@ -28,6 +28,7 @@ namespace RawlerLib
 
         public string UserAgent { get; set; }
         public string Referer { get; set; }
+        public BasicAuthorization BasicAuthorization { get; set; }
 
         protected override WebRequest GetWebRequest(Uri uri)
         {
@@ -39,9 +40,30 @@ namespace RawlerLib
                 httpWebRequest.CookieContainer = this.cookieContainer;
                 httpWebRequest.Referer = this.Referer;
                 httpWebRequest.UserAgent = this.UserAgent;
+
+                if(BasicAuthorization !=null)
+                {
+                    httpWebRequest.Headers[HttpRequestHeader.Authorization] = BasicAuthorization.GetAuthorization();
+                }
+             
+               
             }
 
             return webRequest;
+        }
+    }
+
+    public class BasicAuthorization
+    {
+        public string UserName { get; set; }
+        public string PassWord { get; set; }
+
+        public string GetAuthorization()
+        {
+            var namePassword = string.Format("{0}:{1}", UserName, PassWord);
+            var chars = System.Text.Encoding.ASCII.GetBytes(namePassword);
+            var base64 = Convert.ToBase64String(chars);
+            return "Basic " +base64;
         }
     }
 }

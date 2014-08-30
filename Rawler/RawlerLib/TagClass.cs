@@ -153,6 +153,22 @@ namespace RawlerLib.MarkupLanguage
             }
         }
 
+        public string InnerWithoutChildren
+        {
+            get
+            {
+                var inner = this.Inner;
+                if (inner == null) return inner;
+                StringBuilder sb = new StringBuilder(inner);
+                foreach (var item in Children)
+                {
+                    sb = sb.Replace(item.Outer, string.Empty);
+                }
+                return sb.ToString();
+            }
+        }
+
+
         public string Outer
         {
             get

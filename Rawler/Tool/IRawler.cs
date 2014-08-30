@@ -460,6 +460,8 @@ namespace Rawler.Tool
 
         protected void OnPropertyChanged(string name)
         {
+            xamlWithoutChildren = null;
+            xaml = null;
             if (PropertyChanged != null)
             {
                 PropertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(name));
@@ -604,12 +606,83 @@ namespace Rawler.Tool
         }
 
         /// <summary>
+        /// 簡易型XAML生成
+        /// </summary>
+        /// <returns></returns>
+        public string CreateXAML()
+        {
+            StringBuilder sb = new StringBuilder();
+            var type = this.GetType();
+            sb.Append("<" + this.ToObjectString() + ">");
+            foreach (var item in this.Children)
+            {
+                sb.Append(item.CreateXAML());
+            }
+            sb.Append("</" + type.Name + ">");
+            return sb.ToString();
+        }
+
+        /// <summary>
+        /// 高速にXAMLっぽい出力を得る
+        /// </summary>
+        /// <returns></returns>
+        public virtual string ToObjectString()
+        {
+            StringBuilder sb = new StringBuilder();
+            var type = this.GetType();
+            sb.Append(type.Name);
+            sb.Append(" ");
+
+             System.Reflection.PropertyInfo[] properties = type.GetProperties();
+            for (int i = 0; i < properties.Length; i++)
+            {
+                //読込み可能なプロパティのみを対象とする。
+                //    if (properties[i].CanRead && properties[i].CanWrite)
+                if (properties[i].CanWrite)
+                {
+                    System.Reflection.ParameterInfo[] param =
+                             properties[i].GetGetMethod().GetParameters();
+                    if ((param != null) && (param.Length > 0))
+                    {
+                        continue;
+                    }
+
+                    //プロパティから値を取得し、その文字列表記を保存する。
+                    object v = properties[i].GetValue(this, null);
+
+                    if (v != null )
+                    {
+                        if(v is RawlerBase)
+                        {
+                            sb.Append(properties[i].Name);
+                            sb.Append("=");
+                            sb.Append("'{" + ((RawlerBase)v).CreateXAML() + "}' ");
+                        }
+                        else if (v.ToString().Length > 0)
+                        {
+                            sb.Append(properties[i].Name);
+                            sb.Append("=");
+                            sb.Append("'" + v.ToString() + "' ");
+                        }
+                    }
+
+                }
+            }
+
+            return sb.ToString();
+        }
+
+        protected string xaml = null;
+        protected string xamlWithoutChildren = null;
+
+        /// <summary>
         /// XAML化する。
         /// </summary>
         /// <returns></returns>
         public string ToXAML()
         {
-            return System.Xaml.XamlServices.Save(this);
+            if(xaml == null) xaml = System.Xaml.XamlServices.Save(this);
+            return xaml;
         }
         /// <summary>
         /// 子供なしでXAML化する。
@@ -617,10 +690,15 @@ namespace Rawler.Tool
         /// <returns></returns>
         public string ToXAMLWithoutChildren()
         {
-            string xaml = this.ToXAML();
-            var xml = XElement.Parse(xaml);
-            xml.RemoveNodes();
-            return xml.ToString();
+            if (xamlWithoutChildren == null)
+            {
+                string xaml = this.ToXAML();
+                var xml = XElement.Parse(xaml);
+
+                xml.RemoveNodes();
+                xamlWithoutChildren = xml.ToString();
+            }
+            return xamlWithoutChildren;
         }
 
         /// <summary>
@@ -631,7 +709,7 @@ namespace Rawler.Tool
             List<KeyValuePair<string, RawlerBase>> list = new List<KeyValuePair<string, RawlerBase>>();
             foreach (var item in this.Children)
             {
-                list.Add(new KeyValuePair<string, RawlerBase>(item.ToXAMLWithoutChildren(), item));
+                list.Add(new KeyValuePair<string, RawlerBase>(item.ToObjectString(), item));
             }
             List<RawlerBase> delList = new List<RawlerBase>();
             foreach (var group in list.GroupBy(n=>n.Key))

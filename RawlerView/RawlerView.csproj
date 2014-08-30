@@ -66,6 +66,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ShowDialog.cs" />
     <Compile Include="Scheme\RawlerToolSchemeBase.cs" />
     <Compile Include="ViewTask.cs" />
     <Compile Include="ViewText.cs" />

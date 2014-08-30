@@ -10,8 +10,6 @@ namespace RawlerLib.Extend
 
     public static class Text
     {
-
-
         public static HtmlText ToHtml(this string html, string url)
         {
             return new HtmlText(html, url);
@@ -21,6 +19,40 @@ namespace RawlerLib.Extend
         {
             return new HtmlText(html, string.Empty);
         }
+
+        /// <summary>
+        /// タグの親にあるパラメータを継承する。
+        /// </summary>
+        /// <param name="list"></param>
+        /// <returns></returns>
+        public static IEnumerable<MarkupLanguage.TagClass> ParameterInherit(this IEnumerable<MarkupLanguage.TagClass> list)
+        {
+            foreach (var item in list)
+            {
+                if (item.Parameter.Length > 0)
+                {
+                    MarkupLanguage.TagClass tag = item;
+                    while (true)
+                    {
+                        if(tag.Parameter.Length > 0)
+                        {
+                            item.Parameter = tag.Parameter;
+                            break;
+                        }
+                        if(tag.Parent !=null)
+                        {
+                            tag = tag.Parent;
+                        }
+                        else
+                        {
+                            break;
+                        }
+                    }
+                }
+            }
+            return list;
+        }
+             
     }
 
     public class HtmlText
@@ -32,8 +64,6 @@ namespace RawlerLib.Extend
             Text = text;
             Url = url;
         }
-
-
 
         public IEnumerable<MarkupLanguage.TagClass> GetTag(string tag)
         {
@@ -52,13 +82,44 @@ namespace RawlerLib.Extend
 
         public IEnumerable<Web.Link> GetImageLink()
         {
-            return Web.GetImageLink(Text);
+            return Web.GetImageLink(Text,Url);
         }
 
         public string TagClear()
         {
             return Web.HtmlTagAllDelete(Text);
         }
+    }
+
+    public static class XAML
+    {
+        /// <summary>
+        /// XAMLのNULL値、空の文字列の値を消す。
+        /// </summary>
+        /// <param name="xaml"></param>
+        /// <returns></returns>
+        public static string ConvertNullXAML(this string xaml)
+        {
+            System.Text.RegularExpressions.Regex r = new System.Text.RegularExpressions.Regex("[A-Za-z0-9_]*=\"{x:Null}\" ");
+            System.Text.RegularExpressions.Regex r2 = new System.Text.RegularExpressions.Regex("[A-Za-z0-9_]*=\"\" ");
+            System.Text.RegularExpressions.Regex r3 = new System.Text.RegularExpressions.Regex("[A-Za-z0-9_]*=\"True\" ");
+            //var m = r.Match(xaml);
+            StringBuilder sb = new StringBuilder(xaml);
+            foreach (System.Text.RegularExpressions.Match item in r.Matches(xaml))
+            {
+                sb = sb.Replace(item.Value, "");
+            }
+            foreach (System.Text.RegularExpressions.Match item in r2.Matches(xaml))
+            {
+                sb = sb.Replace(item.Value, "");
+            }
+            foreach (System.Text.RegularExpressions.Match item in r3.Matches(xaml))
+            {
+                sb = sb.Replace(item.Value, "");
+            }
+            return sb.ToString();
+        }
+
     }
 
     public static class RawlerExtend
@@ -101,6 +162,10 @@ namespace RawlerLib.Extend
         public static RawlerBase Page(this RawlerBase rawler)
         {
             return rawler.Add(new Page());
+        }
+        public static RawlerBase GetPageUrl(this RawlerBase rawler)
+        {
+            return rawler.Add(new GetPageUrl());
         }
 
         public static RawlerBase GetTesvValue(this RawlerBase rawler,string column)

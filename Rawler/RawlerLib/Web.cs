@@ -332,7 +332,7 @@ namespace RawlerLib
                 Link link = new Link();
                 link.Label = match.Groups[4].Value;
                 link.Url = match.Groups[2].Value;
-                link.Tag = match.Value;
+                link.Tag = match.Value.Replace(match.Groups[2].Value, string.Empty);
                 linkList.Add(link);
             }
             return linkList;
@@ -352,7 +352,7 @@ namespace RawlerLib
                 link.Label = match.Groups[4].Value;
                 link.Url = HtmlTagAllDelete(match.Groups[2].Value).Replace("'", "");
                 link.Tag = match.Value;
-
+                link.TagWithoutUrl = match.Value.Replace(match.Groups[2].Value, string.Empty);
                 //HTTP‚ª“ü‚Á‚Ä‚¢‚é‚Æ‚«
                 if (regexHttp.IsMatch(link.Url) == false && url != null)
                 {
@@ -847,6 +847,12 @@ namespace RawlerLib
             {
                 get { return tag; }
                 set { tag = value; }
+            }
+
+            public string TagWithoutUrl
+            {
+                get;
+                set;
             }
 
         }

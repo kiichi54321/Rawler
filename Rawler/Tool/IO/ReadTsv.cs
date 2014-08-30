@@ -38,19 +38,6 @@ namespace Rawler.Tool
             if (string.IsNullOrEmpty( filename))
             {
                 ReportManage.ErrReport(this, "FileNameが空です。");
-             //   Microsoft.Win32.OpenFileDialog dialog = new Microsoft.Win32.OpenFileDialog();
-                //if (string.IsNullOrEmpty(ExtendFilter) == false)
-                //{
-                //    dialog.Filter = FilterStringCreate(ExtendFilter);
-                //}
-                //else
-                //{
-                //    dialog.Filter = FilterStringCreate("tsv");
-                //}
-                //if (dialog.ShowDialog() == true)
-                //{
-                //    filename = dialog.FileName;
-                //}
             }
 
             try
@@ -76,10 +63,10 @@ namespace Rawler.Tool
                     var lines = System.IO.File.ReadLines(filename);
                     var topline = System.IO.File.ReadLines(filename).First();
                     int i = 0;
-                    attributeDic = new Dictionary<string, int>();
+                    columnNameDic = new Dictionary<string, int>();
                     foreach (var item in topline.Split('\t'))
                     {
-                        attributeDic.Add(item, i);
+                        columnNameDic.Add(item, i);
                         i++;
                     }
                     lines = lines.Skip(1);
@@ -98,18 +85,26 @@ namespace Rawler.Tool
 
         }
 
-        private Dictionary<string, int> attributeDic = new Dictionary<string, int>();
+        private Dictionary<string, int> columnNameDic = new Dictionary<string, int>();
+
+        public Dictionary<string, int> ColumnNameDic
+        {
+            get { return columnNameDic; }
+            set { columnNameDic = value; }
+        }
+
+         
 
         public string GetValue(string columnName)
         {
             var data = this.Text.Split('\t');
-            if (attributeDic.ContainsKey(columnName))
+            if (columnNameDic.ContainsKey(columnName))
             {
-                if (data.Length >= attributeDic[columnName])
+                if (data.Length >= columnNameDic[columnName])
                 {
                     try
                     {
-                        return data[attributeDic[columnName]];
+                        return data[columnNameDic[columnName]];
                     }
                     catch (Exception e)
                     {
@@ -149,10 +144,11 @@ namespace Rawler.Tool
     /// </summary>
     public class GetTsvValue : RawlerBase
     {
+        public string Default{get;set;}
         public override void Run(bool runChildren)
         {
-            var file = this.GetAncestorRawler().OfType<TsvReadLines>();
-            if (file.Count() > 0)
+            var file = this.GetUpperRawler<TsvReadLines>();
+            if (file !=null)
             {
                 string columnName = this.ColumnName;
                 if (this.ColumnNameTree != null)
@@ -161,7 +157,23 @@ namespace Rawler.Tool
                 }
                 if (string.IsNullOrEmpty(columnName) == false)
                 {
-                    SetText(file.First().GetValue(columnName));
+                    if (file.ColumnNameDic.ContainsKey(columnName))
+                    {
+                        var i = file.ColumnNameDic[columnName];
+                        var d = GetText().Split('\t');
+                        if (d.Length > i)
+                        {
+                            SetText(d[i]);
+                        }
+                        else
+                        {
+                            SetText(Default);
+                        }
+                    }
+                    else
+                    {
+                        ReportManage.ErrReport(this, "該当するキーがありません:" + columnName);
+                    }
                 }
                 else
                 {

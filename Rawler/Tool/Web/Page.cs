@@ -238,6 +238,15 @@ namespace Rawler.Tool
                 }
             }
         }
+
+        /// <summary>
+        /// ページロードなしで、Runをします。
+        /// </summary>
+        public void RunWithoutPageLoad()
+        {
+            RunChildren(true);
+        }
+
         protected bool ReadPage(string url)
         {
             var client = GetWebClient();
@@ -357,7 +366,7 @@ namespace Rawler.Tool
             set { useReferer = value; }
         }
 
-        private WebClient GetWebClient()
+        public WebClient GetWebClient()
         {
             WebClient client = new WebClient();
             IRawler current = this.Parent;
@@ -431,6 +440,20 @@ namespace Rawler.Tool
                 clone.AddChildren(child);
             }
             return clone;
+        }
+
+        /// <summary>
+        /// ページヘの読み込み済みのPageオブジェクトを返す
+        /// </summary>
+        /// <param name="url"></param>
+        /// <param name="html"></param>
+        /// <returns></returns>
+        public static Page CreatePage(string url,string html)
+        {
+            var page = new Page();
+            page.currentUrl = url;
+            page.SetText(html);
+            return page;
         }
     }
 

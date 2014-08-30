@@ -18,25 +18,31 @@ namespace Rawler.Tool
 
         public override void Run(bool runChildren)
         {
-            var page = this.GetAncestorRawler().Where(n => n is Page);
-            if (page.Count() > 0)
+             base.Run(runChildren);          
+        }
+
+        public override string Text
+        {
+            get
             {
-                if (urlType == Tool.UrlType.Current)
+                var page = this.GetAncestorRawler().Where(n => n is Page);
+                if (page.Count() > 0)
                 {
-                    this.SetText(((Page)page.First()).GetCurrentUrl());
+                    if (urlType == Tool.UrlType.Current)
+                    {
+                        this.SetText(((Page)page.First()).GetCurrentUrl());
+                    }
+                    else
+                    {
+                        this.SetText(((Page)page.First()).GetStartUrl());
+                    }                  
                 }
                 else
                 {
-                    this.SetText(((Page)page.First()).GetStartUrl());                    
-                }
-                base.Run(runChildren);
+                    ReportManage.ErrReport(this, "Pageオブジェクトが上流にありません");
+                } 
+                return base.Text;
             }
-            else
-            {
-                ReportManage.ErrReport(this, "Pageオブジェクトが上流にありません");
-            }
-
-            
         }
 
         /// <summary>
