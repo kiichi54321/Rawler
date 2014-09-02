@@ -198,6 +198,27 @@ namespace RawlerLib
             return list;
         }
 
+        public static IEnumerable<Link> GetBackImageLink(string Html, string url)
+        {
+            System.Text.RegularExpressions.Regex regex = new System.Text.RegularExpressions.Regex(@"<[^>]*?\s*(background|background-image)\s*:\s*url\s*\((\s*[']|\s*)([^'\)>]+)[^>]*?>", System.Text.RegularExpressions.RegexOptions.IgnoreCase);
+            List<Link> linkList = new List<Link>();
+            foreach (System.Text.RegularExpressions.Match match in regex.Matches(Html))
+            {
+                Link link = new Link();
+                if (url.Length > 0)
+                {
+                    link.Url = ChangeAbsoluteUriForUrl(match.Groups[3].Value, url);
+                }
+                else
+                {
+                    link.Url = match.Groups[3].Value;
+                }
+                link.Tag = match.Value;
+                linkList.Add(link);
+            }
+            return linkList;
+        }
+
 
         /// <summary>
         /// HTML内のIMGタグを抽出し、Linkオブジェクトで返す。

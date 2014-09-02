@@ -1,6 +1,7 @@
 ﻿using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Linq;
+using RawlerLib.MyExtend;
 
 namespace TestRawlerToolProject
 {
@@ -19,5 +20,16 @@ namespace TestRawlerToolProject
             Assert.AreEqual<string>(list.First().Word, "5");
 
         }
+
+        [TestMethod]
+        public void TinyTestMethod()
+        {
+            TinySegmenterDotNet.TinySegmenter ts = new TinySegmenterDotNet.TinySegmenter();
+            Console.WriteLine(ts.SegmentExted("私は[任務完了]です").JoinText("_"));
+            ts.AddWordDic("[任務完了]");
+            ts.AddWordDic("[任務");
+            Console.WriteLine(ts.SegmentExted("私は[任務完了]です").JoinText("_"));
+
+        }        
     }
 }

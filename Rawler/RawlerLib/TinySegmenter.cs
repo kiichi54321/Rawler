@@ -1,4 +1,7 @@
 ﻿/*
+ * 部分的辞書使用に改造。@kiichi54321 
+ * 
+ * 元のC#版作者
  * TinySegmenter.NET 0.1.1 -- C# Version of TinySegmenter
  * (c) 2010 DOBON! <http://dobon.net>
 
@@ -12,6 +15,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
+using System.Linq;
 
 namespace TinySegmenterDotNet
 {
@@ -1465,7 +1469,7 @@ namespace TinySegmenterDotNet
             this.chartype_ = new Dictionary<Regex, string>();
             foreach (string i in patterns.Keys)
             {
-                Regex reg = new Regex(i, RegexOptions.Compiled);
+                Regex reg = new Regex(i);
                 this.chartype_.Add(reg, patterns[i]);
             }
         }
@@ -1592,6 +1596,200 @@ namespace TinySegmenterDotNet
                 p2 = p3;
                 p3 = p;
                 word += seg[i];
+            }
+            result.Add(word);
+
+            return result.ToArray();
+        }
+
+        Dictionary<string, List<WordDicData>> wordDic = new Dictionary<string, List<WordDicData>>();
+        List<string> wordList = new List<string>();
+
+        public void AddWordDic(string word)
+        {
+            wordList.Add(word);
+            wordDic = null;
+        }
+
+        public class WordDicData
+        {
+            public string Word { get; set; }
+            public int Length { get; set; }
+            public string Replace { get; set; }
+
+            public WordDicData()
+            {
+
+            }
+
+            public WordDicData(string text)
+            {
+                var d = text.Split('\t');
+                Word = d[0];
+                if (d.Length > 1) Replace = d[1];
+                Length = Word.Length;
+            }
+
+            public string GetWord()
+            {
+                if (string.IsNullOrEmpty(Replace)) return Word;
+                return Replace;
+            }
+
+            public bool EqualsText(string text)
+            {
+                if (text.Length >= Length)
+                {
+                    if (text.Substring(0, Length) == Word)
+                    {
+                        return true;
+                    }
+                }
+                return false;
+            }
+        }
+
+        public void CreateDic()
+        {
+            wordDic = wordList.GroupBy(n => n.Substring(0, 2)).Select(n => new { Key = n.Key, List = n.Select(m => new WordDicData(m)).OrderByDescending(m => m.Length).ToList() }).ToDictionary(n => n.Key, n => n.List);
+        }
+
+        public WordDicData SearchDic(string head, string text)
+        {
+            if (wordDic == null) CreateDic();
+
+            if (wordDic.ContainsKey(head))
+            {
+                var worddata = wordDic[head].DefaultIfEmpty(null).FirstOrDefault(n => n.EqualsText(text));
+                return worddata;
+            }
+            return null;
+        }
+
+
+        public string[] SegmentExted(string input)
+        {
+            if (string.IsNullOrEmpty(input))
+                return new string[] { };
+
+            List<string> result = new List<string>();
+            List<string> seg = new List<string>();
+            seg.Add("B3");
+            seg.Add("B2");
+            seg.Add("B1");
+            List<string> ctype = new List<string>();
+            ctype.Add("O");
+            ctype.Add("O");
+            ctype.Add("O");
+            //char[] o = input.ToCharArray();
+            for (int i = 0; i < input.Length; i++)
+            {
+                string c = input[i].ToString();
+                seg.Add(c);
+                ctype.Add(this.ctype_(c));
+            }
+            seg.Add("E1");
+            seg.Add("E2");
+            seg.Add("E3");
+            ctype.Add("O");
+            ctype.Add("O");
+            ctype.Add("O");
+            string word = seg[3];
+            string p1 = "U";
+            string p2 = "U";
+            string p3 = "U";
+
+            int postion = 0;
+            while (input.Length > postion +1)
+            {
+                var i = postion + 4;
+                WordDicData worddicdata = null;
+                if (postion + 2 < input.Length)
+                {
+                    worddicdata = SearchDic(input.Substring(postion, 2), input.Substring(postion));
+                }
+                if (worddicdata != null)
+                {
+                    result.Add(worddicdata.GetWord());
+                    postion += worddicdata.Length;
+                    i = postion + 4;
+                    word = seg[i-1];
+                    p1 = "O";
+                    p2 = "O";
+                    p3 = "B";
+                }
+                else
+                {
+                    int score = this.BIAS__;
+
+                    string w1 = seg[i - 3];
+                    string w2 = seg[i - 2];
+                    string w3 = seg[i - 1];
+                    string w4 = seg[i];
+                    string w5 = seg[i + 1];
+                    string w6 = seg[i + 2];
+                    string c1 = ctype[i - 3];
+                    string c2 = ctype[i - 2];
+                    string c3 = ctype[i - 1];
+                    string c4 = ctype[i];
+                    string c5 = ctype[i + 1];
+                    string c6 = ctype[i + 2];
+                    score += this.ts_(this.UP1__, p1);
+                    score += this.ts_(this.UP2__, p2);
+                    score += this.ts_(this.UP3__, p3);
+                    score += this.ts_(this.BP1__, p1 + p2);
+                    score += this.ts_(this.BP2__, p2 + p3);
+                    score += this.ts_(this.UW1__, w1);
+                    score += this.ts_(this.UW2__, w2);
+                    score += this.ts_(this.UW3__, w3);
+                    score += this.ts_(this.UW4__, w4);
+                    score += this.ts_(this.UW5__, w5);
+                    score += this.ts_(this.UW6__, w6);
+                    score += this.ts_(this.BW1__, w2 + w3);
+                    score += this.ts_(this.BW2__, w3 + w4);
+                    score += this.ts_(this.BW3__, w4 + w5);
+                    score += this.ts_(this.TW1__, w1 + w2 + w3);
+                    score += this.ts_(this.TW2__, w2 + w3 + w4);
+                    score += this.ts_(this.TW3__, w3 + w4 + w5);
+                    score += this.ts_(this.TW4__, w4 + w5 + w6);
+                    score += this.ts_(this.UC1__, c1);
+                    score += this.ts_(this.UC2__, c2);
+                    score += this.ts_(this.UC3__, c3);
+                    score += this.ts_(this.UC4__, c4);
+                    score += this.ts_(this.UC5__, c5);
+                    score += this.ts_(this.UC6__, c6);
+                    score += this.ts_(this.BC1__, c2 + c3);
+                    score += this.ts_(this.BC2__, c3 + c4);
+                    score += this.ts_(this.BC3__, c4 + c5);
+                    score += this.ts_(this.TC1__, c1 + c2 + c3);
+                    score += this.ts_(this.TC2__, c2 + c3 + c4);
+                    score += this.ts_(this.TC3__, c3 + c4 + c5);
+                    score += this.ts_(this.TC4__, c4 + c5 + c6);
+                    //score += this.ts_(this.TC5__, c4 + c5 + c6);
+                    score += this.ts_(this.UQ1__, p1 + c1);
+                    score += this.ts_(this.UQ2__, p2 + c2);
+                    score += this.ts_(this.UQ1__, p3 + c3);
+                    score += this.ts_(this.BQ1__, p2 + c2 + c3);
+                    score += this.ts_(this.BQ2__, p2 + c3 + c4);
+                    score += this.ts_(this.BQ3__, p3 + c2 + c3);
+                    score += this.ts_(this.BQ4__, p3 + c3 + c4);
+                    score += this.ts_(this.TQ1__, p2 + c1 + c2 + c3);
+                    score += this.ts_(this.TQ2__, p2 + c2 + c3 + c4);
+                    score += this.ts_(this.TQ3__, p3 + c1 + c2 + c3);
+                    score += this.ts_(this.TQ4__, p3 + c2 + c3 + c4);
+                    string p = "O";
+                    if (score > 0)
+                    {
+                        result.Add(word);
+                        word = "";
+                        p = "B";
+                    }
+                    p1 = p2;
+                    p2 = p3;
+                    p3 = p;
+                    word += seg[i];
+                    postion++;
+                }
             }
             result.Add(word);
 

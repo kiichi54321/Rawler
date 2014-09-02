@@ -93,11 +93,15 @@ namespace Rawler.Tool
                     if (useAbsolutetLink)
                     {
                         list = new List<RawlerLib.Web.Link>(RawlerLib.Web.GetImageLink(GetText(), GetPageUrl()));
+                        list.AddRange(RawlerLib.Web.GetBackImageLink(GetText(), GetPageUrl()));
                     }
                     else
                     {
                         list = new List<RawlerLib.Web.Link>(RawlerLib.Web.GetImageLink(GetText()));
+                        list.AddRange(RawlerLib.Web.GetBackImageLink(GetText(),string.Empty));
                     }
+
+
                     if (LabelFilter != null && LabelFilter.Length > 0)
                     {
                         list = new List<RawlerLib.Web.Link>(list.Where(n => n.Label.Contains(LabelFilter)));

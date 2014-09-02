@@ -18,5 +18,7 @@ namespace TestRawlerToolProject
             Console.WriteLine(encoding.BodyName);
             Console.WriteLine(html);
         }
+
+
     }
 }
