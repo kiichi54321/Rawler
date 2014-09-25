@@ -6,7 +6,8 @@ using Rawler.Tool;
 using Microsoft.CSharp.RuntimeBinder;
 using System.Runtime.CompilerServices;
 using System.Reflection;
-
+using Newtonsoft.Json.Linq;
+using RawlerLib.MyExtend;
 
 namespace Rawler.Tool
 {
@@ -90,9 +91,9 @@ namespace Rawler.Tool
             }
         }
 
-
-
     }
+
+
 
     public class DataWriteJsonData : RawlerBase,IDataWrite
     {
@@ -123,27 +124,44 @@ namespace Rawler.Tool
         public override void Run(bool runChildren)
         {
             var t = GetText();
-            object obj;
-            Codeplex.Data.DynamicJson data = Codeplex.Data.DynamicJson.Parse(t);
+            bool flag = false;
+            var json = JObject.Parse(t);
+            var data = this.GetUpperRawler<Data>();
 
+            foreach (var item in FieldName.Split('.'))
             {
-
-                if (data.TryGetMember(FieldName, out obj))
+                if (json.Properties().Where(n => n.Name == item).Any())
                 {
-                    this.SetText(obj.ToString());
-                    DataWrite dataWrite = new DataWrite();
-                    dataWrite.SetParent(this);
-                    dataWrite.Attribute = FieldName;
-                    dataWrite.WriteType = this.WriteType;
-                    dataWrite.Run();
-
-                    base.Run(runChildren);
+                    if (json.Property(item).Value.Type == JTokenType.Object)
+                    {
+                        json = JObject.Parse(json.Property(item).Value.ToString());
+                    }
+                    else
+                    {
+                        data.DataWrite(FieldName, json.Property(item).Value.ToString(), this.WriteType);
+                        flag = true;
+                    }
                 }
                 else
                 {
-                    ReportManage.ErrReport(this, "FieldNameがありません。");
+                    break;
                 }
+
+            }          
+            if( json.Type == JTokenType.Object && flag == false)
+            {
+                SetText(json.ToString());
+                DataWrite dataWrite = new DataWrite();
+                dataWrite.SetParent(this);
+                dataWrite.Attribute = FieldName;
+                dataWrite.WriteType = this.WriteType;
+                dataWrite.Run();
             }
+            if(flag == false)
+            {
+                ReportManage.ErrReport(this, "FieldNameがありません。");
+            }
+            base.Run(runChildren);
         }
 
         public string FieldName { get; set; }
@@ -208,37 +226,52 @@ namespace Rawler.Tool
         }
         #endregion
 
+        protected string Json { get; set; }
+        protected string PropertyName { get; set; }
+
         /// <summary>
         /// このクラスでの実行すること。
         /// </summary>
         /// <param name="runChildren"></param>
         public override void Run(bool runChildren)
         {
-            var t = GetText();
-            object obj;
-            Codeplex.Data.DynamicJson data = Codeplex.Data.DynamicJson.Parse(t);
+            string t = GetText();
+            if (string.IsNullOrEmpty(Json) == false) t = Json;
+            var j = JObject.Parse(t);
 
+            foreach (var item in j.Properties())
             {
-                foreach (var item in data.GetDynamicMemberNames())
+                if (item.Value != null)
                 {
-                    if (data.TryGetMember(item, out obj))
+                    if (item.Value.Type == Newtonsoft.Json.Linq.JTokenType.Null)
                     {
-                        if (obj != null)
-                        {
-                            this.SetText(obj.ToString());
-                        }
-                        else
-                        {
-                            this.SetText("Null");
-                        }
-                        DataWrite dataWrite = new DataWrite();
-                        dataWrite.SetParent(this);
-                        dataWrite.Attribute = item;
-                        dataWrite.Run();
+                        SetText("Null");
+                    }
+                    else if (item.Value.Type == Newtonsoft.Json.Linq.JTokenType.Object)
+                    {
+                        DataWriteAllJsonData all = new DataWriteAllJsonData();
+                        all.SetParent(this);
+                        all.Json = item.Value.ToString();
+                        all.PropertyName = this.PropertyName.NullIsEmpty() + item.Name + ".";
+                        all.Run();
+                    }
+                    else
+                    {
+                        SetText(item.Value.ToString());
                     }
                 }
-                base.Run(runChildren);
+                else
+                {
+                    SetText("Null");
+                }
+
+                DataWrite dataWrite = new DataWrite();
+                dataWrite.SetParent(this);
+                dataWrite.Attribute = PropertyName.NullIsEmpty()+ item.Name;
+                dataWrite.Run();
+
             }
+            base.Run(runChildren);
         }
 
 

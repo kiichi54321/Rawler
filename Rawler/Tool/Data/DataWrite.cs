@@ -71,6 +71,13 @@ namespace Rawler.Tool
         /// </summary>
         public virtual string Attribute { get; set; }
 
+        private DataAttributeType attributeType = DataAttributeType.Text;
+
+        public DataAttributeType AttributeType
+        {
+            get { return attributeType; }
+            set { attributeType = value; }
+        } 
 
         ///// <summary>
         ///// 書き込むときに使うAttribute 
@@ -149,18 +156,18 @@ namespace Rawler.Tool
                         tmpAttributeText = RawlerBase.GetText(this.Parent.Text, attributeTree,this);
 
                     }
-                    data.DataWrite(tmpAttributeText, txt, writeType);
+                    data.DataWrite(tmpAttributeText, txt, writeType,AttributeType);
 
                 }
                 else
                 {
                     if (this.Attribute != null)
                     {
-                        data.DataWrite(this.Attribute, txt, writeType);
+                        data.DataWrite(this.Attribute, txt, writeType,AttributeType);
                     }
                     else
                     {
-                        data.DataWrite(string.Empty, txt, writeType);
+                        data.DataWrite(string.Empty, txt, writeType, AttributeType);
                     }
                 }
 

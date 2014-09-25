@@ -18,7 +18,7 @@ namespace Rawler.Tool
     public class Throw:RawlerBase
     {
         public string TypeName { get; set; }
-        public string ObjectName { get; set; }
+        public string TargetName { get; set; }
         public override void Run(bool runChildren)
         {
             var list = this.GetAncestorRawler().OfType<IThrowCatch>();
@@ -26,9 +26,9 @@ namespace Rawler.Tool
             {
                 list = list.Where(n => n.GetType().Name == TypeName);
             }
-            if(string.IsNullOrEmpty(ObjectName)==false)
+            if(string.IsNullOrEmpty(TargetName)==false)
             {
-                list = list.Where(n => n.Name == ObjectName);
+                list = list.Where(n => n.Name == TargetName);
             }
             if(list.Any())
             {

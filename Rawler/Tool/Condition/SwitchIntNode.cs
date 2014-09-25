@@ -28,8 +28,8 @@ namespace Rawler.Tool
         }
         #endregion
 
-        public int Start { get; set; }
-        public int End { get; set; }
+        public int? Start { get; set; }
+        public int? End { get; set; }
 
         private bool errReport = false;
 

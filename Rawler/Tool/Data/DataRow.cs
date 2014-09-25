@@ -3,6 +3,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using RawlerLib.MyExtend;
+using System.Diagnostics;
 
 namespace Rawler.Tool
 {
@@ -12,6 +14,7 @@ namespace Rawler.Tool
     [Serializable]
     public class DataRow
     {
+        private Dictionary<string, DataAttributeType> dataTypeDic = new Dictionary<string, DataAttributeType>();
         private Dictionary<string, List<string>> dataDic = new Dictionary<string, List<string>>();
         /// <summary>
         /// データの一行分を格納するクラス。
@@ -35,9 +38,11 @@ namespace Rawler.Tool
         /// </summary>
         /// <param name="attribute">属性（Key）</param>
         /// <param name="value">値</param>
-        public void AddData(string attribute, string value)
+        public void AddData(string attribute, string value,DataAttributeType type)
         {
             List<string> list;
+            dataTypeDic.GetValueOrAdd(attribute, type);
+
             if (dataDic.TryGetValue(attribute, out list) == false)
             {
                 list = new List<string>();
@@ -46,14 +51,20 @@ namespace Rawler.Tool
             list.Add(value);
         }
 
+        public void AddData(string attribute, string value)
+        {
+            AddData(attribute, value, DataAttributeType.Text);
+        }
+
         /// <summary>
         /// データを加える。上書きせずリストに蓄積される。
         /// </summary>
         /// <param name="attribute">属性（Key）</param>
         /// <param name="value">値</param>
-        public void ReplaceData(string attribute, string value)
+        public void ReplaceData(string attribute, string value,DataAttributeType type)
         {
             List<string> list;
+            dataTypeDic.GetValueOrAdd(attribute, type);
             if (dataDic.TryGetValue(attribute, out list) == false)
             {
                 list = new List<string>();
@@ -98,6 +109,22 @@ namespace Rawler.Tool
         }
 
 
+        public IEnumerable<CellData> GetCell(IEnumerable<string> keys)
+        {
+            List<CellData> list = new List<CellData>();
+            foreach (var item in keys)
+            {
+                if( dataDic.ContainsKey(item))
+                {
+                    list.Add(new CellData() { Key = item, Values = dataDic[item].Select(n=>n.Trim()).ToList() , DataType = dataTypeDic.GetValueOrDefault(item,DataAttributeType.Text) });
+                }
+                else
+                {
+                    list.Add(new CellData() { Key = item, Values = new List<string>(), DataType = DataAttributeType.Text });
+                }
+            }
+            return list;
+        }
 
         /// <summary>
         /// attributeの内容を取ってくる（単数）。attributeがない時は空文字を返す。
@@ -148,5 +175,23 @@ namespace Rawler.Tool
                 return true;
             }
         }
+    }
+
+    [DebuggerDisplay("{Key}:{DataText})")]
+    public class CellData
+    {
+        public string Key { get; set; }
+        public List<string> Values { get; set; }
+        public DataAttributeType DataType { get; set; }
+        public string DataText
+        {
+            get { return Values.JoinText(","); }
+        }
+    }
+
+
+    public enum DataAttributeType
+    {
+        Text, Image, Url, SourceUrl
     }
 }

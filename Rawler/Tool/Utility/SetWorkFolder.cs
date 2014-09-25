@@ -48,7 +48,12 @@ namespace Rawler.Tool
             {
                 path = System.Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory);
             }
-            if (Folder != null)
+            if(FolderTree !=null)
+            {
+                var f = RawlerBase.GetText(GetText(), FolderTree, this);
+                path = System.IO.Path.Combine(path,f);
+            }
+            else if (Folder != null)
             {
                 path = System.IO.Path.Combine(path, Folder);
             }
@@ -69,6 +74,9 @@ namespace Rawler.Tool
         }
 
         public string Folder { get; set; }
+        public RawlerBase FolderTree { get; set; }
+
+
         private SpecialFolder workFolderType = SpecialFolder.none;
 
         public SpecialFolder SpecialFolder

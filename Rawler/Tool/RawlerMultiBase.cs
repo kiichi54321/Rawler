@@ -66,7 +66,6 @@ namespace Rawler.Tool
         /// <param name="list"></param>
         protected void RunChildrenForArray(bool runChildren, IEnumerable<string> list)
         {
-
             if (runChildren)
             {
                 if (ConvertTree != null)

@@ -38,6 +38,7 @@ namespace RawlerTwitter
             base.RunChildrenForArray(runChildren, ReadSearch());
 
         }
+        public double SleepSecond { get; set; }
 
         private Dictionary<string, Tuple<decimal, decimal>> searchWordDic = new Dictionary<string, Tuple<decimal, decimal>>();
         
@@ -118,7 +119,8 @@ namespace RawlerTwitter
                             if (searchWordDic[searchWord].Item1 < item.Id || searchWordDic[searchWord].Item2 > item.Id)
                             {                               
                                 c++;
-                                yield return Codeplex.Data.DynamicJson.Serialize(item);
+                                yield return Newtonsoft.Json.Linq.JObject.FromObject(item).ToString();
+                              //  yield return Codeplex.Data.DynamicJson.Serialize(item);
                             }
                             else
                             {
@@ -128,8 +130,9 @@ namespace RawlerTwitter
                         else
                         {
                             c++;
-                           // yield return Codeplex.Data.DynamicJson.Serialize(item);
-                            yield return Codeplex.Data.DynamicJson.Serialize(item);
+                            yield return Newtonsoft.Json.Linq.JObject.FromObject(item).ToString();
+                            // yield return Codeplex.Data.DynamicJson.Serialize(item);
+                         //   yield return Codeplex.Data.DynamicJson.Serialize(item);
                         }
                     }
 
@@ -151,6 +154,10 @@ namespace RawlerTwitter
                 else
                 {
                     searchWordDic.Add(searchWord, new Tuple<decimal, decimal>(maxId, minId));
+                }
+                if (SleepSecond > 0)
+                {
+                    System.Threading.Thread.Sleep((int)(SleepSecond * 1000));
                 }
           
             }

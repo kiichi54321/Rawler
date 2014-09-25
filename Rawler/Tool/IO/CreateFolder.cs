@@ -9,10 +9,29 @@ namespace Rawler.Tool
     {
         public string FolderName { get; set; }
         public RawlerBase FolderNameTree { get; set; }
+        private SpecialFolder workFolderType = SpecialFolder.none;
+
+        public SpecialFolder SpecialFolder
+        {
+            get { return workFolderType; }
+            set { workFolderType = value; }
+        }
 
         public override void Run(bool runChildren)
         {
+            string path = string.Empty;
+            if (workFolderType == Tool.SpecialFolder.MyDocuments)
+            {
+                path = System.Environment.GetFolderPath(Environment.SpecialFolder.Personal);
+            }
+            if (workFolderType == Tool.SpecialFolder.Desktop)
+            {
+                path = System.Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory);
+            }
+
             string folder = null;
+
+
             if(FolderNameTree !=null)
             {
                 folder = RawlerBase.GetText(this.GetText(), FolderNameTree, this);
@@ -28,9 +47,10 @@ namespace Rawler.Tool
             }
             else
             {
-                if (System.IO.Directory.Exists(folder) == false)
+                 path = System.IO.Path.Combine(path,folder);
+                 if (System.IO.Directory.Exists(path) == false)
                 {
-                    System.IO.Directory.CreateDirectory(folder);
+                    System.IO.Directory.CreateDirectory(path);
                 }
 
             }

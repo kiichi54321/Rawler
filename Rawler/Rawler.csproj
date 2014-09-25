@@ -87,10 +87,11 @@
     <Compile Include="RawlerLib\DynamicDictionary.cs" />
     <Compile Include="RawlerLib\DynamicJson.cs" />
     <Compile Include="RawlerLib\EventStringArgs.cs" />
-    <Compile Include="RawlerLib\Extend.cs" />
+    <Compile Include="RawlerLib\Extend\Extend.cs" />
     <Compile Include="RawlerLib\Io.cs" />
+    <Compile Include="RawlerLib\Jcode.cs" />
     <Compile Include="RawlerLib\kanaxs-1.0.0.cs" />
-    <Compile Include="RawlerLib\MyExtend.cs" />
+    <Compile Include="RawlerLib\Extend\MyExtend.cs" />
     <Compile Include="RawlerLib\ObjectLib.cs" />
     <Compile Include="RawlerLib\Pair.cs" />
     <Compile Include="RawlerLib\TagAnalyze.cs" />
@@ -171,6 +172,7 @@
     <Compile Include="Tool\Html\ImageLink.cs" />
     <Compile Include="Tool\Condition\IsEmpty.cs" />
     <Compile Include="Tool\Utility\KeyValuePair.cs" />
+    <Compile Include="Tool\Web\PageNoDownLoad.cs" />
     <Compile Include="Tool\Web\PageOnce.cs" />
     <Compile Include="Tool\Web\PageParent.cs" />
     <Compile Include="Tool\Dirt\Parallel.cs" />
@@ -257,6 +259,7 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Attribute\" />
     <Folder Include="Template\" />
     <Folder Include="Tool\NewFolder1\" />
   </ItemGroup>

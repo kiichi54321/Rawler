@@ -17,19 +17,7 @@ namespace Rawler.Tool
             : base()
         {
         }
-        ///// <summary>
-        ///// イメージタグを取りだすRawlerクラス。
-        ///// </summary>
-        ///// <param name="UrlFilter">含まれるURLの指定する</param>
-        ///// <param name="LabelFilter">含まれるLabelの指定する（不完全）</param>
-        ///// <param name="isMulti">複数か？</param>
-        //public ImageLink(string UrlFilter, string LabelFilter, bool isMulti)
-        //    : base()
-        //{
-        //    this.UrlFilter = UrlFilter;
-        //    this.LabelFilter = LabelFilter;
-        //    this.isMulti = isMulti;
-        //}
+
         /// <summary>
         /// 含まれるURLの指定する
         /// </summary>
@@ -50,13 +38,14 @@ namespace Rawler.Tool
             set { visbleType = value; }
         }
 
-        //private bool useAbsolutetLink = false;
+        ImageType imageType = ImageType.Both;
 
-        //public bool UseAbsolutetLink
-        //{
-        //    get { return useAbsolutetLink; }
-        //    set { useAbsolutetLink = value; }
-        //}
+        public ImageType ImageType
+        {
+            get { return imageType; }
+            set { imageType = value; }
+        }
+
 
 
         private bool emptyReport = false;
@@ -92,14 +81,39 @@ namespace Rawler.Tool
                     List<RawlerLib.Web.Link> list;
                     if (useAbsolutetLink)
                     {
-                        list = new List<RawlerLib.Web.Link>(RawlerLib.Web.GetImageLink(GetText(), GetPageUrl()));
-                        list.AddRange(RawlerLib.Web.GetBackImageLink(GetText(), GetPageUrl()));
+                        if (imageType == Tool.ImageType.Both)
+                        {
+                            list = new List<RawlerLib.Web.Link>(RawlerLib.Web.GetImageLink(GetText(), GetPageUrl()));
+                            list.AddRange(RawlerLib.Web.GetBackImageLink(GetText(), GetPageUrl()));
+                        }
+                        else if(imageType == Tool.ImageType.image)
+                        {
+                            list = new List<RawlerLib.Web.Link>(RawlerLib.Web.GetImageLink(GetText(), GetPageUrl()));
+                        }
+                        else
+                        {
+                            list = new List<RawlerLib.Web.Link>();
+                            list.AddRange(RawlerLib.Web.GetBackImageLink(GetText(), GetPageUrl()));
+                        }
                     }
                     else
                     {
-                        list = new List<RawlerLib.Web.Link>(RawlerLib.Web.GetImageLink(GetText()));
-                        list.AddRange(RawlerLib.Web.GetBackImageLink(GetText(),string.Empty));
+                        if (imageType == Tool.ImageType.Both)
+                        {
+                            list = new List<RawlerLib.Web.Link>(RawlerLib.Web.GetImageLink(GetText()));
+                            list.AddRange(RawlerLib.Web.GetBackImageLink(GetText(), string.Empty));
+                        }
+                        else if (imageType == Tool.ImageType.image)
+                        {
+                            list = new List<RawlerLib.Web.Link>(RawlerLib.Web.GetImageLink(GetText()));
+                        }
+                        else
+                        {
+                            list = new List<RawlerLib.Web.Link>();
+                            list.AddRange(RawlerLib.Web.GetBackImageLink(GetText(), string.Empty));
+                        }
                     }
+
 
 
                     if (LabelFilter != null && LabelFilter.Length > 0)
@@ -227,5 +241,7 @@ namespace Rawler.Tool
         }
 
     }
+
+    public enum ImageType { image,BackgroundImage,Both}
 }
 

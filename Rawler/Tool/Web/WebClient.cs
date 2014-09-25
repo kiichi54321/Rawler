@@ -17,15 +17,15 @@ namespace Rawler.Tool
     [Serializable]
     public class WebClient : RawlerBase
     {
-        private bool onceEncodingCheck = true;
-        /// <summary>
-        /// 初めだけエンコードのチェックをする。
-        /// </summary>
-        public bool OnceEncodingCheck
-        {
-            get { return onceEncodingCheck; }
-            set { onceEncodingCheck = value; }
-        }
+        //private bool onceEncodingCheck = true;
+        ///// <summary>
+        ///// 初めだけエンコードのチェックをする。
+        ///// </summary>
+        //public bool OnceEncodingCheck
+        //{
+        //    get { return onceEncodingCheck; }
+        //    set { onceEncodingCheck = value; }
+        //}
 
         private Encoding encoder = null;
 
@@ -165,12 +165,24 @@ namespace Rawler.Tool
             }
         }
 
+        private bool useCache = false;
+        /// <summary>
+        /// キャッシュを効かせる。
+        /// </summary>
+        public bool UseCache
+        {
+            get { return useCache; }
+            set { useCache = value; }
+        }
+
+        protected Dictionary<string, string> casheDic = new Dictionary<string, string>();
+
         /// <summary>
         /// Basic認証用
         /// </summary>
         public RawlerLib.BasicAuthorization BasicAuthorization { get; set; }
 
-
+        [NonSerialized]
         RawlerLib.WebClientEx wc = new RawlerLib.WebClientEx();
         /// <summary>
         /// HttpGet
@@ -181,6 +193,10 @@ namespace Rawler.Tool
         public virtual string HttpGet(string url, Encoding enc)
         {
             Sleep();
+            if(UseCache)
+            {
+                if (casheDic.ContainsKey(url)) return casheDic[url];
+            }
 
             ErrMessage = string.Empty;
             string result = string.Empty;
@@ -190,14 +206,6 @@ namespace Rawler.Tool
                 wc.Referer = referer;
                 wc.UserAgent = userAgent;
                 wc.BasicAuthorization = BasicAuthorization;
-
-                if (OnceEncodingCheck == false)
-                {
-                    var data = wc.DownloadData(url);
-                    result = GetAutoEncoding(data, out encoder);
-                }
-                else
-                {
                     if (enc != null)
                     {
                         wc.Encoding = enc;
@@ -215,7 +223,7 @@ namespace Rawler.Tool
                         //txtEnc.Codec = "shift_jis";
                         //result = txtEnc.Text;
                     }
-                }
+                
             }
             catch (Exception e)
             {
@@ -241,36 +249,58 @@ namespace Rawler.Tool
                     result = string.Empty;
                 }
             }
-
+            if(UseCache)
+            {
+                casheDic.GetValueOrAdd(url, result);
+            }
 
             return result;
         }
 
         public string ErrMessage { get; set; }
+        class DownloadData
+        {
+            public string Url { get; set; }
+            public string HTML { get; set; }
+        }
 
+
+        public virtual void HttpGetAsync(IEnumerable<string> urls)
+        {
+            UseCache = false;
+            var d = urls.Distinct().Select(n => new DownloadData() { Url = n, HTML = string.Empty });
+            System.Threading.Tasks.Parallel.ForEach(d, (n) => {  n.HTML = HttpGet(n.Url); });
+            foreach (var item in d)
+            {
+                casheDic.GetValueOrAdd(item.Url, item.HTML);
+            }
+            UseCache = true;
+        }
         
 
         public string GetAutoEncoding(byte[] data,out Encoding encoding)
         {
             var utf8 = System.Text.Encoding.UTF8.GetString(data);
 
-            var p1 = "<meta http-equiv=\"content-type\" content=\"text/html; charset=(.*)\">";   
-            var p2 ="<meta charset=\"(.*)\">";
+            var p1 = "<meta http-equiv=\"content-type\" content=\"text/html; charset=(.*?)\"\\s*/?>";
+            var p2 = "<meta charset=\"(.*?)\"\\s*/?>";
             encoding = System.Text.Encoding.UTF8;
             try
             {
                 var head =utf8.Substring(0, 600);
                 var m1 = Regex.Match(head, p1, RegexOptions.IgnoreCase);
-                if (m1 != null)
+                if (m1.Success)
                 {
+                    if (m1.Groups[1].Value == "UTF-8") { return utf8; }
                     encoding = System.Text.Encoding.GetEncoding(m1.Groups[1].Value);
                     return encoding.GetString(data);
                 }
                 else
                 {
                     var m2 = Regex.Match(head, p2, RegexOptions.IgnoreCase);
-                    if (m2 != null)
+                    if (m2.Success)
                     {
+                        if (m2.Groups[1].Value == "UTF-8") { return utf8; }
                         encoding = System.Text.Encoding.GetEncoding(m2.Groups[1].Value);
                         return encoding.GetString(data);
                     }
@@ -280,6 +310,10 @@ namespace Rawler.Tool
             {
                 ReportManage.ErrReport(this, "エンコードの取得に失敗しました。"+e.Message);
             }
+            //文字コード自動判別（日本語限定）
+            var enc = RawlerLib.Jcode.GetCode(data);
+            if (enc != null) return enc.GetString(data);
+
             return utf8;
         }
 

@@ -9,6 +9,17 @@ using CoreTweet;
 
 namespace RawlerTwitter
 {
+    public class AppOnlyAuthentication
+    {
+        public AppOnlyAuthentication()
+        {
+            this.ConsumerKey = "gHVupgapEXlTZdu7rf3oOg";
+            this.ConsumerSecret = "YOicLtW8utx3NJyy88wtzq8QN3ilXeQoEGCPIJNzo";
+        }
+        public string ConsumerKey { get; set; }
+        public string ConsumerSecret { get; set; }
+    }
+
     public class TwitterLogin : RawlerBase
     {
         #region テンプレ
@@ -33,11 +44,12 @@ namespace RawlerTwitter
 
         string ConsumerKey = "gHVupgapEXlTZdu7rf3oOg";
         string ConsumerSecret = "YOicLtW8utx3NJyy88wtzq8QN3ilXeQoEGCPIJNzo";
-
   
-        protected Tokens token;
-        public Tokens Token { get { return token; } protected set { token = value; } }
+        protected CoreTweet.Core.TokensBase token;
+        public CoreTweet.Core.TokensBase Token { get { return token; } protected set { token = value; } }
         public TokenData TokenData { get; set; }
+        public AppOnlyAuthentication AppOnlyAuthentication { get; set; }
+
 
         private string tokenSettingFileName = "RawlerTwitterToken.setting";
         /// <summary>
@@ -46,56 +58,55 @@ namespace RawlerTwitter
         /// <param name="runChildren"></param>
         public override void Run(bool runChildren)
         {
-
-          //  OAuth2Token apponly = OAuth2.GetToken("consumer key", "consumer secret");
-
-               if (GetOAuthTokens() == null)
+            if (AppOnlyAuthentication != null)
             {
-                var session = OAuth.Authorize(ConsumerKey, ConsumerSecret);
-         //       Console.WriteLine("access here: {0}", session.AuthorizeUri);
-               // var tokens = session.GetTokens("PINCODE");
-
-                      ReportManage.Report(this, "PINがありません。ブラウザに表示されているPINの値を入力してください。PIN=\"(表示されているPIN)\"　とTwitterLoginクラスに情報を追加してください");
-                      System.Diagnostics.Process.Start(session.AuthorizeUri.ToString());
-
-
-
-                Task reportProgressTask = Task.Factory.StartNew(() =>
+                token = OAuth2.GetToken(AppOnlyAuthentication.ConsumerKey, AppOnlyAuthentication.ConsumerSecret);
+            }
+            else
+            {
+                if (GetOAuthTokens() == null)
                 {
-                    PinDialog pin = new PinDialog();
-                    if (pin.ShowDialog() == true)
-                    {
-                    var    tokens = session.GetTokens(pin.PIN);
-                  
+                    var session = OAuth.Authorize(ConsumerKey, ConsumerSecret);
+                    ReportManage.Report(this, "PINがありません。ブラウザに表示されているPINの値を入力してください。PIN=\"(表示されているPIN)\"　とTwitterLoginクラスに情報を追加してください");
+                    System.Diagnostics.Process.Start(session.AuthorizeUri.ToString());
 
-                        TokenData td = new TokenData()
+                    Task reportProgressTask = Task.Factory.StartNew(() =>
+                    {
+                        PinDialog pin = new PinDialog();
+                        if (pin.ShowDialog() == true)
                         {
-                            ConsumerKey = ConsumerKey,
-                            ConsumerSecret = ConsumerSecret,
-                            AccessToken = tokens.AccessToken,
-                            AccessTokenSecret = tokens.AccessTokenSecret
-                        };
-                        this.Token = new Tokens(tokens);
-                        this.TokenData = td;
-                        System.Xaml.XamlServices.Save(tokenSettingFileName, td);
-                    }
-                    else
-                    {
-                        return;
-                    }
+                            var tokens = session.GetTokens(pin.PIN);
 
-                },
-         CancellationToken.None,
-         TaskCreationOptions.None,
-         RawlerLib.UIData.UISyncContext);
-                reportProgressTask.Wait();
 
+                            TokenData td = new TokenData()
+                            {
+                                ConsumerKey = ConsumerKey,
+                                ConsumerSecret = ConsumerSecret,
+                                AccessToken = tokens.AccessToken,
+                                AccessTokenSecret = tokens.AccessTokenSecret
+                            };
+                            this.Token = new Tokens(tokens);
+                            this.TokenData = td;
+                            System.Xaml.XamlServices.Save(tokenSettingFileName, td);
+                        }
+                        else
+                        {
+                            return;
+                        }
+
+                    },
+             CancellationToken.None,
+             TaskCreationOptions.None,
+             RawlerLib.UIData.UISyncContext);
+                    reportProgressTask.Wait();
+
+                }
             }
             base.Run(runChildren);
         }
 
-        public Tokens GetOAuthTokens()
-        {
+        public CoreTweet.Core.TokensBase GetOAuthTokens()
+        {           
             if (System.IO.File.Exists(tokenSettingFileName))
             {
                 try

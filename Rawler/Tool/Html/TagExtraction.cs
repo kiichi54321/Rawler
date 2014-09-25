@@ -32,12 +32,12 @@ namespace Rawler.Tool
         }
 
 
-        List<string> texts = new List<string>();
-        public List<string> Texts
-        {
-            get { return texts; }
+        //List<string> texts = new List<string>();
+        //public List<string> Texts
+        //{
+        //    get { return texts; }
         
-        }
+        //}
 
         private bool isSingle = false;
 

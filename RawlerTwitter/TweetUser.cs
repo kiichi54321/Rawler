@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using Rawler.Tool;
 using System.Security;
+using Newtonsoft.Json.Linq;
 
 namespace RawlerTwitter
 {
@@ -38,6 +39,7 @@ namespace RawlerTwitter
             set { includeRetweets = value; }
         }
         bool exclude_replies = true;
+        public int MaxCount { get; set; }
 
         public bool ExcludeReplies
         {
@@ -45,23 +47,10 @@ namespace RawlerTwitter
             set { exclude_replies = value; }
         }
 
+        public RawlerBase CompletedTree { get; set; }
         public RawlerBase ErrorTree { get; set; }
 
-        //int count = 20;
 
-        //public int Count
-        //{
-        //    get { return count; }
-        //    set { count = value; }
-        //}
-
-        //int maxPage = 20;
-
-        //public int MaxPage
-        //{
-        //    get { return maxPage; }
-        //    set { maxPage = value; }
-        //}
 
         public string ScreenName { get; set; }
         ParentUserIdType parentTextType = ParentUserIdType.ScreenName;
@@ -71,17 +60,18 @@ namespace RawlerTwitter
             get { return parentTextType; }
             set { parentTextType = value; }
         }
+
         
-
-
+        public double SleepSecond { get; set; }
+        long max_id = long.MaxValue;
 
         public IEnumerable<string> ReadData()
         {
-            var login = this.GetAncestorRawler().OfType<TwitterLogin>().First();
-
+            var login = this.GetUpperRawler<TwitterLogin>();
+            int totalCount = 0;
             if (login != null)
             {
-                long max_id = long.MaxValue;
+               // long max_id = long.MaxValue;
                 while (true)
                 {
                     /// <para>- <c>long</c> user_id (optional)</para>
@@ -130,53 +120,28 @@ namespace RawlerTwitter
                         dic.Add("max_id", max_id - 1);
                     }
                     int count = 0;
-                   
+
                         foreach (var item in login.Token.Statuses.UserTimeline(dic))
                         {
                             count++;
+                            totalCount++;
                             max_id = Math.Min(max_id, item.Id);
-                            yield return Codeplex.Data.DynamicJson.Serialize(item);
+                            yield return JObject.FromObject(item).ToString();
+                            if (MaxCount > 0 && MaxCount <= totalCount) break;
                         }
-                   
                     
-                    if(count < 90)
+                   
+                    if (MaxCount > 0 && MaxCount <= totalCount) break;
+                    
+                    if(count < 50)
                     {
                         break;
                     }
+                    if (SleepSecond > 0)
+                    {
+                        System.Threading.Thread.Sleep((int)(SleepSecond * 1000));
+                    }
                 }
-
-
-                //while (true)
-                //{
-                //    var r = GetData(login, userTimelineOptions);
-                //    if (r.Item1 == false)
-                //    {
-                //        if (ErrorTree != null)
-                //        {
-                //            this.SetText(GetText() + "\t" + r.Item2);
-                //            ErrorTree.SetParent(this);
-                //            ErrorTree.Run();
-                //        }
-
-                //        break;
-                //    }
-                ////    dynamic[] test = Codeplex.Data.DynamicJson.Parse(r.Item2);
-                //    int c = 0;
-
-
-                //    foreach (var item in r.Item2)
-                //    {
-                //        c++;
-                //        yield return TweetData.ConvertXAML(item);
-                //        //yield return Codeplex.Data.DynamicJson.Serialize(item);
-                //    }
-                //    if (c < userTimelineOptions.Count * 0.9) break;
-                //    userTimelineOptions.Page++;
-                //    if (maxPage < userTimelineOptions.Page)
-                //    {
-                //        break;
-                //    }
-               // }
             }
             else
             {
@@ -185,31 +150,7 @@ namespace RawlerTwitter
         }
 
 
-        //private Tuple<bool,TwitterStatusCollection> GetData(TwitterLogin login, UserTimelineOptions userTimelineOptions)
-        //{
-        //    var lines = Twitterizer.TwitterTimeline.UserTimeline(login.Token, userTimelineOptions);
-        //    dynamic[] test = Codeplex.Data.DynamicJson.Parse(lines.Content);
-
-        //    if (test.Length == 2)
-        //    {
-        //        if (lines.Content.Contains("error"))
-        //        {
-        //            ReportManage.ErrReport(this, test[1].ToString());
-        //            if (lines.Content.Contains("Not authorized"))
-        //            {
-        //                return new Tuple<bool, TwitterStatusCollection>(false, new TwitterStatusCollection());
-        //            }
-        //            else
-        //            {
-        //                System.Threading.Thread.Sleep(new TimeSpan(0, 10, 0));
-        //                return GetData(login, userTimelineOptions);
-        //            }
-        //        }
-        //    }
-
-        //    return new Tuple<bool, TwitterStatusCollection>(true, lines.ResponseObject);
-        //}
-
+  
 
         /// <summary>
         /// このクラスでの実行すること。
@@ -217,16 +158,44 @@ namespace RawlerTwitter
         /// <param name="runChildren"></param>
         public override void Run(bool runChildren)
         {
+            bool flag = true;
+            bool retry = false;
             try
             {
                 this.RunChildrenForArray(true, ReadData());
             }
             catch (Exception e)
             {
+                flag = false;
                 ReportManage.ErrReport(this, GetText() + "\t" + e.Message);
-                ErrorTree.SetParent(this);
-                ErrorTree.Run();
+
+                if (e.Message == "Not authorized.") flag = true;
+                if (e.Message == "Rate limit exceeded") retry = true;
+                if (e.Message == "Over capacity") retry = true;
+                
+                if (ErrorTree != null && flag == false)
+                {
+                    ErrorTree.SetParent(this);
+                    ErrorTree.Run();
+                }
             }
+            if(flag)
+            {
+                max_id = long.MaxValue;
+                if( CompletedTree !=null)
+                {
+                    CompletedTree.SetParent(this.Parent);
+                    CompletedTree.Run();
+                }
+            }
+            if(retry)
+            {
+                ReportManage.Report(this, "3分Sleep", true, true);
+                GC.Collect();
+                System.Threading.Thread.Sleep(new TimeSpan(0, 3, 0));
+                Run(runChildren);
+            }
+            if (flag == false && retry == false) max_id = long.MaxValue;
         }
 
     }

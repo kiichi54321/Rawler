@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Windows.Markup;
+using RawlerLib.MyExtend;
 
 namespace Rawler.Tool
 {
@@ -111,7 +112,7 @@ namespace Rawler.Tool
         {
             List<DataRow> list = new List<DataRow>();
 
-            foreach (var item in dataList)
+            foreach (var item in dataList.ToArray())
             {
                 if (item.IsDataNull() == false)
                 {
@@ -145,15 +146,15 @@ namespace Rawler.Tool
         /// </summary>
         /// <param name="attribute"></param>
         /// <param name="value"></param>
-        public void DataWrite(string attribute, string value,DataWriteType type)
+        public void DataWrite(string attribute, string value,DataWriteType type,DataAttributeType attributeType)
         {
             if (type == DataWriteType.add)
             {
-                currentDataRow.AddData(attribute, value);
+                currentDataRow.AddData(attribute, value,attributeType);
             }
             else if(type == DataWriteType.replace)
             {
-                currentDataRow.ReplaceData(attribute, value);
+                currentDataRow.ReplaceData(attribute, value,attributeType);
             }
 
             if (attribute.ToLower() == "key")
@@ -162,6 +163,19 @@ namespace Rawler.Tool
             }
 
         }
+        public void DataWrite(string attribute, string value,DataWriteType type)
+        {
+            DataWrite(attribute, value, type, DataAttributeType.Text);
+        }
+        bool errReportNullData = true;
+            /// <summary>
+            /// NextDataRow時にNullDataの時、エラーを報告する。
+            /// </summary>
+        public bool ErrReportNullData
+        {
+            get { return errReportNullData; }
+            set { errReportNullData = value; }
+        }
         /// <summary>
         /// 次のDataRowに行く。NextDataRowがよびだすもの。
         /// </summary>
@@ -169,7 +183,10 @@ namespace Rawler.Tool
         {
             if (currentDataRow.IsDataNull())
             {
-                ReportManage.ErrReport(this, "DataがNullのまま、NextDataRowがよびだされました");
+                if (ErrReportNullData)
+                {
+                    ReportManage.ErrReport(this, "DataがNullのまま、NextDataRowがよびだされました");
+                }
                 if (DataNullEvent != null)
                 {
                     DataNullEvent(this, new EventArgs());
@@ -364,6 +381,38 @@ namespace Rawler.Tool
             return new List<string>(list.Distinct());
         }
 
+        
+        public TableData CreateTable()
+        {
+            TableData table = new TableData();
+            HashSet<string> hash = new HashSet<string>();
+            foreach (var item2 in GetDataRows())
+            {
+                foreach (var item3 in item2.DataDic.Keys)
+                {
+                    hash.Add(item3);
+                }
+            }
+            table.Head = hash.ToList();
+            List<List<CellData>> list = new List<List<CellData>>();
+
+            var dic = GetDataRows().SelectMany(n => n.GetCell(hash)).GroupBy(n => n.Key)
+                .Where(n=>n.Select(m=>m.DataText).Distinct().Count()>1 || n.First().DataType == DataAttributeType.SourceUrl)
+                .Select(n => new { Key = n.Key, Value = n.Select(m => m.DataText).JoinText("\t") })
+                .ToDictionary(n => n.Key, n => n.Value);
+            var keyList = dic.GroupBy(n => n.Value).Select(n => n.First().Key);
+            var k = keyList;
+            table.Head = k.ToList();
+            foreach (var item in GetDataRows())
+            {
+                list.Add(item.GetCell(table.Head).ToList());
+            }
+            table.Rows = list;
+            return table;
+        }
+
+
+
         public string ToTsv()
         {
             StringBuilder strBuilder = new StringBuilder();
@@ -520,6 +569,25 @@ namespace Rawler.Tool
         }
 
     }
+        public class TableData
+        {
+            public List<string> Head { get; set; }
+            public List<List<CellData>> Rows { get; set; }
+
+            public string ToXAML()
+            {
+                try
+                {
+                    return System.Xaml.XamlServices.Save(this);
+                }
+                catch
+                {
+
+                }
+                //必殺エラー握りつぶし
+                return System.Xaml.XamlServices.Save(new TableData() { Head = new List<string>() { "Err" }, Rows = new List<List<CellData>>() });
+            }
+        }
 
         public enum FileType { Tsv, Json ,改行区切りJson}
 

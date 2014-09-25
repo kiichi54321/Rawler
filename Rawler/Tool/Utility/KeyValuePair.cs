@@ -36,7 +36,7 @@ namespace Rawler.Tool
         }
         public string Value { get; set; }
     }
-
+    [Serializable]
     public class TextVauleList : System.Collections.Generic.List<TextVaule>
     {
         public void Add(string text)

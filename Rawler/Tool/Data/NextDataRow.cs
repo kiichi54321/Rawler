@@ -8,7 +8,7 @@ namespace Rawler.Tool
 {
         [ContentProperty("Children")]
     [Serializable]
-    public class NextDataRow : RawlerBase
+    public class NextDataRow : RawlerBase,ILastObject
     {
 
         public override string Text

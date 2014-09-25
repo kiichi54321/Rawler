@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.IO;
-
+using RawlerLib.MyExtend;
 
 namespace Rawler.Tool
 {
@@ -80,12 +80,38 @@ namespace Rawler.Tool
 
         }
 
+        private void CheckFileSizeAndCreate()
+        {
+            FileInfo fi = new FileInfo(currentFileName);
+            if( fi.Length > 1024*1024*200)
+            {
+                streamWriter.Close();
+                var file = RawlerLib.IO.GenerateFileName(baseFileName, (n) =>
+                {
+                    if (System.IO.File.Exists(n))
+                    {
+                        FileInfo fi2 = new FileInfo(n);
+                        if (fi2.Length < 1024 * 1024 * 200) return true;
+                        else return false;
+                    }
+                    else
+                    {
+                        return true;
+                    }
+                });
+                currentFileName = file;
+                FileInit(file);
 
+            }
+        }
+
+        long count = 0;
         void FileSave_Commited(object sender, Data.EventDataRow e)
         {
-
+            if (count % 10000== 0) CheckFileSizeAndCreate();
+            count++;
             if (streamWriter != null)
-            {
+            {                
                 foreach (var item2 in order)
                 {
                     if (e.DataRow.DataDic.ContainsKey(item2))
@@ -94,11 +120,11 @@ namespace Rawler.Tool
 
                         if (item.Count > 1)
                         {
-                            item.ForEach(n => streamWriter.Write(n.Replace("\t"," ") + ","));
+                            item.ForEach(n => streamWriter.Write(n.ReadLines().Select(m=> m.Replace("\t"," ").Trim()).JoinText(" ") + ","));
                         }
                         else
                         {
-                            streamWriter.Write(item.First().Replace("\t"," "));
+                            streamWriter.Write(item.First().ReadLines().Select(m => m.Replace("\t", " ").Trim()).JoinText(" "));
                         }
                     }
                     streamWriter.Write("\t");
@@ -112,11 +138,11 @@ namespace Rawler.Tool
                     }
                     if (item.Value.Count > 1)
                     {
-                        item.Value.ForEach(n => streamWriter.Write(n + ","));
+                        item.Value.ForEach(n => streamWriter.Write(n.ReadLines().Select(m=> m.Replace("\t"," ").Trim()).JoinText(" ") + ","));
                     }
                     else
                     {
-                        streamWriter.Write(item.Value.First());
+                        streamWriter.Write(item.Value.First().ReadLines().Select(m=> m.Replace("\t"," ").Trim()).JoinText(" "));
                     }
                     streamWriter.Write("\t");
                 }
@@ -133,6 +159,48 @@ namespace Rawler.Tool
 
 
         StreamWriter streamWriter = null;
+
+        string baseFileName = string.Empty;
+        string currentFileName = string.Empty;
+
+        private void FileInit(string fileName)
+        {
+            var existflag = System.IO.File.Exists(fileName);
+
+
+            if (FileSaveMode == Tool.FileSaveMode.Create)
+            {
+                streamWriter = File.CreateText(fileName);
+            }
+            else
+            {
+                streamWriter = File.AppendText(fileName);
+            }
+
+            if (AttributeOrderString != null)
+            {
+                order = new List<string>(AttributeOrderString.Split(','));
+            }
+            else
+            {
+                order = CreateOrderString();
+            }
+
+            if (FileSaveMode == Tool.FileSaveMode.Create)
+            {
+                order.ForEach(n => streamWriter.Write(n + "\t"));
+                streamWriter.WriteLine();
+            }
+            else
+            {
+                if (existflag == false)
+                {
+                    order.ForEach(n => streamWriter.Write(n + "\t"));
+                    streamWriter.WriteLine();
+                }
+            }
+
+        }
 
         public override void Run(bool runChildren)
         {
@@ -151,56 +219,12 @@ namespace Rawler.Tool
                     {
                         ReportManage.ErrReport(this, "FileNameが空です。");
                         return;
-                    }
-                    //Microsoft.Win32.SaveFileDialog saveDialog = new Microsoft.Win32.SaveFileDialog();
-                    //saveDialog.Title = "保存ファイルの指定　FileSave:" + this.Comment;
-                    //if (string.IsNullOrEmpty(ExtendFilter) == false)
-                    //{
-                    //    saveDialog.Filter = RawlerLib.Io.FilterStringCreate(ExtendFilter);
-                    //}
-                    //if (saveDialog.ShowDialog() == true)
-                    //{
-                    //    fileName = saveDialog.FileName;
-                    //}
-                }
-                var existflag =  System.IO.File.Exists(fileName);
-                    
-
-                if (FileSaveMode == Tool.FileSaveMode.Create)
-                {
-                    streamWriter = File.CreateText(fileName);
-                }
-                else
-                {
-                    streamWriter = File.AppendText(fileName);
+                    }                
                 }
 
-                if (AttributeOrderString != null)
-                {
-                    order = new List<string>(AttributeOrderString.Split(','));
-                }
-                else
-                {
-                    order = CreateOrderString();
-                }
-
-                if (FileSaveMode == Tool.FileSaveMode.Create)
-                {
-                    order.ForEach(n => streamWriter.Write(n + "\t"));
-                    streamWriter.WriteLine();
-                }
-                else
-                {
-                    if (existflag == false)
-                    {
-                        order.ForEach(n => streamWriter.Write(n + "\t"));
-                        streamWriter.WriteLine();
-                    }
-                }
-                    //if (AttributeOrderString != null)
-                //{
-                //    streamWriter.WriteLine(AttributeOrderString.Replace(",", "\t"));
-                //}
+                baseFileName = fileName;
+                currentFileName = fileName;
+                FileInit(fileName);
 
                 base.Run(runChildren);
             }
@@ -218,8 +242,9 @@ namespace Rawler.Tool
             }
         }
 
-        public override void Dispose()
+        public sealed override void Dispose()
         {
+            
             if (streamWriter != null)
             {
                 streamWriter.Dispose();

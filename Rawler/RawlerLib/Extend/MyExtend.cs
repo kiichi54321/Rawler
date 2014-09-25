@@ -8,6 +8,18 @@ namespace RawlerLib.MyExtend
 {
     public static class Collection
     {
+        public static T2 FirstDefault<T,T2>(this IEnumerable<T> list,Func<T,T2> func ,T2 defaultValue)
+        {
+            if(list.Any())
+            {
+                return func( list.First());
+            }
+            else
+            {
+                return defaultValue;
+            }
+        }
+
         public static string JoinText(this IEnumerable<string> list, string separator)
         {
             StringBuilder sb = new StringBuilder();
@@ -22,45 +34,60 @@ namespace RawlerLib.MyExtend
             }
             return sb.ToString();
         }
-    }
 
+        public static IEnumerable<string> Ngram(this IEnumerable<string> list, int n,string separeter)
+        {           
+             var d = list.ToArray();
+             for (int i = 0; i < d.Length-n+1; i++)
+             {
+                 yield return d.Skip(i).Take(n).JoinText(separeter);
+             }
+        }
 
-    public static class Web
-    {
-        public static string DownloadHtml(System.Net.WebClient wc,string url)
+        public static List<T> Adds<T>(this List<T> list,IEnumerable<T> list1)
         {
-            var data = wc.DownloadData(url);
-            var text_utf8 = System.Text.Encoding.UTF8.GetString(data);
-
-            var p1 = "<meta http-equiv=\"content-type\" content=\"text/html; charset=(.*)\">";
-            var p2 = "<meta charset=\"(.*)\">";
-            var encoding = System.Text.Encoding.UTF8;
-            try
-            {
-                var head = text_utf8.Substring(0, 600);
-                var m1 = Regex.Match(head, p1, RegexOptions.IgnoreCase);
-                if (m1.Success)
-                {
-                    encoding = System.Text.Encoding.GetEncoding(m1.Groups[1].Value);
-                    return encoding.GetString(data);
-                }
-                else
-                {
-                    var m2 = Regex.Match(head, p2, RegexOptions.IgnoreCase);
-                    if (m2.Success)
-                    {
-                        encoding = System.Text.Encoding.GetEncoding(m2.Groups[1].Value);
-                        return encoding.GetString(data);
-                    }
-                }
-            }
-            catch (Exception e)
-            {
-               
-            }
-            return text_utf8;
+            list.AddRange(list1);
+            return list;
         }
     }
+
+
+    //public static class Web
+    //{
+    //    public static string DownloadHtml(System.Net.WebClient wc,string url)
+    //    {
+    //        var data = wc.DownloadData(url);
+    //        var text_utf8 = System.Text.Encoding.UTF8.GetString(data);
+
+    //        var p1 = "<meta http-equiv=\"content-type\" content=\"text/html; charset=(.*)\">";
+    //        var p2 = "<meta charset=\"(.*)\">";
+    //        var encoding = System.Text.Encoding.UTF8;
+    //        try
+    //        {
+    //            var head = text_utf8.Substring(0, 600);
+    //            var m1 = Regex.Match(head, p1, RegexOptions.IgnoreCase);
+    //            if (m1.Success)
+    //            {
+    //                encoding = System.Text.Encoding.GetEncoding(m1.Groups[1].Value);
+    //                return encoding.GetString(data);
+    //            }
+    //            else
+    //            {
+    //                var m2 = Regex.Match(head, p2, RegexOptions.IgnoreCase);
+    //                if (m2.Success)
+    //                {
+    //                    encoding = System.Text.Encoding.GetEncoding(m2.Groups[1].Value);
+    //                    return encoding.GetString(data);
+    //                }
+    //            }
+    //        }
+    //        catch (Exception e)
+    //        {
+               
+    //        }
+    //        return text_utf8;
+    //    }
+    //}
 
     public static class DictionaryExtensions
     {
@@ -163,6 +190,17 @@ namespace RawlerLib.MyExtend
         public static bool IsNullOrEmpty(this string text)
         {
             return string.IsNullOrEmpty(text);
+        }
+
+        /// <summary>
+        /// Nullの時、空文字
+        /// </summary>
+        /// <param name="text"></param>
+        /// <returns></returns>
+        public static string NullIsEmpty(this string text)
+        {
+            if (text == null) return string.Empty;
+            return text;
         }
 
         public static IEnumerable<string> ReadLines(this string text)

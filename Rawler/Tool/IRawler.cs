@@ -31,6 +31,14 @@ namespace Rawler.Tool
         DataWriteType WriteType { get; set; }
     }
 
+    /// <summary>
+    /// このオブジェクトは、末尾に来ないとダメ。
+    /// </summary>
+    public interface ILastObject
+    {
+        RawlerBase Parent { get; }
+    }
+
 
     public interface Imulti
     {
@@ -423,6 +431,16 @@ namespace Rawler.Tool
         }
 
         /// <summary>
+        /// 最初に挿入する。
+        /// </summary>
+        /// <param name="rawler"></param>
+        public void AddFirst(RawlerBase rawler)
+        {
+            children.Insert(0, rawler);
+            rawler.SetParent(this);            
+        }
+
+        /// <summary>
         /// 子たちを追加する。返りは、自分自身。
         /// </summary>
         /// <param name="children"></param>
@@ -725,6 +743,21 @@ namespace Rawler.Tool
             {
                 this.Children.Remove(item);
             }
+            ///同じ兄弟にDataWriteがあったら、一つだけにする。
+            if(this.Children.OfType<DataWrite>().Count()>1)
+            {
+                foreach (var item in this.Children.OfType<DataWrite>().Skip(1).ToArray())
+                {
+                    if(item.Children.Any()==false) this.children.Remove(item);                    
+                }
+            }
+            //LastObjectを持つものを末尾にする。
+            foreach (RawlerBase item in this.Children.OfType<ILastObject>().ToArray())
+            {
+                this.Children.Remove(item);
+                this.Children.Add(item);
+            }
+
             foreach (var item in this.Children)
             {
                 item.MargeChildren();

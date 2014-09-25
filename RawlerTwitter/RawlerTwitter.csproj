@@ -43,15 +43,9 @@
     <Reference Include="Accessibility">
       <EmbedInteropTypes>True</EmbedInteropTypes>
     </Reference>
-    <Reference Include="CoreTweet">
-      <HintPath>..\packages\CoreTweet.0.3.4\lib\net40\CoreTweet.dll</HintPath>
-    </Reference>
-    <Reference Include="CoreTweet.Streaming.Reactive">
-      <HintPath>..\packages\CoreTweet.Streaming.Reactive.0.3.4\lib\net40\CoreTweet.Streaming.Reactive.dll</HintPath>
-    </Reference>
     <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Newtonsoft.Json.6.0.3\lib\net40\Newtonsoft.Json.dll</HintPath>
+      <HintPath>..\packages\Newtonsoft.Json.6.0.5\lib\net40\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
@@ -60,14 +54,20 @@
     <Reference Include="System.Core" />
     <Reference Include="System.Deployment" />
     <Reference Include="System.Drawing" />
-    <Reference Include="System.Reactive.Core">
+    <Reference Include="System.Reactive.Core, Version=2.2.5.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\Rx-Core.2.2.5\lib\net40\System.Reactive.Core.dll</HintPath>
     </Reference>
-    <Reference Include="System.Reactive.Interfaces">
+    <Reference Include="System.Reactive.Interfaces, Version=2.2.5.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\Rx-Interfaces.2.2.5\lib\net40\System.Reactive.Interfaces.dll</HintPath>
     </Reference>
-    <Reference Include="System.Reactive.Linq">
+    <Reference Include="System.Reactive.Linq, Version=2.2.5.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\Rx-Linq.2.2.5\lib\net40\System.Reactive.Linq.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Reactive.PlatformServices">
+      <HintPath>..\packages\Rx-PlatformServices.2.2.5\lib\net40\System.Reactive.PlatformServices.dll</HintPath>
     </Reference>
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Xaml" />
@@ -82,6 +82,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ChopMention.cs" />
+    <Compile Include="GetFollowers.cs" />
     <Compile Include="PinDialog.xaml.cs">
       <DependentUpon>PinDialog.xaml</DependentUpon>
     </Compile>
@@ -93,6 +94,14 @@
     <Compile Include="TwitterStreaming.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\..\Users\kiichi\Documents\GitHub\CoreTweet\CoreTweet.Streaming.Reactive\CoreTweet.Streaming.Reactive.csproj">
+      <Project>{7f946219-a568-4e49-955d-f18c20cef016}</Project>
+      <Name>CoreTweet.Streaming.Reactive</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\Users\kiichi\Documents\GitHub\CoreTweet\CoreTweet\CoreTweet.csproj">
+      <Project>{b8237636-ec72-47bd-887b-e66d4123f422}</Project>
+      <Name>CoreTweet</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Rawler\Rawler.csproj">
       <Project>{D0FF1894-5D72-40C4-91FD-774A8D87D34F}</Project>
       <Name>Rawler</Name>

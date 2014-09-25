@@ -198,6 +198,7 @@ namespace RawlerLib
             return list;
         }
 
+
         public static IEnumerable<Link> GetBackImageLink(string Html, string url)
         {
             System.Text.RegularExpressions.Regex regex = new System.Text.RegularExpressions.Regex(@"<[^>]*?\s*(background|background-image)\s*:\s*url\s*\((\s*[']|\s*)([^'\)>]+)[^>]*?>", System.Text.RegularExpressions.RegexOptions.IgnoreCase);
@@ -422,6 +423,7 @@ namespace RawlerLib
                 }
                 link.Url = HtmlTagAllDelete(match.Groups[2].Value).Replace("'", "");
                 link.Tag = match.Value;
+                link.TagWithoutUrl = match.Value.Replace(match.Groups[2].Value, string.Empty);
 
                 //HTTP‚ª“ü‚Á‚Ä‚¢‚é‚Æ‚«
                 if (regexHttp.IsMatch(link.Url) == false && url != null)

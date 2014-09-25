@@ -6,6 +6,38 @@ using System.Collections.ObjectModel;
 
 namespace Rawler.Tool
 {
+    public class ReportStock:RawlerBase
+    {
+        ObservableCollection<ReportEvnetArgs> reportList = new ObservableCollection<ReportEvnetArgs>();
+        public ObservableCollection<ReportEvnetArgs> ReportList { get { return reportList; } }
+        string fileName = "ErrReport.txt";
+
+        public string FileName1
+        {
+            get { return fileName; }
+            set { fileName = value; }
+        }
+        bool isStock = true;
+
+        public bool IsStock
+        {
+            get { return isStock; }
+            set { isStock = value; }
+        }
+
+
+        public void AddReport(ReportEvnetArgs ea)
+        {
+            if(ea.IsErr)
+            {
+                if(FileName)   
+            }
+            if (isStock)
+            {
+                reportList.Add(ea);
+            }
+        }
+    }
     public static class ReportManage
     {
         public static event EventHandler<ReportEvnetArgs> ErrReportEvent;
@@ -60,8 +92,18 @@ namespace Rawler.Tool
         }
 
 
-        private static void AddReportEventArgs(ReportEvnetArgs args)
+        private static void AddReportEventArgs(RawlerBase sender, ReportEvnetArgs args)
         {
+            if (sender != null)
+            {
+                var reportStock = sender.GetUpperRawler<ReportStock>();
+                if (reportStock != null)
+                {
+                    reportStock.AddReport(args);
+                    return;
+                }
+            }
+
             if (args.IsErr)
             {
                 if (stockErrReport)
@@ -84,13 +126,13 @@ namespace Rawler.Tool
             ReportEvnetArgs args;
             if (sender != null)
             {
-                args = new ReportEvnetArgs(sender, GetTopComment(sender) + "ERR:" + sender.ObjectName + ":" + err, true, true);
+                args = new ReportEvnetArgs(sender, GetTopComment(sender) + "ERR:" + sender.GetType().Name + ":" + err, true, true);
             }
             else
             {
                 args = new ReportEvnetArgs(sender, GetTopComment(sender) + "ERR:" + err, true, true);
             }
-            AddReportEventArgs(args);
+            AddReportEventArgs(sender, args);
             if (ErrReportEvent != null)
             {
                 ErrReportEvent(sender, args);
@@ -100,7 +142,7 @@ namespace Rawler.Tool
         public static void Report(RawlerBase sender, string message, bool returncode)
         {
             ReportEvnetArgs args = new ReportEvnetArgs(sender, GetTopComment(sender) + message, returncode);
-            AddReportEventArgs(args);
+            AddReportEventArgs(sender, args);
             if (message.Contains("NextDataRow"))
             {
                 RowCount++;
@@ -117,7 +159,7 @@ namespace Rawler.Tool
         public static void Report(RawlerBase sender, string message)
         {
             ReportEvnetArgs args = new ReportEvnetArgs(sender, GetTopComment(sender) + message, true);
-            AddReportEventArgs(args);
+            AddReportEventArgs(sender,args);
 
             if (message.Contains("NextDataRow"))
             {
@@ -135,7 +177,7 @@ namespace Rawler.Tool
         public static void Report(RawlerBase sender, string message, bool returncode, bool visible)
         {
             ReportEvnetArgs args = new ReportEvnetArgs(sender, GetTopComment(sender) + message, returncode);
-            AddReportEventArgs(args);
+            AddReportEventArgs(sender,args);
             args.Visible = visible;
             if (message.Contains("NextDataRow"))
             {

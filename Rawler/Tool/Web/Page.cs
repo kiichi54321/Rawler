@@ -27,18 +27,12 @@ namespace Rawler.Tool
             Encoding = encoding;
         }
 
-        //public Page( string encoding)
-        //    : base()
-        //{
-        //    Encoding = encoding;
-
-        //}
 
         /// <summary>
         /// 初めに指定したURLを取得します。
         /// 現在読み込んでいるURLを取得するには GetCurrentUrl()を使ってください
         /// </summary>
-        public string Url { get; set; }
+        public virtual string Url { get; set; }
 
         protected string currentUrl = string.Empty;
 
@@ -101,7 +95,7 @@ namespace Rawler.Tool
             return this.text;
         }
 
-        private string startUrl = string.Empty;
+        protected string startUrl = string.Empty;
 
 
         /// <summary>
@@ -172,34 +166,7 @@ namespace Rawler.Tool
         }
 
         string pastUrl = string.Empty;
-        //public override void Run(bool runChildren)
-        //{
-        //    var client = GetWebClient();
-        //    //    this.CurrentUrl = this.Url;
-        //    if (this.Url != null && this.Url.Length > 0)
-        //    {
-        //        this.startUrl = this.Url;
-        //        this.text = client.HttpGet(this.Url);
-        //        this.currentUrl = this.Url;
-        //    }
-        //    else
-        //    {
-        //        if (this.Parent != null)
-        //        {
-        //            this.startUrl = GetText();
-        //            this.text = client.HttpGet(GetText());
-        //            this.currentUrl = GetText();
-        //        }
-        //    }
-        //    if (this.Text.Length > 0)
-        //    {
-        //        RunChildren(runChildren);
-        //    }
-        //    else
-        //    {
-        //        ReportManage.ErrReport(this, "ページの読み込みに失敗しました。");
-        //    }
-        //}
+
         public override void Run(bool runChildren)
         {
             if (clearUrlHistory)
@@ -345,19 +312,6 @@ namespace Rawler.Tool
 
         }
 
-        //public void Run(string url)
-        //{
-        //    var client = GetWebClient();
-        //    this.text = client.HttpGet(url);
-        //    this.currentUrl = url;
-
-
-        //    if(this.Text.Length>0)
-        //    {
-        //        RunChildren(true);
-        //    }
-        //}
-
         bool useReferer = true;
 
         public bool UseReferer
@@ -403,15 +357,6 @@ namespace Rawler.Tool
             {
                 client.Referer = string.Empty;
             }
-            //while (current != null)
-            //{
-            //    if (current is WebClient)
-            //    {
-            //        client = current as WebClient;
-            //        break;
-            //    }
-            //    current = current.Parent;
-            //}
             var enc = GetEncoding();
             if (enc != null)
             {
@@ -448,11 +393,10 @@ namespace Rawler.Tool
         /// <param name="url"></param>
         /// <param name="html"></param>
         /// <returns></returns>
-        public static Page CreatePage(string url,string html)
+        public static Web.PageNoDownLoad CreatePage(string url,string html)
         {
-            var page = new Page();
-            page.currentUrl = url;
-            page.SetText(html);
+            var page = new Web.PageNoDownLoad();
+            page.SetPage(url, html);
             return page;
         }
     }

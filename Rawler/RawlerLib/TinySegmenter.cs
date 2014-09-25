@@ -1,5 +1,6 @@
 ﻿/*
- * 部分的辞書使用に改造。@kiichi54321 
+ * 部分的辞書使用に改造。
+ * (c) 2014 Takaichi Ito (@kiichi54321)
  * 
  * 元のC#版作者
  * TinySegmenter.NET 0.1.1 -- C# Version of TinySegmenter
@@ -16,6 +17,7 @@ using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using System.Linq;
+using RawlerLib.MyExtend;
 
 namespace TinySegmenterDotNet
 {
@@ -1452,6 +1454,7 @@ namespace TinySegmenterDotNet
         }
         #endregion
 
+        #region オリジナルTinySegmenter
         private Dictionary<Regex, string> chartype_;
 
         public TinySegmenter()
@@ -1602,14 +1605,39 @@ namespace TinySegmenterDotNet
             return result.ToArray();
         }
 
+        #endregion
+
+
         Dictionary<string, List<WordDicData>> wordDic = new Dictionary<string, List<WordDicData>>();
         List<string> wordList = new List<string>();
+        List<string> learnWordList = new List<string>();
 
+        public List<string> LearnWordList
+        {
+            get { return learnWordList; }
+        }
         public void AddWordDic(string word)
         {
             wordList.Add(word);
             wordDic = null;
         }
+        public void ClearWordDic()
+        {
+            wordDic = null;
+            wordList.Clear();
+        }
+        public void AddRangeWordDic(IEnumerable<string> words)
+        {
+            wordList.AddRange(words);
+            wordDic = null;
+        }
+        public List<string> WordDicList
+        {
+            get { return wordList; }
+            set { wordList = value; wordDic = null; }
+        }
+
+        public EventHandler LearnEnd;
 
         public class WordDicData
         {
@@ -1619,13 +1647,14 @@ namespace TinySegmenterDotNet
 
             public WordDicData()
             {
-
+                Replace = string.Empty;
             }
 
             public WordDicData(string text)
             {
                 var d = text.Split('\t');
                 Word = d[0];
+                Replace = string.Empty;
                 if (d.Length > 1) Replace = d[1];
                 Length = Word.Length;
             }
@@ -1649,12 +1678,16 @@ namespace TinySegmenterDotNet
             }
         }
 
-        public void CreateDic()
+        /// <summary>
+        /// 辞書をの作成。
+        /// </summary>
+        private void CreateDic()
         {
-            wordDic = wordList.GroupBy(n => n.Substring(0, 2)).Select(n => new { Key = n.Key, List = n.Select(m => new WordDicData(m)).OrderByDescending(m => m.Length).ToList() }).ToDictionary(n => n.Key, n => n.List);
+            var list = new List<string>().Adds(learnWordList).Adds(wordList).Where(n=>n.Length>1).OrderBy(n => n.Substring(0, 2)).ThenByDescending(n => n.Length).Distinct().ToList();
+            wordDic = list.GroupBy(n => n.Substring(0, 2)).Select(n => new { Key = n.Key, List = n.Select(m => new WordDicData(m)).OrderByDescending(m => m.Length).ThenByDescending(m=>m.Replace.Length).ToList() }).ToDictionary(n => n.Key, n => n.List);
         }
 
-        public WordDicData SearchDic(string head, string text)
+        private WordDicData SearchDic(string head, string text)
         {
             if (wordDic == null) CreateDic();
 
@@ -1665,7 +1698,67 @@ namespace TinySegmenterDotNet
             }
             return null;
         }
+        System.Text.RegularExpressions.Regex hiragana = new System.Text.RegularExpressions.Regex("^[ぁ-ん。、]$");
 
+        private IEnumerable<string> Ngram(IEnumerable<string> list, int n, string separeter)
+        {
+            var d = list.ToArray();
+            for (int i = 0; i < d.Length - n + 1; i++)
+            {
+                //初めと最後がひらがな1文字の時は、排除。
+                if (hiragana.Match(d[i]).Success == false && hiragana.Match(d[i+n-1]).Success==false)
+                {
+                    yield return d.Skip(i).Take(n).JoinText(separeter).Trim();
+                }
+            }
+        }
+
+        /// <summary>
+        /// SegmentExtedをして、NGramの結果を返す
+        /// </summary>
+        /// <param name="text"></param>
+        /// <param name="maxGram"></param>
+        /// <returns></returns>
+        public IEnumerable<string> GetNgram(string text,int maxGram)
+        {
+            List<string> list = new List<string>();
+       
+            var d = this.SegmentExted(text);
+            for (int i = 2; i <= maxGram; i++)
+            {
+                list.AddRange(Ngram(d, i, string.Empty).Distinct());
+            }
+            return list;
+        }
+
+
+        /// <summary>
+        /// 入力テキストを、分かち書きをして、Ngramで組み合わせを作って、指定割合以上のものを採用する。
+        /// </summary>
+        /// <param name="lines"></param>
+        /// <param name="rate"></param>
+        public void Learning(IEnumerable<string> lines,double rate)
+        {
+            List<string> list = new List<string>();
+            LearnWordList.Clear();
+            CreateDic();
+            foreach (var item in lines)
+            {
+                var d = SegmentExted(item);
+
+                list.AddRange(Ngram(d, 2, string.Empty).Distinct());
+                list.AddRange(Ngram(d, 3, string.Empty).Distinct());
+                list.AddRange(Ngram(d, 4, string.Empty).Distinct());
+                list.AddRange(Ngram(d, 5, string.Empty).Distinct());
+                list.AddRange(Ngram(d, 6, string.Empty).Distinct());
+            }
+            var all = (double)lines.Count();
+           
+            var countList= list.GroupBy(n=>n).Select(n=>new {Word = n.Key,Rate = n.Count()/all});
+            learnWordList = countList.Where(n => n.Rate >= rate).Select(n => n.Word).ToList();
+            CreateDic();
+            if (LearnEnd != null) LearnEnd(this,new EventArgs());
+        }
 
         public string[] SegmentExted(string input)
         {
@@ -1791,8 +1884,10 @@ namespace TinySegmenterDotNet
                     postion++;
                 }
             }
-            result.Add(word);
-
+            if (word != "E1")
+            {
+                result.Add(word);
+            }
             return result.ToArray();
         }
     }
