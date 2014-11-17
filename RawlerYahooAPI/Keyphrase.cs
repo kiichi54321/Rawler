@@ -29,6 +29,9 @@ namespace RawlerYahooAPI
         }
         #endregion
 
+        /// <summary>
+        /// YahooAPIのidカンマ区切りだと、ランダムに選ばれる。
+        /// </summary>
         public string ApiId { get; set; }
 
 
@@ -38,17 +41,17 @@ namespace RawlerYahooAPI
         /// <param name="runChildren"></param>
         public override void Run(bool runChildren)
         {
-            string apiId = ApiId;
+            string apiIds = ApiId;
             if (string.IsNullOrEmpty(ApiId))
             {
-                apiId = Rawler.Tool.GlobalVar.GetVar("YahooApiId");
+                apiIds = Rawler.Tool.GlobalVar.GetVar("YahooApiId");
             }
-            if (string.IsNullOrEmpty(apiId))
+            if (string.IsNullOrEmpty(apiIds))
             {
                 Rawler.Tool.ReportManage.ErrReport(this, "YahooApiIdがありません。SetTmpValで指定してください");
                 return;
             }
-   
+            string apiId = apiIds.Split(',').OrderBy(n => Guid.NewGuid()).First();
             string baseUrl = "http://jlp.yahooapis.jp/KeyphraseService/V1/extract";
             var post = "appid=" + apiId + "&sentence=" +Uri.EscapeUriString(GetText());
             string result = string.Empty;

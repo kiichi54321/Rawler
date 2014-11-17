@@ -264,14 +264,52 @@ namespace Rawler.Tool
             public string HTML { get; set; }
         }
 
+        public WebClient GetCopy()
+        {
+            WebClient wc = new WebClient();
+            wc.cc = this.cc;
+            wc.AddUserAgent = this.AddUserAgent;
+            wc.UserAgent = wc.UserAgent;
+            return wc;
+            
+        }
 
         public virtual void HttpGetAsync(IEnumerable<string> urls)
         {
             UseCache = false;
-            var d = urls.Distinct().Select(n => new DownloadData() { Url = n, HTML = string.Empty });
-            System.Threading.Tasks.Parallel.ForEach(d, (n) => {  n.HTML = HttpGet(n.Url); });
-            foreach (var item in d)
+            int ThreadNum = 4;
+            System.Collections.Concurrent.ConcurrentStack<string> stack = new System.Collections.Concurrent.ConcurrentStack<string>(urls.Distinct());
+
+            List<System.Threading.Tasks.Task<List<DownloadData>>> tasks = new List<System.Threading.Tasks.Task<List<DownloadData>>>();
+            for (int i = 0; i < ThreadNum; i++)
             {
+                var task = System.Threading.Tasks.Task.Factory.StartNew<List<DownloadData>>((n) =>
+                {
+                    List<DownloadData> list = new List<DownloadData>();
+                    var c = this.GetCopy();
+                    while (true)
+                    {
+                        string url = string.Empty;
+                        if (stack.TryPop(out url))
+                        {
+                            DownloadData dd = new DownloadData() { Url = url, HTML = c.HttpGet(url) };
+                            list.Add(dd);
+                        }
+                        else
+                        {
+                            break;
+                        }
+                    }
+                    c.Dispose();
+                    return list;
+                }, System.Threading.Tasks.TaskCreationOptions.LongRunning);
+                if (task != null) tasks.Add(task);
+            }
+            System.Threading.Tasks.Task.WaitAll(tasks.ToArray());
+  
+
+            foreach (var item in tasks.SelectMany(n=>n.Result))
+            {  
                 casheDic.GetValueOrAdd(item.Url, item.HTML);
             }
             UseCache = true;
@@ -457,6 +495,12 @@ namespace Rawler.Tool
         public override RawlerBase Clone(RawlerBase parent)
         {
             return base.Clone<WebClient>(parent);
+        }
+
+        public override void Dispose()
+        {
+            if (wc != null) wc.Dispose();
+            base.Dispose();
         }
     }
 

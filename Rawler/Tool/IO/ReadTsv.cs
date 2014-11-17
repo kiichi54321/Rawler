@@ -160,7 +160,8 @@ namespace Rawler.Tool
                     if (file.ColumnNameDic.ContainsKey(columnName))
                     {
                         var i = file.ColumnNameDic[columnName];
-                        var d = GetText().Split('\t');
+
+                        var d = file.Text.Split('\t');
                         if (d.Length > i)
                         {
                             SetText(d[i]);

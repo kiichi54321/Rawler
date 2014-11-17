@@ -11,8 +11,7 @@ namespace Rawler.Tool
         ObservableCollection<ReportEvnetArgs> reportList = new ObservableCollection<ReportEvnetArgs>();
         public ObservableCollection<ReportEvnetArgs> ReportList { get { return reportList; } }
         string fileName = "ErrReport.txt";
-
-        public string FileName1
+        public string FileName
         {
             get { return fileName; }
             set { fileName = value; }
@@ -25,12 +24,23 @@ namespace Rawler.Tool
             set { isStock = value; }
         }
 
+        private bool doSave = false;
+
+        public bool DoSave
+        {
+            get { return doSave; }
+            set { doSave = value; }
+        }
+
 
         public void AddReport(ReportEvnetArgs ea)
         {
             if(ea.IsErr)
             {
-                if(FileName)   
+                if(string.IsNullOrEmpty(fileName)==false && DoSave == true)
+                {
+                    System.IO.File.AppendAllText(FileName, ea.DateTime.ToFileTimeUtc() + "\t" + ea.Message+"\n");
+                }
             }
             if (isStock)
             {
@@ -226,6 +236,10 @@ namespace Rawler.Tool
         public DateTime DateTime { get; set; }
         public bool Visible { get; set; }
         public bool ReturnCode { get; set; }
+        public ReportEvnetArgs()
+            :base()
+        { }
+
         public ReportEvnetArgs(RawlerBase sender, string message, bool returncode)
             : base()
         {

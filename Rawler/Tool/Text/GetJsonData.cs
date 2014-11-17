@@ -40,9 +40,10 @@ namespace Rawler.Tool
         public override void Run(bool runChildren)
         {
             var t = GetText();
-            object obj;
-            Codeplex.Data.DynamicJson data = Codeplex.Data.DynamicJson.Parse(t);
-            if (data.IsArray)
+            bool flag = false;
+            var json = JObject.Parse(t);
+
+            if (json.Type == JTokenType.Array)
             {
                 dynamic[] array = Codeplex.Data.DynamicJson.Parse(t);
                 List<string> list = new List<string>();
@@ -54,27 +55,73 @@ namespace Rawler.Tool
             }
             else
             {
-                obj = data;
-                bool flag = true;
-                foreach (var item in this.FieldName.Split('.'))
-                {                                    
-                    try
+                foreach (var item in FieldName.Split('.'))
+                {
+                    if (json.Properties().Where(n => n.Name == item).Any())
                     {
-                        var type = obj.GetType();
-                        PropertyInfo property = type.GetProperty(item);
-                        obj = property.GetValue(obj, null);
+                        if (json.Property(item).Value.Type == JTokenType.Object)
+                        {
+                            json = JObject.Parse(json.Property(item).Value.ToString());
+                        }
+                        else
+                        {
+                            SetText(json.Property(item).Value.ToString());
+                            flag = true;
+                        }
                     }
-                    catch { flag = false; }
+                    else
+                    {
+                        break;
+                    }
+
                 }
-                if(flag){
-                    this.SetText(obj.ToString());
-                    base.Run(runChildren);
+                if (json.Type == JTokenType.Object && flag == false)
+                {
+                    SetText(json.ToString());
                 }
-                else
+                if (flag == false)
                 {
                     ReportManage.ErrReport(this, "FieldNameがありません。");
                 }
+                RunChildren(runChildren);
             }
+          
+            //var t = GetText();
+            //object obj;
+            //Codeplex.Data.DynamicJson data = Codeplex.Data.DynamicJson.Parse(t);
+            //if (data.IsArray)
+            //{
+            //    dynamic[] array = Codeplex.Data.DynamicJson.Parse(t);
+            //    List<string> list = new List<string>();
+            //    foreach (var item in array)
+            //    {
+            //        list.Add(item.ToString());
+            //    }
+            //    RunChildrenForArray(runChildren, list);
+            //}
+            //else
+            //{
+            //    obj = data;
+            //    bool flag = true;
+            //    foreach (var item in this.FieldName.Split('.'))
+            //    {                                    
+            //        try
+            //        {
+            //            var type = obj.GetType();
+            //            PropertyInfo property = type.GetProperty(item);
+            //            obj = property.GetValue(obj, null);
+            //        }
+            //        catch { flag = false; }
+            //    }
+            //    if(flag){
+            //        this.SetText(obj.ToString());
+            //        base.Run(runChildren);
+            //    }
+            //    else
+            //    {
+            //        ReportManage.ErrReport(this, "FieldNameがありません。");
+            //    }
+            //}
         }
 
         public string FieldName { get; set; }
@@ -150,12 +197,7 @@ namespace Rawler.Tool
             }          
             if( json.Type == JTokenType.Object && flag == false)
             {
-                SetText(json.ToString());
-                DataWrite dataWrite = new DataWrite();
-                dataWrite.SetParent(this);
-                dataWrite.Attribute = FieldName;
-                dataWrite.WriteType = this.WriteType;
-                dataWrite.Run();
+                data.DataWrite(FieldName, json.ToString(), this.WriteType);
             }
             if(flag == false)
             {

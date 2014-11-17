@@ -105,6 +105,57 @@ namespace RawlerTwitter
             base.Run(runChildren);
         }
 
+        public void ReLogin()
+        {            
+            token = null;
+            GC.Collect();
+            if (AppOnlyAuthentication != null)
+            {
+                token = OAuth2.GetToken(AppOnlyAuthentication.ConsumerKey, AppOnlyAuthentication.ConsumerSecret);
+            }
+            else
+            {
+                if (GetOAuthTokens() == null)
+                {
+                    var session = OAuth.Authorize(ConsumerKey, ConsumerSecret);
+                    ReportManage.Report(this, "PINがありません。ブラウザに表示されているPINの値を入力してください。PIN=\"(表示されているPIN)\"　とTwitterLoginクラスに情報を追加してください");
+                    System.Diagnostics.Process.Start(session.AuthorizeUri.ToString());
+
+                    Task reportProgressTask = Task.Factory.StartNew(() =>
+                    {
+                        PinDialog pin = new PinDialog();
+                        if (pin.ShowDialog() == true)
+                        {
+                            var tokens = session.GetTokens(pin.PIN);
+
+
+                            TokenData td = new TokenData()
+                            {
+                                ConsumerKey = ConsumerKey,
+                                ConsumerSecret = ConsumerSecret,
+                                AccessToken = tokens.AccessToken,
+                                AccessTokenSecret = tokens.AccessTokenSecret
+                            };
+                            this.Token = new Tokens(tokens);
+                            this.TokenData = td;
+                            System.Xaml.XamlServices.Save(tokenSettingFileName, td);
+                        }
+                        else
+                        {
+                            return;
+                        }
+
+                    },
+             CancellationToken.None,
+             TaskCreationOptions.None,
+             RawlerLib.UIData.UISyncContext);
+                    reportProgressTask.Wait();
+
+                }
+            }
+        }
+
+
         public CoreTweet.Core.TokensBase GetOAuthTokens()
         {           
             if (System.IO.File.Exists(tokenSettingFileName))

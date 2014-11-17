@@ -39,6 +39,18 @@ namespace Rawler.Tool
     [Serializable]
     public class TextVauleList : System.Collections.Generic.List<TextVaule>
     {
+        public TextVauleList()
+        {
+
+        }
+
+        public TextVauleList(IEnumerable<string> list)
+        {
+            this.AddRange(list.Select(n => new TextVaule(n)));
+        }
+
+
+
         public void Add(string text)
         {
             this.Add(new TextVaule(text));

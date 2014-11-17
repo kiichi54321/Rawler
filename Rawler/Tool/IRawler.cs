@@ -618,6 +618,7 @@ namespace Rawler.Tool
             }
             else
             {
+                 ((RawlerBase)obj).SetParent();
                 return (RawlerBase)obj;
             }
             

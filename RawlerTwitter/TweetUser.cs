@@ -123,6 +123,7 @@ namespace RawlerTwitter
 
                         foreach (var item in login.Token.Statuses.UserTimeline(dic))
                         {
+                           
                             count++;
                             totalCount++;
                             max_id = Math.Min(max_id, item.Id);
@@ -133,12 +134,13 @@ namespace RawlerTwitter
                    
                     if (MaxCount > 0 && MaxCount <= totalCount) break;
                     
-                    if(count < 50)
+                    if(count < 10)
                     {
                         break;
                     }
                     if (SleepSecond > 0)
                     {
+                        GC.Collect();
                         System.Threading.Thread.Sleep((int)(SleepSecond * 1000));
                     }
                 }
@@ -168,10 +170,18 @@ namespace RawlerTwitter
             {
                 flag = false;
                 ReportManage.ErrReport(this, GetText() + "\t" + e.Message);
-
+                flag = true;
                 if (e.Message == "Not authorized.") flag = true;
-                if (e.Message == "Rate limit exceeded") retry = true;
-                if (e.Message == "Over capacity") retry = true;
+                if (e.Message == "Rate limit exceeded")
+                {
+                    retry = true;
+                    flag = false;
+                }
+                if (e.Message == "Over capacity")
+                {
+                    retry = true;
+                    flag = false;
+                }
                 
                 if (ErrorTree != null && flag == false)
                 {
@@ -191,11 +201,14 @@ namespace RawlerTwitter
             if(retry)
             {
                 ReportManage.Report(this, "3分Sleep", true, true);
-                GC.Collect();
+                this.GetUpperRawler<TwitterLogin>().ReLogin();
+//                GC.Collect();
                 System.Threading.Thread.Sleep(new TimeSpan(0, 3, 0));
                 Run(runChildren);
             }
             if (flag == false && retry == false) max_id = long.MaxValue;
+          
+            GC.Collect();
         }
 
     }

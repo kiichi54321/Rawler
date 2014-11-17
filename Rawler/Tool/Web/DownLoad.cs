@@ -36,6 +36,11 @@ namespace Rawler.Tool
         {
             var client = this.GetAncestorRawler().OfType<WebClient>().DefaultIfEmpty(new WebClient()).FirstOrDefault();
             string url = GetText();
+            var page = this.GetUpperRawler<Page>();
+            if(page !=null)
+            {
+                client.Referer = page.GetCurrentUrl();
+            }
             var data = client.HttpGetByte(GetText());
             string path = string.Empty;
             if (FolderNameTree != null)

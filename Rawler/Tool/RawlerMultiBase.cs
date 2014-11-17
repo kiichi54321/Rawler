@@ -58,6 +58,11 @@ namespace Rawler.Tool
         public RawlerBase EmptyTree { get; set; }
         public RawlerBase AnyTree { get; set; }
         public RawlerBase ConvertTree { get; set; }
+        /// <summary>
+        /// 繰り返しが終わったことを知らせる。
+        /// </summary>
+        public event EventHandler LoopEndEvent;
+
 
         /// <summary>
         /// 子を実行する。
@@ -91,6 +96,10 @@ namespace Rawler.Tool
                         }
                     }
 
+                }
+                if(LoopEndEvent !=null)
+                {
+                    LoopEndEvent(this, new EventArgs());
                 }
                 if (EmptyTree != null)
                 {

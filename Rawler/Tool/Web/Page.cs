@@ -20,12 +20,12 @@ namespace Rawler.Tool
         {
             this.Url = url;
         }
-        public Page(string url, string encoding)
-            : base()
-        {
-            this.Url = url;
-            Encoding = encoding;
-        }
+        //public Page(string url, string encoding)
+        //    : base()
+        //{
+        //    this.Url = url;
+        //    Encoding = encoding;
+        //}
 
 
         /// <summary>

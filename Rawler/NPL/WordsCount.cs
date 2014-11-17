@@ -3,9 +3,106 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Rawler.Tool;
+using RawlerLib.MyExtend;
+using System.Runtime.Serialization;
+using System.Runtime.Serialization.Formatters.Binary;
+using System.IO;
 
 namespace Rawler.NPL
 {
+    [Serializable()]
+    public class WordListInSource
+    {
+        Dictionary<string, List<string>> dic = new Dictionary<string, List<string>>();
+      
+        public WordListInSource()
+        { }
+
+        public WordListInSource(IEnumerable<string> wordList)
+        {
+            dic = wordList.GroupBy(n => n.Take(2).JoinText("")).ToDictionary(n => n.Key, n => n.OrderByDescending(m =>m.Length).ToList());
+        }
+
+        IEnumerable<Tuple<string,string>> NGram(string text, int n)
+        {
+            for (int i = 0; i < text.Length - n; i++)
+            {
+                yield return new Tuple<string,string>(text.Substring(i, n),text.Substring(i));
+            }
+           
+        }
+
+        public void Save(string fileName)
+        {
+            using (FileStream fs = new FileStream(fileName, FileMode.Create, FileAccess.Write))
+            {
+                BinaryFormatter bf = new BinaryFormatter();
+                //シリアル化して書き込む
+                bf.Serialize(fs, this);
+            }
+        }
+
+        public static WordListInSource Load(string fileName)
+        {
+            FileStream fs = new FileStream(fileName,    FileMode.Open,    FileAccess.Read);
+            BinaryFormatter f = new BinaryFormatter();
+            //読み込んで逆シリアル化する
+            object obj = f.Deserialize(fs);
+            fs.Close();            
+            return obj as WordListInSource;
+        }
+
+        public IEnumerable<string> GetWords(string text)
+        {
+            string t = text;
+            while(t.Length>1)
+            {
+                bool flag = true;
+                var w = t.Substring(0, 2);
+                var a = t.TakeAlphabets();
+                if(a.Length>1 && dic.ContainsKey(a.Substring(0,2)))
+                {
+                    foreach (var item in dic[a.Substring(0,2)])
+                    {
+                        if(item == a)
+                        {
+                            t = t.Substring(item.Length);
+                            flag = false;
+                            yield return item;
+                            break;
+                        }
+                    }
+                }
+                else if(dic.ContainsKey(w))
+                {                    
+                    foreach (var item in dic[w])
+                    {
+                        if(t.Length >= item.Length && t.Substring(0,item.Length)==item)
+                        {
+                            t = t.Substring(item.Length);
+                            flag = false;
+                            yield return item;
+                            break;
+                        }
+                    }
+                }
+                else if(dic.ContainsKey(w.First().ToString()))
+                {
+                    yield return w.First().ToString();
+                }
+                if (flag)
+                {
+                    t = t.Substring(1);
+                }
+                if (t.Length < 2)
+                {
+                    break;
+                }
+            }
+
+        }
+    }
+
     /// <summary>
     /// SouceIterator にある文字列のみを取得し、子に流します（複数）
     /// </summary>

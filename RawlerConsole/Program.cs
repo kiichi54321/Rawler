@@ -13,6 +13,8 @@ namespace RawlerConsole
         {
             Rawler.Tool.ReportManage.ErrReportEvent += ReportManage_ErrReportEvent;
             Rawler.Tool.ReportManage.ReportEvnet += ReportManage_ReportEvnet;
+
+      //      args = new List<string>() { @"C:\Users\kiichi\Documents\TwitterData\hamano_satoshi\tweet.xaml" }.ToArray();
             if(args.Length>0)
             {
                 try

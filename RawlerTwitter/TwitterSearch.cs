@@ -36,7 +36,7 @@ namespace RawlerTwitter
         {
 
             base.RunChildrenForArray(runChildren, ReadSearch());
-
+            GC.Collect();
         }
         public double SleepSecond { get; set; }
 

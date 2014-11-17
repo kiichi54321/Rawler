@@ -587,6 +587,17 @@ namespace Rawler.Tool
                 //必殺エラー握りつぶし
                 return System.Xaml.XamlServices.Save(new TableData() { Head = new List<string>() { "Err" }, Rows = new List<List<CellData>>() });
             }
+
+            public IEnumerable<List<CellData>> GetSkipRows()
+            {
+                foreach (var item in Rows)
+                {
+                    if( item.Where(n=>n.DataText.Length>0 ).Count()>1)
+                    {
+                        yield return item;
+                    }
+                }
+            }
         }
 
         public enum FileType { Tsv, Json ,改行区切りJson}

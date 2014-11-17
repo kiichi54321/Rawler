@@ -2,6 +2,9 @@ using System;
 using System.Web;
 using System.Collections.Generic;
 using System.Text;
+using System.Text.RegularExpressions;
+using System.Linq;
+using RawlerLib.MyExtend;
 
 namespace RawlerLib
 {
@@ -63,6 +66,7 @@ namespace RawlerLib
             strBuilder.Replace("&lt;", "<");
             strBuilder.Replace("&gt;", ">");
             strBuilder.Replace("&amp;", "&");
+            strBuilder.Replace("&#038;", "&");
             strBuilder.Replace("&quot;", "\"");
             return strBuilder.ToString();
 
@@ -78,8 +82,11 @@ namespace RawlerLib
         {
             StringBuilder strBuilder = new StringBuilder();
             strBuilder.Append(txt);
-            strBuilder.Replace("<", "&lt;");
-            strBuilder.Replace(">", "&gt;");
+            strBuilder.Replace("&nbsp;", " ");
+            strBuilder.Replace("&lt;", "<");
+            strBuilder.Replace("&gt;", ">");
+            strBuilder.Replace("&amp;", "&");
+            strBuilder.Replace("&quot;", "\"");
             return strBuilder.ToString();
         }
 
@@ -156,7 +163,7 @@ namespace RawlerLib
                 }
                 if (tag)
                 {
-                    list.Add(txt.Substring(s, e - s));
+                    list.Add(txt.Substring(s, e - s + end.Length));
                 }
                 else
                 {
@@ -231,32 +238,78 @@ namespace RawlerLib
         {
             System.Text.RegularExpressions.Regex regex = new System.Text.RegularExpressions.Regex(@"<IMG[^>]*?SRC\s*=(\s*|\s*[""])([^"">]+)([""][^>]*?|[^>]*?)>", System.Text.RegularExpressions.RegexOptions.IgnoreCase);
             List<Link> linkList = new List<Link>();
-            foreach (System.Text.RegularExpressions.Match match in regex.Matches(Html))
+            //Regex regex1 = new Regex(@"(\w*)\s?=\s?" + "[\"|\'| ]*(.+?)[\"|\'| |$]");
+            //foreach (System.Text.RegularExpressions.Match match in regex.Matches(Html))
+            //{
+            //    Link link = new Link();
+            //    //link.Label = 
+            //    string label = GetTagContent(match.Value, "alt=\"", "\"");
+            //    if (label == null || label.Length == 0)
+            //    {
+            //        label = GetTagContent(match.Value, "alt='", "'");
+            //        if (label == null || label.Length == 0)
+            //        {
+            //            label = GetTagContent(match.Value, "alt=", " ");
+            //        }
+            //    }
+            //    link.Label = label;
+            //    if (url.Length > 0)
+            //    {
+            //        link.Url = ChangeAbsoluteUriForUrl(match.Groups[2].Value, url);
+            //    }
+            //    else
+            //    {
+            //        link.Url = match.Groups[2].Value;
+            //    }
+
+
+
+
+            //    link.Tag = match.Value;
+            //    linkList.Add(link);
+            //}
+            foreach (var item in GetTagContentList(Html, "<img", ">", true).Adds(GetTagContentList(Html, "<IMG", ">", true)))
             {
                 Link link = new Link();
                 //link.Label = 
-                string label = GetTagContent(match.Value, "alt=\"", "\"");
-
+                string label = GetTagContent(item, "alt=\"", "\"");
                 if (label == null || label.Length == 0)
                 {
-                    label = GetTagContent(match.Value, "alt='", "'");
+                    label = GetTagContent(item, "alt='", "'");
                     if (label == null || label.Length == 0)
                     {
-                        label = GetTagContent(match.Value, "alt=", " ");
+                        label = GetTagContent(item, "alt=", " ");
                     }
                 }
                 link.Label = label;
-                if (url.Length > 0)
+
+                var match = regex.Match(item);
+                if (match.Success)
                 {
-                    link.Url = ChangeAbsoluteUriForUrl(match.Groups[2].Value, url);
+                    if (url.Length > 0)
+                    {
+                        link.Url = ChangeAbsoluteUriForUrl(match.Groups[2].Value, url);
+                    }
+                    else
+                    {
+                        link.Url = match.Groups[2].Value;
+                    }
+                    link.Tag = match.Value;
+                    linkList.Add(link);
+
                 }
                 else
                 {
-                    link.Url = match.Groups[2].Value;
+                    List<string> imageExtend = new List<string>() { "png", "jpeg", "jpg", "gif" };
+                    var m = GetTagContentList(item, "\"", "\"").Where(n => imageExtend.Contains(n.Split('.').Last()) == true);
+                    foreach (var item2 in m)
+                    {
+                        linkList.Add(new Link() { Label = label, Url = item2, Tag = item });
+                    }
                 }
-                link.Tag = match.Value;
-                linkList.Add(link);
+
             }
+
             return linkList;
         }
 

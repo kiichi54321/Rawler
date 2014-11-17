@@ -1639,24 +1639,68 @@ namespace TinySegmenterDotNet
 
         public EventHandler LearnEnd;
 
-        public class WordDicData
+        public struct WordDicData
         {
-            public string Word { get; set; }
-            public int Length { get; set; }
-            public string Replace { get; set; }
+            string word;
 
-            public WordDicData()
+            public string Word
             {
-                Replace = string.Empty;
+                get { return word; }
+                set { word = value; }
+            }
+            int length; 
+
+            public int Length
+            {
+                get { return length; }
+                set { length = value; }
+            }
+            string replace ;
+
+            public string Replace
+            {
+                get { return replace; }
+                set { replace = value; }
             }
 
-            public WordDicData(string text)
+
+            //public string Word { get; set; }
+            //public int Length { get; set; }
+            //public string Replace { get; set; }
+
+            ////public WordDicData()
+            //{
+            //    Replace = string.Empty;
+            //}
+
+            public static WordDicData Create(string text)
             {
+                var dd = new WordDicData();
                 var d = text.Split('\t');
-                Word = d[0];
-                Replace = string.Empty;
-                if (d.Length > 1) Replace = d[1];
-                Length = Word.Length;
+                dd.Word = d[0];
+                dd.Replace = string.Empty;
+                if (d.Length > 1) dd.Replace = d[1];
+                dd.Length = dd.Word.Length;
+                return dd;
+            }
+            public static WordDicData Create(string word,string replace)
+            {
+                var dd = new WordDicData();
+                dd.Word = word;
+                dd.Replace = replace;
+                dd.Length = word.Length;
+                return dd;
+            }
+
+            public bool IsEmpty()
+            {
+                if (this.Word != null) return false;
+                return true;
+            }
+
+            public static WordDicData GetEmpty()
+            {
+                return new WordDicData();
             }
 
             public string GetWord()
@@ -1684,32 +1728,120 @@ namespace TinySegmenterDotNet
         private void CreateDic()
         {
             var list = new List<string>().Adds(learnWordList).Adds(wordList).Where(n=>n.Length>1).OrderBy(n => n.Substring(0, 2)).ThenByDescending(n => n.Length).Distinct().ToList();
-            wordDic = list.GroupBy(n => n.Substring(0, 2)).Select(n => new { Key = n.Key, List = n.Select(m => new WordDicData(m)).OrderByDescending(m => m.Length).ThenByDescending(m=>m.Replace.Length).ToList() }).ToDictionary(n => n.Key, n => n.List);
+            wordDic = list.GroupBy(n => n.Substring(0, 2)).Select(n => new { Key = n.Key, List = n.Select(m =>WordDicData.Create(m)).OrderByDescending(m => m.Length).ThenByDescending(m=>m.Replace.Length).ToList() }).ToDictionary(n => n.Key, n => n.List);
         }
 
         private WordDicData SearchDic(string head, string text)
         {
             if (wordDic == null) CreateDic();
 
+
+            char firstChar = text.First();
+            if(firstChar == ' ')
+            {
+                return new WordDicData() { Word = " ", Replace = string.Empty, Length = 1 };
+            }
+            if (endChar.Contains(firstChar)) return WordDicData.Create(firstChar.ToString());
+
+            System.Text.StringBuilder sb = new System.Text.StringBuilder();
+            //カタカナ連続
+            foreach (var item in text)
+            {
+                if (katakana.Contains(item)) sb.Append(item);
+                else break;
+            }
+            if (sb.Length > 0) return WordDicData.Create(sb.ToString());
+
+
+            //数字の連続判別
+            foreach (var item in text)
+            {
+                if (numChar.Contains(item)) sb.Append(item);
+                else break;
+            }
+            if (sb.Length > 0) return WordDicData.Create(sb.ToString());
+            //アルファベットの連続
+            foreach (var item in text)
+            {
+                if (alfabet.Contains(item)) sb.Append(item);
+                else break;
+            }
+            if (sb.Length > 0) return WordDicData.Create(sb.ToString());
+
+            //辞書を使う
             if (wordDic.ContainsKey(head))
             {
-                var worddata = wordDic[head].DefaultIfEmpty(null).FirstOrDefault(n => n.EqualsText(text));
-                return worddata;
+                var worddata = wordDic[head].DefaultIfEmpty(new WordDicData()).FirstOrDefault(n => n.EqualsText(text));
+                if (worddata.IsEmpty() == false) return worddata;
             }
-            return null;
+
+
+            //括弧閉じ
+            int カッコ数 = 0;
+            foreach (var item in text)
+            {
+                if (startカッコ.Contains(item))
+                {
+                    カッコ数++;
+                }
+                if(endカッコ.Contains(item))
+                {
+                    カッコ数--;
+                }
+                if (カッコ数 > 0) sb.Append(item);
+                else
+                {
+                    if (sb.Length > 0) sb.Append(item);
+                    break;
+                }
+            }
+            if (sb.Length > 0 && sb.Length<16) return WordDicData.Create(sb.ToString());
+
+
+
+            return WordDicData.GetEmpty();
         }
+
         System.Text.RegularExpressions.Regex hiragana = new System.Text.RegularExpressions.Regex("^[ぁ-ん。、]$");
+        System.Text.RegularExpressions.Regex numRegex = new System.Text.RegularExpressions.Regex("^[ぁ-ん。、]$");
+        HashSet<char> numChar = new HashSet<char>("+,-./0123456789:");
+        HashSet<char> startカッコ = new HashSet<char>("([（【");
+        HashSet<char> endカッコ = new HashSet<char>(")]）】");
+        HashSet<char> katakana = new HashSet<char>("アィイゥウェエォオカガキギクグケゲコゴサザシジスズセゼソゾタダチヂッツヅテデトドナニヌネノハバパヒビピフブプヘベペホボポマミムメモャヤュユョヨラリルレロヮワヰヱヲンヴヵヶー");
+        HashSet<char> endChar = new HashSet<char>("!?！？、。「」『』:");
+        HashSet<char> alfabet = new HashSet<char>("0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ");
 
         private IEnumerable<string> Ngram(IEnumerable<string> list, int n, string separeter)
-        {
-            var d = list.ToArray();
-            for (int i = 0; i < d.Length - n + 1; i++)
+        {            
+            List<List<string>> list2 = new List<List<string>>();
+            List<string> l = new List<string>();
+            list2.Add(l);
+            foreach (var item in list)
             {
-                //初めと最後がひらがな1文字の時は、排除。
-                if (hiragana.Match(d[i]).Success == false && hiragana.Match(d[i+n-1]).Success==false)
+                if(endChar.Contains(item.First()))
                 {
-                    yield return d.Skip(i).Take(n).JoinText(separeter).Trim();
+                    l = new List<string>();
+                    list2.Add(l);
                 }
+                else
+                {
+                    l.Add(item);
+                }
+            }
+            foreach (var item in list2)
+            {
+                var d = item.ToArray();
+                if (d.Length > n)
+                {
+                    for (int i = 0; i < d.Length - n + 1; i++)
+                    {
+                        //初めと最後がひらがな1文字の時は、排除。
+                        if (hiragana.Match(d[i]).Success == false && hiragana.Match(d[i + n - 1]).Success == false)
+                        {
+                            yield return d.Skip(i).Take(n).JoinText(separeter).Trim();
+                        }
+                    }
+                }                
             }
         }
 
@@ -1722,12 +1854,29 @@ namespace TinySegmenterDotNet
         public IEnumerable<string> GetNgram(string text,int maxGram)
         {
             List<string> list = new List<string>();
-       
             var d = this.SegmentExted(text);
             for (int i = 2; i <= maxGram; i++)
             {
-                list.AddRange(Ngram(d, i, string.Empty).Distinct());
+                list.AddRange(Ngram(d, i, string.Empty).Distinct().Where(n => n.Contains(" ") == false));
             }
+            return list;
+        }
+
+        /// <summary>
+        /// SegmentExtedをして、NGramの結果を返す
+        /// </summary>
+        /// <param name="text"></param>
+        /// <param name="maxGram"></param>
+        /// <returns></returns>
+        public IEnumerable<string> GetNgram(string text, int[] nList)
+        {
+            List<string> list = new List<string>();
+            var d = this.SegmentExted(text);
+            foreach (var item in nList)
+            {
+                list.AddRange(Ngram(d, item, string.Empty).Distinct().Where(n => n.Contains(" ") == false));
+            }
+
             return list;
         }
 
@@ -1760,12 +1909,22 @@ namespace TinySegmenterDotNet
             if (LearnEnd != null) LearnEnd(this,new EventArgs());
         }
 
-        public string[] SegmentExted(string input)
+
+        public Func<string, PreSegment> PreSegmentFunc { get; set; }
+
+        public IEnumerable<string> SegmentExted(string input)
         {
             if (string.IsNullOrEmpty(input))
                 return new string[] { };
-
             List<string> result = new List<string>();
+
+            if(PreSegmentFunc !=null)
+            {
+                var r = PreSegmentFunc(input);
+                input = r.Text;
+                result.AddRange(r.List);
+            }
+
             List<string> seg = new List<string>();
             seg.Add("B3");
             seg.Add("B2");
@@ -1796,14 +1955,15 @@ namespace TinySegmenterDotNet
             while (input.Length > postion +1)
             {
                 var i = postion + 4;
-                WordDicData worddicdata = null;
+                WordDicData worddicdata = WordDicData.GetEmpty(); 
                 if (postion + 2 < input.Length)
                 {
                     worddicdata = SearchDic(input.Substring(postion, 2), input.Substring(postion));
                 }
-                if (worddicdata != null)
+                if (worddicdata.IsEmpty()==false)
                 {
-                    result.Add(worddicdata.GetWord());
+                    var w = worddicdata.GetWord();
+                    if (w.Length > 0) result.Add(w);
                     postion += worddicdata.Length;
                     i = postion + 4;
                     word = seg[i-1];
@@ -1888,7 +2048,108 @@ namespace TinySegmenterDotNet
             {
                 result.Add(word);
             }
-            return result.ToArray();
+            return result;
         }
     }
+
+    /// <summary>
+    /// 前処理用のクラス。メソッドチェーン
+    /// </summary>
+    public class PreSegment
+    {
+        public string Text { get; set; }
+        public List<string> List { get; set; }
+
+        public PreSegment()
+        { }
+
+        public PreSegment(string text)
+        {
+            this.Text = text;
+            this.List = new List<string>();
+        }
+
+        public PreSegment(string text,IEnumerable<string> list)
+        {
+            this.Text = text;
+            this.List = new List<string>(list);
+        }
+
+        public PreSegment TakeUrl()
+        {
+            return TakeRegex(@"https?://[\w/:%#\$&\?\(\)~\.=\+\-]+");
+        }
+        public PreSegment SkipUrl()
+        {
+            return SkipRegex(@"https?://[\w/:%#\$&\?\(\)~\.=\+\-]+");
+        }
+        public PreSegment TakeMention()
+        {
+            return TakeRegex(@"@\w*");
+        }
+        public PreSegment SkipMention()
+        {
+            return SkipRegex(@"@\w*");
+        }
+
+        public PreSegment SkipRegex(string pattern)
+        {
+            System.Text.RegularExpressions.Regex r = new Regex(pattern);
+            List<string> list = new List<string>();
+            foreach (System.Text.RegularExpressions.Match item in r.Matches(this.Text))
+            {
+                list.Add(item.Value);
+            }
+            foreach (var item in list)
+            {
+               // List.Add(item);
+                Text = Text.Replace(item, " ");
+            }
+            return this;
+        }
+
+        public PreSegment TakeRegex(string pattern)
+        {
+            System.Text.RegularExpressions.Regex r = new Regex(pattern);
+            List<string> list = new List<string>();
+            foreach(System.Text.RegularExpressions.Match item in r.Matches(  this.Text))
+            {
+                list.Add(item.Value);
+            }
+            foreach (var item in list)
+            {
+                List.Add(item);
+                Text = Text.Replace(item, " ");
+            }
+            return this;
+        }
+
+        /// <summary>
+        /// すべてを小文字化します。
+        /// </summary>
+        /// <returns></returns>
+        public PreSegment ToLower()
+        {
+            this.Text = this.Text.ToLower();
+            return this;
+        }
+
+        /// <summary>
+        /// 日本語の基本的な前処理
+        /// </summary>
+        /// <param name="text"></param>
+        /// <returns></returns>
+        public PreSegment PreprocessingForJapanese()
+        {
+            var t = Text;
+            t = CSharp.Japanese.Kanaxs.Kana.ToHankaku(t);
+            t = CSharp.Japanese.Kanaxs.Kana.ToZenkakuKana(t);
+            t = CSharp.Japanese.Kanaxs.Kana.ToPadding(t);
+        //    t = RawlerLib.Web.SimpleHtmlEncode(t);
+            t = t.Replace("～", "ー").Replace("－", "ー").Replace("─", "ー");
+            this.Text = t;
+            return this;
+        }
+    }
+
 }

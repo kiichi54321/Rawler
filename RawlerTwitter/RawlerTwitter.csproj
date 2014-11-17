@@ -92,6 +92,7 @@
     <Compile Include="TwitterLogin.cs" />
     <Compile Include="TwitterSearch.cs" />
     <Compile Include="TwitterStreaming.cs" />
+    <Compile Include="UserState.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\Users\kiichi\Documents\GitHub\CoreTweet\CoreTweet.Streaming.Reactive\CoreTweet.Streaming.Reactive.csproj">

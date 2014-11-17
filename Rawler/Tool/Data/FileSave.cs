@@ -21,6 +21,7 @@ namespace Rawler.Tool
         {
             this.Commited += new EventHandler<EventDataRow>(FileSave_Commited);
             doLastFileSave = false;
+            Stock = false;
         }
 
         public string AttributeOrderString { get; set; }
@@ -101,7 +102,6 @@ namespace Rawler.Tool
                 });
                 currentFileName = file;
                 FileInit(file);
-
             }
         }
 
@@ -117,14 +117,16 @@ namespace Rawler.Tool
                     if (e.DataRow.DataDic.ContainsKey(item2))
                     {
                         var item = e.DataRow.DataDic[item2];
-
-                        if (item.Count > 1)
+                        if (item.First() != null)
                         {
-                            item.ForEach(n => streamWriter.Write(n.ReadLines().Select(m=> m.Replace("\t"," ").Trim()).JoinText(" ") + ","));
-                        }
-                        else
-                        {
-                            streamWriter.Write(item.First().ReadLines().Select(m => m.Replace("\t", " ").Trim()).JoinText(" "));
+                            if (item.Count > 1)
+                            {
+                                item.ForEach(n => streamWriter.Write(n.ReadLines().Select(m => m.Replace("\t", " ").Trim()).JoinText(" ") + ","));
+                            }
+                            else
+                            {
+                                streamWriter.Write(item.First().ReadLines().Select(m => m.Replace("\t", " ").Trim()).JoinText(" "));
+                            }
                         }
                     }
                     streamWriter.Write("\t");

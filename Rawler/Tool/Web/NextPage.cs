@@ -89,6 +89,7 @@ namespace Rawler.Tool
         public override void Run(bool runChildren)
         {
             var page = GetPage();
+            
             var u = GetText().Split('#');
             string url = string.Empty;
             if (u.Length > 0)

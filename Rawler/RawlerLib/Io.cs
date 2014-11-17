@@ -29,6 +29,7 @@ namespace RawlerLib
             {
                 r = file+"_"+count+ext;
                 if (predicate(r)) break;
+                count++;
             }
             return r;
         }
