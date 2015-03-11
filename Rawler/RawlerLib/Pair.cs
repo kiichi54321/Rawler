@@ -10,7 +10,7 @@ namespace RawlerLib.Collections
     /// </summary>
     /// <typeparam name="TKey"></typeparam>
     /// <typeparam name="TValue"></typeparam>
-    internal class Pair<TKey, TValue> : IComparable<Pair<TKey, TValue>>
+    public class Pair<TKey, TValue> : IComparable<Pair<TKey, TValue>>
         where TKey : IComparable<TKey>
     {
         private TKey key;

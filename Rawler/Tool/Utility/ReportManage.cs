@@ -42,7 +42,7 @@ namespace Rawler.Tool
                     System.IO.File.AppendAllText(FileName, ea.DateTime.ToFileTimeUtc() + "\t" + ea.Message+"\n");
                 }
             }
-            if (isStock)
+            if (isStock && ea.IsErr)
             {
                 reportList.Add(ea);
             }

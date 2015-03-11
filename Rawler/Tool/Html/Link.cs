@@ -21,56 +21,6 @@ namespace Rawler.Tool
         {
         }
 
-        ///// <summary>
-        ///// Linkを取得するRawlerオブジェクト
-        ///// </summary>
-        ///// <param name="UrlFilter">URLの含まれている文字列</param>
-        ///// <param name="LabelFilter">Labelに含まれている文字列</param>
-        ///// <param name="isMulti">単数か複数か</param>
-        //public Link(string UrlFilter, string LabelFilter,bool isMulti)
-        //    : base()
-        //{
-        //    this.UrlFilter = UrlFilter;
-        //    this.LabelFilter = LabelFilter;
-        //    this.isMulti = isMulti;
-        //}
-
-        ///// <summary>
-        /////  Linkを取得するRawlerオブジェクト
-        ///// </summary>
-        ///// <param name="UrlFilter">URLの含まれている文字列</param>
-        ///// <param name="LabelFilter">Labelに含まれている文字列</param>
-        ///// <param name="isMulti">単数か複数か</param>
-        ///// <param name="type">子に流すデータタイプ</param>
-        //public Link(string UrlFilter, string LabelFilter, bool isMulti,LinkVisbleType type)
-        //    : base()
-        //{
-        //    this.UrlFilter = UrlFilter;
-        //    this.LabelFilter = LabelFilter;
-        //    this.isMulti = isMulti;
-        //    this.visbleType = type;
-        //}
-
-        ///// <summary>
-        /////  Linkを取得するRawlerオブジェクト
-        ///// </summary>
-        ///// <param name="UrlFilter">URLの含まれている文字列</param>
-        ///// <param name="LabelFilter">Labelに含まれている文字列</param>
-        ///// <param name="isMulti">単数か複数か</param>
-        ///// <param name="type">子に流すデータタイプ</param>
-        ///// <param name="useAbsolutetLink">絶対リンクで返す</param>
-        //public Link(string UrlFilter, string LabelFilter, bool isMulti, LinkVisbleType type, bool useAbsolutetLink)
-        //    : base()
-        //{
-        //    this.UrlFilter = UrlFilter;
-        //    this.LabelFilter = LabelFilter;
-        //    this.isMulti = isMulti;
-        //    this.visbleType = type;
-        //    this.useAbsolutetLink = useAbsolutetLink;
-        //}
-
-
-
         /// <summary>
         /// URLの含まれている文字列
         /// </summary>
@@ -80,6 +30,9 @@ namespace Rawler.Tool
         /// </summary>
         public string LabelFilter { get; set; }
 
+        /// <summary>
+        /// Tagに含まれている文字列
+        /// </summary>
         public string TagFilter { get; set; }
 
         private LinkVisbleType visbleType = LinkVisbleType.Url;
@@ -120,25 +73,105 @@ namespace Rawler.Tool
             set { emptyReport = value; }
         }
 
+        /// <summary>
+        /// aタグ以外にも反応させる場合
+        /// </summary>
         public string TargetTag { get; set; }
 
-        //private bool useDistinct = false;
 
-        //public bool UseDistinct
-        //{
-        //    get { return useDistinct; }
-        //    set { useDistinct = value; }
-        //}
-        /// <summary>
-        /// 実行する
-        /// </summary>
-        /// <param name="runChildren"></param>
-        public override void Run(bool runChildren)
+        private void oldMethod(bool runChildren)
         {
-            if (this.Parent != null && this.Parent.Text != null)
+            List<RawlerLib.Web.Link> list;
+            if (string.IsNullOrEmpty(TargetTag))
+            {
+                if (useAbsolutetLink)
+                {
+                    list = new List<RawlerLib.Web.Link>(RawlerLib.Web.GetLinkForHTML(GetText(), GetPageUrl()));
+                }
+                else
+                {
+                    list = new List<RawlerLib.Web.Link>(RawlerLib.Web.GetLinkForHTML(GetText()));
+                }
+            }
+            else
+            {
+                if (useAbsolutetLink)
+                {
+                    list = new List<RawlerLib.Web.Link>(RawlerLib.Web.GetLinkForHTML(GetText(), GetPageUrl(), TargetTag));
+                }
+                else
+                {
+                    list = new List<RawlerLib.Web.Link>(RawlerLib.Web.GetLinkForHTML(GetText(), null, TargetTag));
+                }
+            }
+
+            if (LabelFilter != null && LabelFilter.Length > 0)
+            {
+                list = new List<RawlerLib.Web.Link>(list.Where(n => n.Label.Contains(LabelFilter)));
+            }
+            if (UrlFilter != null && UrlFilter.Length > 0)
+            {
+                list = new List<RawlerLib.Web.Link>(list.Where(n => n.Url.Contains(UrlFilter)));
+
+            }
+            if (TagFilter != null && TagFilter.Length > 0)
+            {
+                list = new List<RawlerLib.Web.Link>(list.Where(n => n.TagWithoutUrl.Contains(TagFilter)));
+            }
+
+
+            if (VisbleType == LinkVisbleType.Label)
             {
 
-                List<RawlerLib.Web.Link> list;
+                {
+                    this.texts = new List<string>(list.Select(n => n.Label));
+                }
+            }
+            else if (VisbleType == LinkVisbleType.Url)
+            {
+                {
+                    this.texts = new List<string>(list.Select(n => n.Url));
+                }
+            }
+            else
+            {
+                {
+                    this.texts = new List<string>(list.Select(n => n.Tag));
+                }
+            }
+            if (emptyReport && this.texts.Count() == 0)
+            {
+                ReportManage.ErrReport(this, "対象が見つかりませんでした");
+            }
+
+            if (IsSingle == false)
+            {
+                RunChildrenForArray(runChildren, this.texts);
+
+            }
+            else
+            {
+                if (this.texts.Count() > 0)
+                {
+                    SetText(this.texts.First());
+                    RunChildren(runChildren);
+                }
+            }
+           
+
+        }
+        private RawlerLib.Web.Link currentLink;
+
+        private void NewMethod(bool runChildren)
+        {
+            List<RawlerLib.Web.Link> list;
+            if (this.Parent is Links && ((Links)this.Parent).TargetTag == this.TargetTag)
+            {
+                var p = (Links)this.Parent;
+                list = new List<RawlerLib.Web.Link>() { p.currentLink };
+            }
+            else
+            {
                 if (string.IsNullOrEmpty(TargetTag))
                 {
                     if (useAbsolutetLink)
@@ -154,67 +187,67 @@ namespace Rawler.Tool
                 {
                     if (useAbsolutetLink)
                     {
-                        list = new List<RawlerLib.Web.Link>(RawlerLib.Web.GetLinkForHTML(GetText(), GetPageUrl(),TargetTag));
+                        list = new List<RawlerLib.Web.Link>(RawlerLib.Web.GetLinkForHTML(GetText(), GetPageUrl(), TargetTag));
                     }
                     else
                     {
-                        list = new List<RawlerLib.Web.Link>(RawlerLib.Web.GetLinkForHTML(GetText(),null, TargetTag));
+                        list = new List<RawlerLib.Web.Link>(RawlerLib.Web.GetLinkForHTML(GetText(), null, TargetTag));
                     }
                 }
+            }
 
-                if (LabelFilter != null && LabelFilter.Length > 0)
-                {
-                    list = new List<RawlerLib.Web.Link>(list.Where(n => n.Label.Contains(LabelFilter)));
-                }
-                if (UrlFilter != null && UrlFilter.Length > 0)
-                {
-                    list = new List<RawlerLib.Web.Link>(list.Where(n => n.Url.Contains(UrlFilter)));
+            if (LabelFilter != null && LabelFilter.Length > 0)
+            {
+                list = new List<RawlerLib.Web.Link>(list.Where(n => n.Label.Contains(LabelFilter)));
+            }
+            if (UrlFilter != null && UrlFilter.Length > 0)
+            {
+                list = new List<RawlerLib.Web.Link>(list.Where(n => n.Url.Contains(UrlFilter)));
 
-                }
-                if (TagFilter != null && TagFilter.Length > 0)
-                {
-                    list = new List<RawlerLib.Web.Link>(list.Where(n => n.TagWithoutUrl.Contains(TagFilter)));
-                }
+            }
+            if (TagFilter != null && TagFilter.Length > 0)
+            {
+                list = new List<RawlerLib.Web.Link>(list.Where(n => n.TagWithoutUrl.Contains(TagFilter)));
+            }
 
 
-                if (VisbleType == LinkVisbleType.Label)
-                {
+            if (emptyReport && list.Count() == 0)
+            {
+                ReportManage.ErrReport(this, "対象が見つかりませんでした");
+            }
 
-                    {
-                        this.texts = new List<string>(list.Select(n => n.Label));
-                    }
-                }
-                else if (VisbleType == LinkVisbleType.Url)
+            if (IsSingle == false)
+            {
+                RunChildrenForArray<RawlerLib.Web.Link>(runChildren, list, (n) => GetTextVisbleType(n) , (n) => { currentLink = n; });
+            }
+            else
+            {
+                if (this.texts.Count() > 0)
                 {
-                    {
-                        this.texts = new List<string>(list.Select(n => n.Url));
-                    }
+                    SetText(GetTextVisbleType(list.First()));
+                    RunChildren(runChildren);
                 }
-                else
-                {
-                    {
-                        this.texts = new List<string>(list.Select(n => n.Tag));
-                    }
-                }
-                if (emptyReport && this.texts.Count() == 0)
-                {
-                    ReportManage.ErrReport(this, "対象が見つかりませんでした");
-                }
+            }
+        }
 
-                if (IsSingle == false)
-                {
-                    RunChildrenForArray(runChildren, this.texts);
+        private string GetTextVisbleType(RawlerLib.Web.Link link)
+        {
+            if (visbleType == LinkVisbleType.Label) return link.Label;
+            if (visbleType == LinkVisbleType.Url) return link.Url;
+            return link.Tag;            
+        }
 
-                }
-                else
-                {
-                    if (this.texts.Count() > 0)
-                    {
-                        SetText(this.texts.First());
-                        RunChildren(runChildren);
-                    }
-                }
-           
+        /// <summary>
+        /// 実行する
+        /// </summary>
+        /// <param name="runChildren"></param>
+        public override void Run(bool runChildren)
+        {
+            if (this.Parent != null && this.Parent.Text != null)
+            {
+             //   oldMethod(runChildren);
+                NewMethod(runChildren);
+ 
             }
         }
 

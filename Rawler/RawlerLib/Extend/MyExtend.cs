@@ -403,6 +403,23 @@ namespace RawlerLib.MyExtend
         }
 
         /// <summary>
+        /// Nullを例外としないTrimを行います。
+        /// </summary>
+        /// <param name="text">文字列です。</param>
+        /// <returns>結果です。</returns>
+        public static string TrimOrNull(this string text)
+        {
+            if (text != null)
+            {
+                return text.Trim();
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+        /// <summary>
         /// Nullの時、空文字
         /// </summary>
         /// <param name="text"></param>

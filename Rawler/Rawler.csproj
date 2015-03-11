@@ -152,6 +152,7 @@
     <Compile Include="Tool\Text\StringFormat.cs" />
     <Compile Include="Tool\Text\StringLength.cs" />
     <Compile Include="Tool\Text\ToCharArray.cs" />
+    <Compile Include="Tool\Thread\Concurrent.cs" />
     <Compile Include="Tool\Utility\Counter.cs" />
     <Compile Include="Tool\Utility\GetObject.cs" />
     <Compile Include="Tool\Utility\GlobalVar.cs" />
@@ -161,6 +162,7 @@
     <Compile Include="Tool\Utility\SetTempVar.cs" />
     <Compile Include="Tool\Utility\FunctionTree.cs" />
     <Compile Include="Tool\Utility\SetWorkFolder.cs" />
+    <Compile Include="Tool\Utility\StopWatch.cs" />
     <Compile Include="Tool\Utility\ThrowCatch.cs" />
     <Compile Include="Tool\Web\AddAllInputParameter.cs" />
     <Compile Include="Tool\Web\AddHiddenInputParameter.cs" />

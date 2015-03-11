@@ -15,14 +15,10 @@
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <WarningLevel>4</WarningLevel>
-    <SccProjectName>
-    </SccProjectName>
-    <SccLocalPath>
-    </SccLocalPath>
-    <SccAuxPath>
-    </SccAuxPath>
-    <SccProvider>
-    </SccProvider>
+    <SccProjectName>SAK</SccProjectName>
+    <SccLocalPath>SAK</SccLocalPath>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccProvider>SAK</SccProvider>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -42,11 +38,12 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Microsoft.mshtml, Version=7.0.3300.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
-    <Reference Include="System.Windows.Controls.WpfPropertyGrid">
-      <HintPath>..\..\SeasonChecker\SeasonChecker\System.Windows.Controls.WpfPropertyGrid.dll</HintPath>
-    </Reference>
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Core" />
@@ -58,18 +55,13 @@
     <Reference Include="WindowsBase" />
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
-    <Reference Include="WPG">
-      <HintPath>..\..\RawlerMovieApplication\RawlerApplication1\bin\Debug\WPG.dll</HintPath>
-    </Reference>
-    <Reference Include="WPGBrushEditor">
-      <HintPath>..\..\RawlerMovieApplication\RawlerApplication1\bin\Debug\WPGBrushEditor.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ShowDialog.cs" />
     <Compile Include="Scheme\RawlerToolSchemeBase.cs" />
     <Compile Include="ViewTask.cs" />
     <Compile Include="ViewText.cs" />
+    <Compile Include="WebBrowser.cs" />
     <Compile Include="WPF\RawlerParameterControl.xaml.cs">
       <DependentUpon>RawlerParameterControl.xaml</DependentUpon>
     </Compile>
@@ -151,7 +143,7 @@
     <AppDesigner Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Rawler\Rawler.csproj">
+    <ProjectReference Include="..\..\Rawler\Rawler\Rawler.csproj">
       <Project>{D0FF1894-5D72-40C4-91FD-774A8D87D34F}</Project>
       <Name>Rawler</Name>
     </ProjectReference>

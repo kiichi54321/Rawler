@@ -76,14 +76,7 @@ namespace Rawler.Tool
 
         public string ToJson()
         {
-            //StringBuilder sb = new StringBuilder();
-            //sb.Append("{");
-            //sb.Append(dataDic.Select(n => "\"" + n.Key + "\":\"" + n.Value + "\"").Aggregate((m,n)=>m+","+n));
-            //sb.Append("}");
-            //return sb.ToString();
            return   JsonConvert.SerializeObject(dataDic);
-            
-         //   return Codeplex.Data.DynamicJson.Serialize(dataDic).Replace("\"Key\":", string.Empty).Replace(",\"Value\"",string.Empty);
         }
 
         /// <summary>
@@ -109,18 +102,41 @@ namespace Rawler.Tool
         }
 
 
-        public IEnumerable<CellData> GetCell(IEnumerable<string> keys)
+        //public IEnumerable<CellData> GetCell(IEnumerable<string> keys)
+        //{
+        //    List<CellData> list = new List<CellData>();
+        //    foreach (var item in keys)
+        //    {
+        //        if( dataDic.ContainsKey(item))
+        //        {
+        //            list.Add(new CellData() { Key = item, Values = dataDic[item].Select(n=>n.Trim()).ToList() , DataType = dataTypeDic.GetValueOrDefault(item,DataAttributeType.Text) });
+        //        }
+        //        else
+        //        {
+        //            list.Add(new CellData() { Key = item, Values = new List<string>(), DataType = DataAttributeType.Text });
+        //        }
+        //    }
+        //    return list;
+        //}
+
+        public IEnumerable<CellData> GetCell(IDictionary<string,int> dic)
         {
             List<CellData> list = new List<CellData>();
-            foreach (var item in keys)
+            foreach (var item in dic)
             {
-                if( dataDic.ContainsKey(item))
+                for (int i = 0; i < item.Value; i++)
                 {
-                    list.Add(new CellData() { Key = item, Values = dataDic[item].Select(n=>n.Trim()).ToList() , DataType = dataTypeDic.GetValueOrDefault(item,DataAttributeType.Text) });
-                }
-                else
-                {
-                    list.Add(new CellData() { Key = item, Values = new List<string>(), DataType = DataAttributeType.Text });
+                    string k = item.Key;
+                    if (item.Value > 1) { k = item.Key + "_" + (i + 1); }
+
+                    if (dataDic.ContainsKey(item.Key) && dataDic[item.Key].Count > i)
+                    {
+                        list.Add(new CellData() { Key = k, Value = dataDic[item.Key][i].Trim(), DataType = dataTypeDic.GetValueOrDefault(item.Key, DataAttributeType.Text) });
+                    }
+                    else
+                    {
+                        list.Add(new CellData() { Key = k, Value = string.Empty, DataType = DataAttributeType.Text });
+                    }
                 }
             }
             return list;
@@ -181,11 +197,13 @@ namespace Rawler.Tool
     public class CellData
     {
         public string Key { get; set; }
-        public List<string> Values { get; set; }
+        public string Value { get; set; }
+        //廃止
+        //public List<string> Values { get; set; }
         public DataAttributeType DataType { get; set; }
         public string DataText
         {
-            get { return Values.JoinText(","); }
+            get { return Value; }
         }
     }
 

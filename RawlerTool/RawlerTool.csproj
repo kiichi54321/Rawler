@@ -45,7 +45,7 @@
     <BootstrapperEnabled>true</BootstrapperEnabled>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
-    <PlatformTarget>x86</PlatformTarget>
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -64,10 +64,11 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup>
-    <ManifestCertificateThumbprint>27448B49398F5FBF15BEF562D08A434BAD64AFA2</ManifestCertificateThumbprint>
+    <ManifestCertificateThumbprint>6A2FE9D4ACB4264B10A7BA7EA2EA8B00A75577AA</ManifestCertificateThumbprint>
   </PropertyGroup>
   <PropertyGroup>
-    <ManifestKeyFile>RawlerTool_1_TemporaryKey.pfx</ManifestKeyFile>
+    <ManifestKeyFile>
+    </ManifestKeyFile>
   </PropertyGroup>
   <PropertyGroup>
     <GenerateManifests>true</GenerateManifests>
@@ -202,6 +203,10 @@
     <ProjectReference Include="..\RawlerMecab\RawlerMecab.csproj">
       <Project>{33B87A14-4DFB-40C1-8B75-367B4D09574E}</Project>
       <Name>RawlerMecab</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\RawlerPhantom\RawlerPhantom.csproj">
+      <Project>{73534035-0bee-4c84-8409-f5b173999044}</Project>
+      <Name>RawlerPhantom</Name>
     </ProjectReference>
     <ProjectReference Include="..\RawlerTwitter\RawlerTwitter.csproj">
       <Project>{22251104-bc73-4fe6-a0e7-c63ecb6522df}</Project>

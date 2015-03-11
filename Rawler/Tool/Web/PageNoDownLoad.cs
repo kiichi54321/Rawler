@@ -47,13 +47,15 @@ namespace Rawler.Tool.Web
                 foreach (var item in HTMLs)
                 {
                     SetText(item);
-                    base.Run(runChildren);
+                    RunChildren(runChildren);
+//                    base.Run(runChildren);
                 }
             }
             else
             {
                 //何もしない。
-                base.Run(runChildren);
+                RunChildren(runChildren);
+//                base.Run(runChildren);
             }
         }
     }

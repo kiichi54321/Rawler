@@ -27,7 +27,13 @@ namespace Rawler.Tool
 
         public string FileName { get; set; }
          FileSaveMode fileSaveMode = FileSaveMode.Create;
+         private bool endReport = true;
 
+         public bool EndReport
+         {
+             get { return endReport; }
+             set { endReport = value; }
+         }
         public FileSaveMode FileSaveMode
         {
             get { return fileSaveMode; }
@@ -268,8 +274,8 @@ namespace Rawler.Tool
                         sw.WriteLine(item.ToJson().Replace("\r", " ").Replace("\n", " "));
                     }
                 }
-                sw.Close();
-                ReportManage.Report(this, filename + "作成完了", true, true);
+                sw.Close();                
+                ReportManage.Report(this, filename + "作成完了", true, EndReport);
             }
         }
 
@@ -343,7 +349,7 @@ namespace Rawler.Tool
                     sw.WriteLine();
                 }
                 sw.Close();
-                ReportManage.Report(this, filename + "作成完了", true, true);
+                ReportManage.Report(this, filename + "作成完了", true, EndReport);
             }
                 
             
@@ -385,27 +391,26 @@ namespace Rawler.Tool
         public TableData CreateTable()
         {
             TableData table = new TableData();
-            HashSet<string> hash = new HashSet<string>();
-            foreach (var item2 in GetDataRows())
-            {
-                foreach (var item3 in item2.DataDic.Keys)
-                {
-                    hash.Add(item3);
-                }
-            }
-            table.Head = hash.ToList();
-            List<List<CellData>> list = new List<List<CellData>>();
+            var hash = GetDataRows().SelectMany(n => n.DataDic).GroupBy(n => n.Key).Select(n => new { n.Key, Value = n.Max(m => m.Value.Count) }).ToDictionary(n => n.Key, n => n.Value);
 
-            var dic = GetDataRows().SelectMany(n => n.GetCell(hash)).GroupBy(n => n.Key)
+//            table.Head = hash.ToList();
+            List<List<CellData>> list = new List<List<CellData>>();
+            list = GetDataRows().Select(n => n.GetCell(hash).ToList()).ToList();
+
+            var dic = list.SelectMany(n => n).GroupBy(n => n.Key)
                 .Where(n=>n.Select(m=>m.DataText).Distinct().Count()>1 || n.First().DataType == DataAttributeType.SourceUrl)
                 .Select(n => new { Key = n.Key, Value = n.Select(m => m.DataText).JoinText("\t") })
                 .ToDictionary(n => n.Key, n => n.Value);
             var keyList = dic.GroupBy(n => n.Value).Select(n => n.First().Key);
             var k = keyList;
             table.Head = k.ToList();
-            foreach (var item in GetDataRows())
+            var h = new HashSet<string>(k);
+            foreach (var item in list)
             {
-                list.Add(item.GetCell(table.Head).ToList());
+                foreach(var item2 in item.Where(n=>h.Contains(n.Key) == false).ToArray())
+                {
+                    item.Remove(item2);
+                }
             }
             table.Rows = list;
             return table;
@@ -417,20 +422,39 @@ namespace Rawler.Tool
         {
             StringBuilder strBuilder = new StringBuilder();
             var item = this;
-//           foreach (var item in GetData())
             {
-                HashSet<string> hash = new HashSet<string>();
-                foreach (var item2 in item.GetDataRows())
-                {
-                    foreach (var item3 in item2.DataDic.Keys)
-                    {
-                        hash.Add(item3);
-                    }
-                }
+                var hash = item.GetDataRows().SelectMany(n => n.DataDic).GroupBy(n => n.Key).Select(n => new { n.Key, Value = n.Max(m => m.Value.Count) }).ToDictionary(n => n.Key, n => n.Value);
+                //Dictionary<string, int> hash = new Dictionary<string, int>();
+                //foreach (var item2 in item.GetDataRows())
+                //{
+                //    foreach (var item3 in item2.DataDic)
+                //    {
+                //        if (hash.ContainsKey(item3.Key))
+                //        {                            
+                //            hash[item3.Key] = Math.Max(item3.Value.Count, hash[item3.Key]);
+                //        }
+                //        else
+                //        {
+                //            hash.Add(item3.Key,item3.Value.Count);
+                //        }
+                //    }
+                //}
                 foreach (var key in hash)
                 {
-                    strBuilder.Append(key);
-                    strBuilder.Append("\t");
+                    if (key.Value == 1)
+                    {
+                        strBuilder.Append(key.Key);
+                        strBuilder.Append("\t");
+                    }
+                    else
+                    {
+                        for (int i = 0; i < key.Value; i++)
+                        {
+                            strBuilder.Append(key.Key);
+                            strBuilder.Append("_"+(i+1));
+                            strBuilder.Append("\t");                            
+                        }
+                    }
                 }
                 strBuilder.AppendLine();
 
@@ -438,21 +462,29 @@ namespace Rawler.Tool
                 {
                     foreach (var key in hash)
                     {
-                        if (row.DataDic.ContainsKey(key))
+                        if (row.DataDic.ContainsKey(key.Key))
                         {
                             StringBuilder str = new StringBuilder();
                             bool flag = true;
-                            foreach (var item5 in row.DataDic[key])
+                            var list = row.DataDic[key.Key];
+                            for (int i = 0; i < key.Value; i++)
                             {
-                                if (item5 != null)
+                                if (list.Count > i)
                                 {
-                                    str.Append(item5.Replace("\n", "").Replace("\r", "").Replace("\t", "") + ",");
+                                    str.Append(list[i].Replace("\n", "").Replace("\r", "").Replace("\t", "") + "\t");
                                 }
                                 else
                                 {
                                     flag = false;
                                 }
                             }
+                            //foreach (var item5 in row.DataDic[key.Key])
+                            //{
+                            //    if (item5 != null)
+                            //    {
+                            //        str.Append(item5.Replace("\n", "").Replace("\r", "").Replace("\t", "") + "\t");
+                            //    }
+                            //}
                             if (flag)
                             {
                                 str.Length = str.Length - 1;
@@ -467,7 +499,46 @@ namespace Rawler.Tool
             }
             return strBuilder.ToString();
         }
+        
+            /// <summary>
+            ///　すべての行数
+            /// </summary>
+        public int TotalRows
+        {
+            get
+            {
+                return dataList.Where(n => n.IsDataNull() == false).Count();
+            }
+        }
+/// <summary>
+/// すべてのカラム数
+/// </summary>
+        public int TotalColumns
+        {
+            get
+            {
+                HashSet<string> hash = new HashSet<string>();
+                foreach (var item2 in GetDataRows())
+                {
+                    foreach (var item3 in item2.DataDic.Keys)
+                    {
+                        hash.Add(item3);
+                    }
+                }
+                return hash.Count;
+            }
+        }
 
+        /// <summary>
+        /// 平均のカラム数
+        /// </summary>
+        public double AvgColumns
+        {
+            get
+            {
+                return GetDataRows().Select(n => n.DataDic.SelectMany(m => m.Value).Count()).Average();
+            }
+        }
 
         private bool stock = true;
 
@@ -597,6 +668,15 @@ namespace Rawler.Tool
                         yield return item;
                     }
                 }
+            }
+
+            public override string ToString()
+            {
+                StringBuilder sb = new StringBuilder();
+                Head.ForEach(n => sb.Append(n + "\t"));
+                sb.AppendLine();
+                Rows.ForEach(n => { n.ForEach(m => sb.Append(m.DataText.Replace("\n",string.Empty) + "\t")); sb.AppendLine(); });
+                return sb.ToString();
             }
         }
 

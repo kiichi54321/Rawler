@@ -11,6 +11,10 @@
     <AssemblyName>RawlerConsole</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <SccProjectName>SAK</SccProjectName>
+    <SccLocalPath>SAK</SccLocalPath>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccProvider>SAK</SccProvider>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -49,7 +53,11 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Rawler\Rawler.csproj">
+    <ProjectReference Include="..\RawlerPhantom\RawlerPhantom.csproj">
+      <Project>{d82f95fc-f1e6-437f-bdfd-4514bc33839e}</Project>
+      <Name>RawlerPhantom</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Rawler\Rawler\Rawler.csproj">
       <Project>{d0ff1894-5d72-40c4-91fd-774a8d87d34f}</Project>
       <Name>Rawler</Name>
     </ProjectReference>

@@ -120,6 +120,63 @@ namespace Rawler.Tool
             }
         }
 
+        /// <summary>
+        /// 子を実行する。
+        /// </summary>
+        /// <param name="runChildren"></param>
+        /// <param name="list"></param>
+        protected void RunChildrenForArray<T>(bool runChildren, IEnumerable<T> list,Func<T,string> textFunc,Action<T> action)
+        {
+            if (runChildren)
+            {
+                List<TextPair<T>> dataList = list.Select(n => new TextPair<T> { Text = textFunc(n), Obj = n }).ToList();
+                if (ConvertTree != null)
+                {
+                    dataList = Convert<T>(dataList,textFunc).ToList();
+                }
+                if (Query != null)
+                {
+                    dataList = Query.RunQuery(dataList, this).ToList();
+                }
+                SetTexts(dataList.Select(n=>n.Text));
+
+                foreach (var item in dataList)
+                {
+                    this.SetText(item.Text);
+                    action(item.Obj);
+                    foreach (RawlerBase item2 in children)
+                    {
+                        item2.Run();
+                        if (item2.GetBreakFlag())
+                        {
+                            break;
+                        }
+                    }
+
+                }
+                if (LoopEndEvent != null)
+                {
+                    LoopEndEvent(this, new EventArgs());
+                }
+                if (EmptyTree != null)
+                {
+                    if (list.Any() == false)
+                    {
+                        EmptyTree.SetParent(this);
+                        EmptyTree.Run();
+                    }
+                }
+                if (AnyTree != null)
+                {
+                    if (list.Any() == true)
+                    {
+                        AnyTree.SetParent(this);
+                        AnyTree.Run();
+                    }
+                }
+            }
+        }
+
 
 
         private IEnumerable<string> Convert(IEnumerable<string> list)
@@ -140,6 +197,33 @@ namespace Rawler.Tool
                 }
 
             }
+        }
+
+        private IEnumerable<TextPair<T>> Convert<T>(IEnumerable<TextPair<T>> list,Func<T,string> textFunc)
+        {
+            if (ConvertTree != null)
+            {
+                ConvertTree.SetParent(this.Parent);
+                foreach (var item in list)
+                {
+                    item.Text = RawlerBase.GetText(item.Text, ConvertTree, this.Parent);
+                    yield return item;
+                    //yield return RawlerBase.GetText(item, ConvertTree, this.Parent);
+                }
+            }
+            else
+            {
+                foreach (var item in list)
+                {
+                    yield return item;
+                }
+            }
+        }
+
+        public class TextPair<T>
+        {
+            public T Obj { get; set; }
+            public string Text { get; set; }
         }
 
         /// <summary>

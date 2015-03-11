@@ -20,6 +20,8 @@ namespace RawlerLib.MarkupLanguage
             set { parameter = value; }
         }
 
+        public string ClassName { get; set; }
+        public string IdName { get; set; }
 
 
         public TagClass(string tag, int start, string text)
@@ -42,13 +44,67 @@ namespace RawlerLib.MarkupLanguage
                 {
                      this.parameter = StartTag.Replace("<" + tag, "").Replace(">", "");
                 }
-
+                //ClassName = Web.GetParameter(this.parameter, "class");
+                //IdName = Web.GetParameter(this.parameter, "id");
             }
         }
 
+        public TagClass(string tag, int start,string text, char[] t)
+        {
+            this.Start = start;
+            this.EndTag = "</" + tag + ">";
+            this.baseText = text;
+            if (baseText != null)
+            {
+                int s = IndexOf(t, '>', start);
+                IsSingleTag = Check(t, '/', s - 1);
+                this.StartTag = baseText.Substring(start, s + 1 - start);
+                if (IsSingleTag)
+                {
+                    this.parameter = StartTag.Replace("<" + tag, "").Replace("/>", "");
+                }
+                else
+                {
+                    this.parameter = StartTag.Replace("<" + tag, "").Replace(">", "");
+                }
+                //ClassName = Web.GetParameter(this.parameter, "class");
+                //IdName = Web.GetParameter(this.parameter, "id");
+            }
+        }
+
+        int IndexOf(char[] t,char target,int start)
+        {
+            int i = start;
+            bool flag = false;
+            while (true)
+            {
+                if (t[i] == target) { flag = true; break; }
+                i++;
+            }
+            if (flag) return i;
+            return -1;
+        }
+
+        bool Check(char[] t,char target,int postion)
+        {
+            if(t.Length > postion)
+            {
+                if( t[postion] == target)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+        
+
+
+
         public bool CheckClassName(string name)
         {
-            System.Text.RegularExpressions.Regex regex = new System.Text.RegularExpressions.Regex("class[ ]*=[\"|\'| ]*"+name+"[\"|\'| |$]", System.Text.RegularExpressions.RegexOptions.IgnoreCase);
+            //return ClassName == name;
+
+            System.Text.RegularExpressions.Regex regex = new System.Text.RegularExpressions.Regex("class[ ]*=[\"|\'| ]*" + name + "[\"|\'| |$]", System.Text.RegularExpressions.RegexOptions.IgnoreCase);
             var r = regex.Match(parameter);
             if (r.Success)
             {
@@ -76,6 +132,7 @@ namespace RawlerLib.MarkupLanguage
 
         public bool CheckIdName(string name)
         {
+        
             System.Text.RegularExpressions.Regex regex = new System.Text.RegularExpressions.Regex("id[ ]*=[\"|\'| ]*" + name + "[\"|\'| |$]", System.Text.RegularExpressions.RegexOptions.IgnoreCase);
             var r = regex.Match(parameter);
             if (r.Success)

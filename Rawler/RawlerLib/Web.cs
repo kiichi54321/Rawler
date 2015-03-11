@@ -286,7 +286,7 @@ namespace RawlerLib
                 var match = regex.Match(item);
                 if (match.Success)
                 {
-                    if (url.Length > 0)
+                    if (url !=null && url.Length > 0)
                     {
                         link.Url = ChangeAbsoluteUriForUrl(match.Groups[2].Value, url);
                     }
@@ -461,8 +461,6 @@ namespace RawlerLib
 
         public static ICollection<Link> GetLinkForHTML(string HTML, string url,string targetTag)
         {
-
-
             System.Text.RegularExpressions.Regex regex = new System.Text.RegularExpressions.Regex(@"<"+targetTag+@"[^>]*?HREF\s*=(\s*|\s*[""])([^"">]+)([""][^>]*?|[^>]*?)(>([\s\S]*?)<\/"+targetTag+">|/>)", System.Text.RegularExpressions.RegexOptions.IgnoreCase);
             System.Text.RegularExpressions.Regex regexHttp = new System.Text.RegularExpressions.Regex("^http", System.Text.RegularExpressions.RegexOptions.IgnoreCase);
             List<Link> linkList = new List<Link>();
@@ -786,6 +784,20 @@ namespace RawlerLib
             {
                 UserAgent = agent;
                 Referer = referer;
+            }
+        }
+
+        public static string GetParameter(string text,string ParameterName)
+        {
+            System.Text.RegularExpressions.Regex regex = new System.Text.RegularExpressions.Regex(ParameterName + "[ ]*=[\"|\'| ]*(.+?)[\"|\'| |$]", System.Text.RegularExpressions.RegexOptions.IgnoreCase);
+            var r = regex.Match(text);
+            if(r.Success)
+            {
+                return r.Groups[1].Value;
+            }
+            else
+            {
+                return null;
             }
         }
 

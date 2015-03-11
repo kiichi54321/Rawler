@@ -14,6 +14,11 @@ namespace Rawler.Tool
             return list;
         }
 
+        public virtual IEnumerable<RawlerMultiBase.TextPair<T>> Query<T>(IEnumerable<RawlerMultiBase.TextPair<T>> list)
+        {
+            return list;
+        }
+
         public IEnumerable<string> RunQuery(IEnumerable<string> list)
         {
             IEnumerable<string> list2 = Query(list);
@@ -34,6 +39,28 @@ namespace Rawler.Tool
             }
             return list2;
         }
+
+        public IEnumerable<RawlerMultiBase.TextPair<T>> RunQuery<T>(IEnumerable<RawlerMultiBase.TextPair<T>> list)
+        {
+            IEnumerable<RawlerMultiBase.TextPair<T>> list2 = Query(list);
+            if (Child != null)
+            {
+                list2 = Child.RunQuery(list2);
+            }
+            return list2;
+        }
+
+        public IEnumerable<RawlerMultiBase.TextPair<T>> RunQuery<T>(IEnumerable<RawlerMultiBase.TextPair<T>> list, RawlerMultiBase rawler)
+        {
+            this.Rawler = rawler;
+            IEnumerable<RawlerMultiBase.TextPair<T>> list2 = Query(list);
+            if (Child != null)
+            {
+                list2 = Child.RunQuery(list2,rawler);
+            }
+            return list2;
+        }
+
 
         /// <summary>
         /// メソッドチェーン的にクエリーを作る

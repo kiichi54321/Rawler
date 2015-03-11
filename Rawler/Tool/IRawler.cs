@@ -703,6 +703,31 @@ namespace Rawler.Tool
             if(xaml == null) xaml = System.Xaml.XamlServices.Save(this);
             return xaml;
         }
+
+        /// <summary>
+        /// 比較的きれいなXAMLを返す
+        /// </summary>
+        /// <returns></returns>
+        public string ToCleanXAML()
+        {
+            StringBuilder xaml = new StringBuilder(System.Xaml.XamlServices.Save(this));
+            xaml = xaml.Replace("\"{x:Null}\"", "Null").Replace(" Enable=\"True\"", "").Replace(" Comment=\"\"", "");
+
+            System.Text.RegularExpressions.Regex regex = new System.Text.RegularExpressions.Regex(@"\w*=Null");
+            List<string> list = new List<string>();
+            foreach (System.Text.RegularExpressions.Match item in regex.Matches(xaml.ToString()))
+            {
+                list.Add(item.Value);
+            }
+
+            foreach (var item in list.Distinct())
+            {
+                xaml = xaml.Replace(" " + item, string.Empty);
+            }
+
+            return xaml.ToString();
+        }
+
         /// <summary>
         /// 子供なしでXAML化する。
         /// </summary>

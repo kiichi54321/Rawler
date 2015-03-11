@@ -179,9 +179,117 @@ namespace Rawler.Tool
         //                }
         //            }
         //}
-        private  void OldMethod(bool runChildren)
+        private void OldMethod(bool runChildren)
         {
-                                       List<RawlerLib.MarkupLanguage.TagClass> list;
+            List<RawlerLib.MarkupLanguage.TagClass> list;
+            if (UseTagRank)
+            {
+                list = new List<RawlerLib.MarkupLanguage.TagClass>(RawlerLib.MarkupLanguage.TagAnalyze.GetTopTag(GetText(), Tag));
+            }
+            else
+            {
+                list = new List<RawlerLib.MarkupLanguage.TagClass>(RawlerLib.MarkupLanguage.TagAnalyze.GetTag(GetText(), Tag));
+            }
+
+
+            if (this.ParameterFilter != null && this.ParameterFilter.Length > 0)
+            {
+                list = new List<RawlerLib.MarkupLanguage.TagClass>(list.Where(n => n.Parameter.Contains(this.ParameterFilter)));
+            }
+            if (this.ContextFilter != null && this.ContextFilter.Length > 0)
+            {
+                list = new List<RawlerLib.MarkupLanguage.TagClass>(list.Where(n => n.Inner.Contains(this.ContextFilter)));
+            }
+            if (this.ClassName != null && this.ClassName.Length > 0)
+            {
+                list = new List<RawlerLib.MarkupLanguage.TagClass>(list.Where(n => n.CheckClassName(ClassName)));
+            }
+            if (string.IsNullOrEmpty(Itemprop) == false)
+            {
+                list = new List<RawlerLib.MarkupLanguage.TagClass>(list.Where(n => n.CheckItempropName(Itemprop)));
+            }
+            if (this.IdName != null && this.IdName.Length > 0)
+            {
+                list = new List<RawlerLib.MarkupLanguage.TagClass>(list.Where(n => n.CheckIdName(IdName)));
+            }
+            if (this.TargetName != null && this.TargetName.Length > 0)
+            {
+                list = new List<RawlerLib.MarkupLanguage.TagClass>(list.Where(n => n.CheckName(TargetName)));
+            }
+
+
+            if (true)
+            {
+                List<string> list2 = new List<string>();
+                foreach (var tag in list)
+                {
+                    string txt = string.Empty;
+                    switch (tagVisbleType)
+                    {
+                        case TagVisbleType.Inner:
+                            txt = tag.Inner;
+                            break;
+                        case TagVisbleType.Outer:
+                            txt = tag.Outer;
+                            break;
+                        case TagVisbleType.Parameter:
+                            txt = tag.Parameter;
+                            break;
+                        default:
+                            txt = tag.Inner;
+                            break;
+                    }
+                    list2.Add(txt);
+                }
+                if (emptyReport && list2.Count == 0)
+                {
+                    ReportManage.ErrReport(this, "該当するものは一つも見つかりませんでした。");
+                }
+                texts = list2;
+
+
+                if (IsSingle)
+                {
+                    if (list2.Count > 0)
+                    {
+                        SetText(list2.First());
+                        RunChildren(runChildren);
+                    }
+                }
+                else
+                {
+                    RunChildrenForArray(runChildren, list2);
+                }
+            }
+        }
+
+        private RawlerLib.MarkupLanguage.TagClass currentTagClass;
+
+        private IEnumerable<RawlerLib.MarkupLanguage.TagClass> ExtendList(List<RawlerLib.MarkupLanguage.TagClass> list)
+        {
+            foreach (var item in list)
+            {
+                yield return item;
+                foreach (var item2 in ExtendList(item.Children))
+                {
+                    yield return item2;
+                }
+            }
+        }
+
+        private void NewMethod(bool runChildren)
+        {
+            List<RawlerLib.MarkupLanguage.TagClass> list;
+
+            var test = this.GetAncestorRawler().Skip(1).TakeWhile(n => (n is Page) == false);
+            var tags = this.GetAncestorRawler().Skip(1).TakeWhile(n => (n is Page) == false).OfType<Tags>().Where(n => n.Tag == this.Tag).FirstOrDefault();
+            if (tags != null)
+            {
+                list = ExtendList( tags.currentTagClass.Children).ToList();
+            }
+            else
+            {
+
                 if (UseTagRank)
                 {
                     list = new List<RawlerLib.MarkupLanguage.TagClass>(RawlerLib.MarkupLanguage.TagAnalyze.GetTopTag(GetText(), Tag));
@@ -190,85 +298,94 @@ namespace Rawler.Tool
                 {
                     list = new List<RawlerLib.MarkupLanguage.TagClass>(RawlerLib.MarkupLanguage.TagAnalyze.GetTag(GetText(), Tag));
                 }
+            }
+
+            if (this.ParameterFilter != null && this.ParameterFilter.Length > 0)
+            {
+                list = new List<RawlerLib.MarkupLanguage.TagClass>(list.Where(n => n.Parameter.Contains(this.ParameterFilter)));
+            }
+            if (this.ContextFilter != null && this.ContextFilter.Length > 0)
+            {
+                list = new List<RawlerLib.MarkupLanguage.TagClass>(list.Where(n => n.Inner.Contains(this.ContextFilter)));
+            }
+            if (this.ClassName != null && this.ClassName.Length > 0)
+            {
+                list = new List<RawlerLib.MarkupLanguage.TagClass>(list.Where(n => n.CheckClassName(ClassName)));
+            }
+            if (string.IsNullOrEmpty(Itemprop) == false)
+            {
+                list = new List<RawlerLib.MarkupLanguage.TagClass>(list.Where(n => n.CheckItempropName(Itemprop)));
+            }
+            if (this.IdName != null && this.IdName.Length > 0)
+            {
+                list = new List<RawlerLib.MarkupLanguage.TagClass>(list.Where(n => n.CheckIdName(IdName)));
+            }
+            if (this.TargetName != null && this.TargetName.Length > 0)
+            {
+                list = new List<RawlerLib.MarkupLanguage.TagClass>(list.Where(n => n.CheckName(TargetName)));
+            }
 
 
-                if (this.ParameterFilter != null && this.ParameterFilter.Length > 0)
-                {
-                    list = new List<RawlerLib.MarkupLanguage.TagClass>(list.Where(n => n.Parameter.Contains(this.ParameterFilter)));
-                }
-                if (this.ContextFilter != null && this.ContextFilter.Length > 0)
-                {
-                    list = new List<RawlerLib.MarkupLanguage.TagClass>(list.Where(n => n.Inner.Contains(this.ContextFilter)));
-                }
-                if (this.ClassName != null && this.ClassName.Length > 0)
-                {
-                    list = new List<RawlerLib.MarkupLanguage.TagClass>(list.Where(n => n.CheckClassName(ClassName)));                    
-                }
-                if(string.IsNullOrEmpty(Itemprop) == false)
-                {
-                    list = new List<RawlerLib.MarkupLanguage.TagClass>(list.Where(n => n.CheckItempropName(Itemprop)));                    
-                }
-                if (this.IdName != null && this.IdName.Length > 0)
-                {
-                    list = new List<RawlerLib.MarkupLanguage.TagClass>(list.Where(n => n.CheckIdName(IdName)));                    
-                }
-                if (this.TargetName != null && this.TargetName.Length > 0)
-                {
-                    list = new List<RawlerLib.MarkupLanguage.TagClass>(list.Where(n => n.CheckName(TargetName)));
-                }
+            if (emptyReport && list.Count == 0)
+            {
+                ReportManage.ErrReport(this, "該当するものは一つも見つかりませんでした。");
+            }
+            texts = list.Select(n=>GetTagVisbleTypeText(n));
 
 
-                if (true)
+            if (IsSingle)
+            {
+                if (list.Count > 0)
                 {
-                    List<string> list2 = new List<string>();
-                    foreach (var tag in list)
-                    {
-                        string txt = string.Empty;
-                        switch (tagVisbleType)
-                        {
-                            case TagVisbleType.Inner:
-                                txt = tag.Inner;
-                                break;
-                            case TagVisbleType.Outer:
-                                txt = tag.Outer;
-                                break;
-                            case TagVisbleType.Parameter:
-                                txt = tag.Parameter;
-                                break;
-                            default:
-                                txt = tag.Inner;
-                                break;
-                        }
-                        list2.Add(txt);
-                    }
-                    if (emptyReport && list2.Count == 0)
-                    {
-                        ReportManage.ErrReport(this, "該当するものは一つも見つかりませんでした。");
-                    }
-                    texts = list2;
-
-
-                    if (IsSingle)
-                    {
-                        if (list2.Count > 0)
-                        {
-                            SetText(list2.First());
-                            RunChildren(runChildren);
-                        }
-                    }
-                    else
-                    {
-                        RunChildrenForArray(runChildren, list2);
-                    }
+                    SetText(GetTagVisbleTypeText(list.First()));
+                    currentTagClass = list.First();
+                    RunChildren(runChildren);
                 }
+            }
+            else
+            {
+                RunChildrenForArray<RawlerLib.MarkupLanguage.TagClass>(runChildren, list,(n)=> GetTagVisbleTypeText(n),(n)=>this.currentTagClass = n );
+            }
+
         }
+
+        private string GetTagVisbleTypeText(RawlerLib.MarkupLanguage.TagClass tag )
+        {
+            string txt = string.Empty;
+            switch (tagVisbleType)
+            {
+                case TagVisbleType.Inner:
+                    txt = tag.Inner;
+                    break;
+                case TagVisbleType.Outer:
+                    txt = tag.Outer;
+                    break;
+                case TagVisbleType.Parameter:
+                    txt = tag.Parameter;
+                    break;
+                default:
+                    txt = tag.Inner;
+                    break;
+            }
+            return txt;
+        }
+
+
+        public static bool NewMethodType = false;
 
         public override void Run(bool runChildren)
         {
             if (this.Parent != null)
             {
-
+                if (NewMethodType == false)
+                {
                     OldMethod(runChildren);
+                }
+                else
+                {
+                    NewMethod(runChildren);
+                }
+
             }
 
 

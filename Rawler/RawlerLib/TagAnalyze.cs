@@ -51,10 +51,11 @@ namespace RawlerLib.MarkupLanguage
             var startList = StringIndexList(txt, new string[] { "<" + tag + " ", "<" + tag + ">" });
             var endList = StringIndexList(txt, endTag);
             Dictionary<int, TagClass> dic = new Dictionary<int, TagClass>();
+            var t = txt.ToArray();
             foreach (var item in startList.OrderBy(n=>n))
             {
                 list.Add(new RawlerLib.Collections.Pair<int, TagType>(item, TagType.Start));
-                dic.Add(item, new TagClass(tag, item, txt));
+                dic.Add(item, new TagClass(tag, item, txt,t));
             }
             foreach (var item in endList)
             {

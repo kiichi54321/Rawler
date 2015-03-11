@@ -224,13 +224,13 @@ namespace Rawler.View
         private void Button_Click_2(object sender, RoutedEventArgs e)
         {
             var obj = (sender as Button).Tag;
-            PropertyGrid1.Instance = obj;
+ //           PropertyGrid1.Instance = obj;
  
         }
 
         private void treeView1_SelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
         {
-            PropertyGrid1.Instance = treeView1.SelectedItem;
+ //           PropertyGrid1.Instance = treeView1.SelectedItem;
         }
     }
 
