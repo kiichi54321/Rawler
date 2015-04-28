@@ -173,7 +173,9 @@ namespace Rawler.Tool
             var t = GetText();
             bool flag = false;
             var json = JObject.Parse(t);
-            var data = this.GetUpperRawler<Data>();
+            var idata = this.GetUpperInterface<IData>();
+
+            var data = (IData)idata;
 
             foreach (var item in FieldName.Split('.'))
             {

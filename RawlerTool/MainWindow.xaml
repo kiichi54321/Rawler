@@ -15,12 +15,22 @@
         <Grid  Name="grid1" Grid.RowSpan="2">
             <Grid.RowDefinitions>
                 <RowDefinition Height="25" />
+                <RowDefinition Height="25" />
                 <RowDefinition Height="144*" />
             </Grid.RowDefinitions>
-       
+            <Grid Grid.Row="1">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="60"></ColumnDefinition>
+                    <ColumnDefinition Width="100*"></ColumnDefinition>
+                    <ColumnDefinition Width="100"></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+                <TextBlock Text="Url" TextAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Center"></TextBlock>
+                <TextBox Grid.Column="1" Name="urlTextBox"></TextBox>
+                <Button Grid.Column="2" Content="DownLoad" Click="Button_Click_1"></Button>
+            </Grid>
 
             <!--   <TextBox Grid.Row="1" Name="textBox1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" AcceptsReturn="True" AcceptsTab="True" />-->
-            <TabControl Name="tabControl1" SelectionChanged="tabControl1_SelectionChanged" Grid.Row="1">
+            <TabControl Name="tabControl1" SelectionChanged="tabControl1_SelectionChanged" Grid.Row="2">
                 <TabItem Header="XAML" Name="tabXAML">
                     <Grid >
                         <avalonEdit:TextEditor Grid.Row="1" Name="textEditor" SyntaxHighlighting="XML" FontSize="14" FontFamily="MS Gothic" Margin="2" ShowLineNumbers="True">

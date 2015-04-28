@@ -31,6 +31,12 @@ namespace Rawler.Tool
         DataWriteType WriteType { get; set; }
     }
 
+    public interface IData
+    {
+        void DataWrite(string attribute, string value, DataWriteType type, DataAttributeType attributeType);
+        void DataWrite(string attribute, string value, DataWriteType type);
+    }
+
     /// <summary>
     /// このオブジェクトは、末尾に来ないとダメ。
     /// </summary>
@@ -542,6 +548,37 @@ namespace Rawler.Tool
             }
             return result;
         }
+
+        public RawlerBase GetUpperInterface<T>()
+        {
+            bool flag = false;
+            RawlerBase rawler = this;
+            while (true)
+            {
+                if (rawler is T)
+                {
+                    flag = true;
+                    break;
+                }
+                else if (rawler.Parent == null)
+                {
+                    break;
+                }
+                else
+                {
+                    rawler = rawler.Parent;
+                }
+            }
+            if(flag )
+            {
+                return rawler;
+            }
+            else
+            {
+                return null;
+            }
+        }
+
 
 
         /// <summary>

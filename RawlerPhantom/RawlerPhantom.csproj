@@ -4,7 +4,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{D82F95FC-F1E6-437F-BDFD-4514BC33839E}</ProjectGuid>
+    <ProjectGuid>{73534035-0BEE-4C84-8409-F5B173999044}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>RawlerPhantom</RootNamespace>

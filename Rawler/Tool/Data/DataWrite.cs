@@ -120,14 +120,14 @@ namespace Rawler.Tool
         /// <param name="runChildren"></param>
         public override void Run(bool runChildren)
         {
-            Data data = null;
+            IData data = null;
 
             IRawler current = this.Parent;
             while (current != null)
             { 
-                if (current is Data)
+                if (current is IData)
                 {
-                    data = current as Data;
+                    data = current as IData;
                     break;
                 }
                 current = current.Parent;

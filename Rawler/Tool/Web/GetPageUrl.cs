@@ -59,6 +59,44 @@ namespace Rawler.Tool
         }
     }
 
+    /// <summary>
+    /// 現在のページのURLをSoruceUrlとしてDataWriteする。
+    /// </summary>
+    public class DataWriteSoruceUrl : RawlerBase, IDataWrite
+    {
+        public override void Run(bool runChildren)
+        {
+            var d = new GetPageUrl().Add(new DataWrite() { Attribute = "SoruceUrl", AttributeType = DataAttributeType.SourceUrl }).GetRoot();
+            d.SetParent(this);
+            d.Run();
+            base.Run(runChildren);
+        }
+
+        public string Attribute
+        {
+            get
+            {
+                return "SoruceUrl";
+            }
+            set
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        public DataWriteType WriteType
+        {
+            get
+            {
+                return DataWriteType.add;
+            }
+            set
+            {
+                throw new NotImplementedException();
+            }
+        }
+    }
+
     public enum UrlType
     {
         Current,Start

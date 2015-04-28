@@ -13,7 +13,7 @@ namespace Rawler.Tool
         [ContentProperty("Children")]
     [Serializable]
     
-    public class Data : RawlerBase
+    public class Data : RawlerBase,IData
     {
         /// <summary>
         /// データを蓄積するRawlerクラス。
@@ -85,22 +85,22 @@ namespace Rawler.Tool
         /// </summary>
         /// <param name="filename"></param>
         /// <returns></returns>
-        public static List<DataRow> DataLoad(string filename)
+        public static List<DataRowObject> DataLoad(string filename)
         {
             var list = RawlerLib.ObjectLib.LoadFromBinaryFile(filename);
-            if (list is List<DataRow>)
+            if (list is List<DataRowObject>)
             {
-                return list as List<DataRow>;
+                return list as List<DataRowObject>;
             }
             else
             {
-                return new List<DataRow>();
+                return new List<DataRowObject>();
             }
         }
 
         [NonSerialized]
-        List<DataRow> dataList = new List<DataRow>();
-        Dictionary<string, DataRow> dataDic = new Dictionary<string, DataRow>();
+        List<DataRowObject> dataList = new List<DataRowObject>();
+        Dictionary<string, DataRowObject> dataDic = new Dictionary<string, DataRowObject>();
         /// <summary>
         /// 蓄積されていくDataRow
         /// </summary>
@@ -114,9 +114,9 @@ namespace Rawler.Tool
         /// 蓄積されたDataRowのリストを取得します。NullのRowは含まれません。
         /// </summary>
         /// <returns></returns>
-        public List<DataRow> GetDataRows()
+        public List<DataRowObject> GetDataRows()
         {
-            List<DataRow> list = new List<DataRow>();
+            List<DataRowObject> list = new List<DataRowObject>();
 
             foreach (var item in dataList.ToArray())
             {
@@ -137,7 +137,7 @@ namespace Rawler.Tool
             }
             else
             {
-                currentDataRow = new DataRow();
+                currentDataRow = new DataRowObject();
                 currentDataRow.AddData("Key",key);
                 dataDic.Add(key, currentDataRow);
                 dataList.Add(currentDataRow);
@@ -146,7 +146,7 @@ namespace Rawler.Tool
 
 
 
-        DataRow currentDataRow = new DataRow();
+        DataRowObject currentDataRow = new DataRowObject();
         /// <summary>
         /// 現在のDataRowに書く。DataWriteがよびだすもの。
         /// </summary>
@@ -182,6 +182,14 @@ namespace Rawler.Tool
             get { return errReportNullData; }
             set { errReportNullData = value; }
         }
+
+        public void AddDataRow(DataRowObject datarow)
+        {
+            currentDataRow.UpDate(datarow);
+            ReportManage.Report(this, "NextDataRow");
+            NextDataRow();
+        }
+
         /// <summary>
         /// 次のDataRowに行く。NextDataRowがよびだすもの。
         /// </summary>
@@ -204,7 +212,7 @@ namespace Rawler.Tool
                 {
                     Commited(this, new EventDataRow(currentDataRow));
                 }
-                currentDataRow = new DataRow();
+                currentDataRow = new DataRowObject();
                 if (stock)
                 {
                     dataList.Add(currentDataRow);
@@ -233,7 +241,7 @@ namespace Rawler.Tool
             {
                 dataDic.Clear();
                 dataList.Clear();
-                currentDataRow = new DataRow();
+                currentDataRow = new DataRowObject();
                 dataList.Add(currentDataRow);
             }
         }
@@ -558,7 +566,7 @@ namespace Rawler.Tool
             return currentDataRow.IsDataNull();
         }
 
-        public DataRow GetCurrentDataRow()
+        public DataRowObject GetCurrentDataRow()
         {
             return currentDataRow;
         }
@@ -628,7 +636,7 @@ namespace Rawler.Tool
             /// DataRowに関するEventArgs
             /// /// </summary>
             /// <param name="row"></param>
-            public EventDataRow(DataRow row)
+            public EventDataRow(DataRowObject row)
                 : base()
             {
                 DataRow = row;
@@ -636,7 +644,7 @@ namespace Rawler.Tool
             /// <summary>
             /// イベント対象のDataRow
             /// </summary>
-            public DataRow DataRow { get; set; }
+            public DataRowObject DataRow { get; set; }
         }
 
     }

@@ -8,11 +8,47 @@ using System.Diagnostics;
 
 namespace Rawler.Tool
 {
+    public class DataRow:RawlerBase,IData
+    {
+        DataRowObject currentDataRow = new DataRowObject();
+
+        public void DataWrite(string attribute, string value, DataWriteType type, DataAttributeType attributeType)
+        {
+            if (type == DataWriteType.add)
+            {
+                currentDataRow.AddData(attribute, value, attributeType);
+            }
+            else if (type == DataWriteType.replace)
+            {
+                currentDataRow.ReplaceData(attribute, value, attributeType);
+            }
+        }
+
+        public void DataWrite(string attribute, string value, DataWriteType type)
+        {
+            DataWrite(attribute, value, type, DataAttributeType.Text);
+        }
+
+        public override void Run(bool runChildren)
+        {
+            currentDataRow = new DataRowObject();
+            SetText(GetText());
+            base.Run(runChildren);
+            var d = this.GetUpperRawler<Data>();
+            if(d !=null)
+            {
+                d.AddDataRow(currentDataRow);
+            }
+        }
+    }
+
+
+
     /// <summary>
     /// データの一行分を格納するクラス。ListDictionary でデータを保持している。
     /// </summary>
     [Serializable]
-    public class DataRow
+    public class DataRowObject
     {
         private Dictionary<string, DataAttributeType> dataTypeDic = new Dictionary<string, DataAttributeType>();
         private Dictionary<string, List<string>> dataDic = new Dictionary<string, List<string>>();
@@ -31,6 +67,12 @@ namespace Rawler.Tool
             {
                 return dataDic.Keys;
             }
+        }
+
+        public void UpDate(DataRowObject row)
+        {
+            dataTypeDic = row.dataTypeDic;
+            dataDic = row.dataDic;
         }
 
         /// <summary>
@@ -139,7 +181,8 @@ namespace Rawler.Tool
                     }
                 }
             }
-            return list;
+            return list.OrderBy(n => n.DataType);
+          //  return list;
         }
 
         /// <summary>
@@ -210,6 +253,6 @@ namespace Rawler.Tool
 
     public enum DataAttributeType
     {
-        Text, Image, Url, SourceUrl
+        SourceUrl, Image, Url, Text,
     }
 }

@@ -30,6 +30,7 @@ obj/
 [Dd]ebug*/
 [Rr]elease*/
 Ankh.NoLoad
+bin/Release
 
 #MonoDevelop
 *.pidb
@@ -71,3 +72,8 @@ RawlerSample/
 
 *.nupkg
 
+#test
+*.vsp
+*.psess
+
+Nuget.exe

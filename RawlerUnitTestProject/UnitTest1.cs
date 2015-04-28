@@ -9,6 +9,7 @@ namespace RawlerUnitTestProject
         [TestMethod]
         public void TestMethod1()
         {
+            Console.WriteLine("こんにちわこんにちわ");
         }
     }
 }

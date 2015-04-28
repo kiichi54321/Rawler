@@ -13,11 +13,51 @@ namespace RawlerTwitter
     {
         public AppOnlyAuthentication()
         {
-            this.ConsumerKey = "gHVupgapEXlTZdu7rf3oOg";
-            this.ConsumerSecret = "YOicLtW8utx3NJyy88wtzq8QN3ilXeQoEGCPIJNzo";
+        }
+
+        public void SetUp()
+        {
+            if (string.IsNullOrEmpty(SetTwitterApiKeys.consumerKey) || string.IsNullOrEmpty(SetTwitterApiKeys.consumerSecret))
+            {
+                this.ConsumerKey = "gHVupgapEXlTZdu7rf3oOg";
+                this.ConsumerSecret = "YOicLtW8utx3NJyy88wtzq8QN3ilXeQoEGCPIJNzo";
+                ReportManage.Report(null, "RawlerのAPI Keyを使います",true,true);
+            }
+            else
+            {
+                this.ConsumerKey = SetTwitterApiKeys.consumerKey;
+                this.ConsumerSecret = SetTwitterApiKeys.consumerSecret;
+            } 
         }
         public string ConsumerKey { get; set; }
         public string ConsumerSecret { get; set; }
+    }
+
+    /// <summary>
+    /// TwitterApiキーを設定する。
+    /// </summary>
+    public class SetTwitterApiKeys:RawlerBase
+    {
+        public static string consumerKey { get; set; }
+        public static string consumerSecret { get; set; }
+
+        public string ConsumerKey { get; set; }
+        public string ConsumerSecret { get; set; }
+        static bool useAppOnlyAutherentcation = false;
+
+        public static bool UseAppOnlyAutherentcation
+        {
+            get { return SetTwitterApiKeys.useAppOnlyAutherentcation; }
+            set { SetTwitterApiKeys.useAppOnlyAutherentcation = value; }
+        }
+
+        public override void Run(bool runChildren)
+        {
+            consumerKey = this.ConsumerKey;
+            consumerSecret = this.ConsumerSecret;
+            useAppOnlyAutherentcation = true;
+            base.Run(runChildren);
+        }
     }
 
     public class TwitterLogin : RawlerBase
@@ -58,8 +98,13 @@ namespace RawlerTwitter
         /// <param name="runChildren"></param>
         public override void Run(bool runChildren)
         {
-            if (AppOnlyAuthentication != null)
+            if (SetTwitterApiKeys.UseAppOnlyAutherentcation || AppOnlyAuthentication != null)
             {
+                if(AppOnlyAuthentication == null)
+                {
+                    AppOnlyAuthentication = new AppOnlyAuthentication();                    
+                }
+                AppOnlyAuthentication.SetUp();
                 token = OAuth2.GetToken(AppOnlyAuthentication.ConsumerKey, AppOnlyAuthentication.ConsumerSecret);
             }
             else

@@ -318,7 +318,7 @@ namespace RawlerTool
 
         #region Folding
         FoldingManager foldingManager;
-        AbstractFoldingStrategy foldingStrategy;
+        XmlFoldingStrategy foldingStrategy;
 
         void HighlightingComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
@@ -449,5 +449,32 @@ namespace RawlerTool
             var w = new Tool.TextConvertWindow();
             w.Show();
         }
+
+        private void Button_Click_1(object sender, RoutedEventArgs e)
+        {
+            System.Net.WebClient wc = new System.Net.WebClient();
+            
+                try
+                {
+                    wc.DownloadStringAsync(new Uri(urlTextBox.Text));
+                }
+                catch
+                {
+                    ReportManage.ErrReport(null, urlTextBox.Text + "のダウンロードに失敗しました");
+                }
+                wc.DownloadStringCompleted += (o, e1) => {
+                    if (e1.Error != null)
+                    {
+                        ReportManage.ErrReport(null, urlTextBox.Text + "のダウンロードに失敗しました。　" + e1.Error.Message);
+                    }
+                    else
+                    {
+                        textEditor.Text = e1.Result;
+                    }
+                };
+            
+        }
+
+
     }
 }

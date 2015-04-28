@@ -118,6 +118,7 @@
     <Compile Include="Tool\Html\GetScriptFunction.cs" />
     <Compile Include="Tool\Html\GetTagParameters.cs" />
     <Compile Include="Tool\Html\RemoveHtmlComment.cs" />
+    <Compile Include="Tool\Html\TagSplit.cs" />
     <Compile Include="Tool\Html\XPath.cs" />
     <Compile Include="Tool\IO\ContainLineInFile.cs" />
     <Compile Include="Tool\IO\CreateFolder.cs" />

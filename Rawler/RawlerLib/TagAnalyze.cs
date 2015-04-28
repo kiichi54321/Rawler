@@ -12,6 +12,12 @@ namespace RawlerLib.MarkupLanguage
             Start, End
         }
 
+        private struct TagTypeStruct
+        {
+            public TagType Type { get; set; }
+            public string TagName { get; set; }
+
+        }
 
         /// <summary>
         /// change がTrueの時、タグを大文字、小文字に変形して取得する。
@@ -35,6 +41,114 @@ namespace RawlerLib.MarkupLanguage
                 return GetTag(txt, tag);
             }
         }
+
+        public static IEnumerable<TagClass> GetTag(string txt,string[] tags)
+        {
+            List<RawlerLib.Collections.Pair<int, TagTypeStruct>> list = new List<RawlerLib.Collections.Pair<int, TagTypeStruct>>();
+            Dictionary<int, TagClass> dic = new Dictionary<int, TagClass>();
+            foreach (var tag in tags)
+            {
+                string endTag = "</" + tag + ">";
+                var startList = StringIndexList(txt, new string[] { "<" + tag + " ", "<" + tag + ">" });
+                var endList = StringIndexList(txt, endTag);
+                var t = txt.ToArray();
+                foreach (var item in startList.OrderBy(n => n))
+                {
+                    list.Add(new RawlerLib.Collections.Pair<int, TagTypeStruct>(item, new TagTypeStruct() { Type = TagType.Start, TagName = tag }));
+                    dic.Add(item, new TagClass(tag, item, txt, t));
+                }
+                foreach (var item in endList)
+                {
+                    list.Add(new RawlerLib.Collections.Pair<int, TagTypeStruct>(item, new TagTypeStruct() { Type = TagType.End, TagName = tag }));
+                }                
+            }
+            list.Sort();
+
+            while (list.Count > 0)
+            {
+                List<RawlerLib.Collections.Pair<int, TagTypeStruct>> tmpList = new List<RawlerLib.Collections.Pair<int, TagTypeStruct>>();
+             
+
+                for (int i = 0; i < list.Count - 1; i++)
+                {
+                    if (list[i].Value.TagName == list[i+1].Value.TagName && list[i].Value.Type == TagType.Start && list[i + 1].Value.Type == TagType.End)
+                    {
+                        var tagClass = dic[list[i].Key];
+                        tagClass.End = list[i + 1].Key;
+                        tmpList.Add(list[i]);
+                        tmpList.Add(list[i + 1]);
+                        int k = i;
+                        //while (k>0)
+                        //{
+                        //    if(list[k].Value.Type == TagType.Start && list[k-1].Value.Type == TagType.Start)
+                        //    {
+                        //        var tagParent = dic[list[k - 1].Key];
+                        //        tagParent.Children.Add(tagClass);
+                        //        tagClass.Parent = tagParent;
+                        //    }
+                        //    k--;
+                        //}
+                        //if (i > 0 && list[i - 1].Value.Type == TagType.Start)
+                        //{
+                        //    var tagParent = dic[list[i - 1].Key];
+                        //    tagParent.Children.Add(tagClass);
+                        //    tagClass.Parent = tagParent;
+                        //}
+                    }
+                }
+
+                if (tmpList.Count == 0)
+                {
+                    break;
+                }
+                foreach (var item in tmpList)
+                {
+                    list.Remove(item);
+                }
+
+                int s = 0;
+                int e = 0;
+                foreach (var item in list)
+                {
+                    if (item.Value.Type == TagType.Start) s++;
+                    else if (item.Value.Type == TagType.End) e++;
+                }
+                if (s == 0 || e == 0)
+                {
+                    if (e == 0)
+                    {
+                        //開始タグばかりの時
+                        for (int i = 0; i < list.Count - 1; i++)
+                        {
+                            dic[list[i].Key].End = dic[list[i + 1].Key].Start - 1;
+                        }
+                    }
+                    break;
+                }
+            }
+
+            var tagsOrderdList = dic.Values.OrderBy(n => n.Start).ToArray();
+
+            for (int i = 0; i < tagsOrderdList.Length; i++)
+            {
+                var current = tagsOrderdList[i];
+                int k = i-1;
+                while   (k>=0)
+                {
+                    if(tagsOrderdList[k].Start < current.Start && tagsOrderdList[k].End > current.End)
+                    {
+                        tagsOrderdList[k].Children.Add(current);
+                        current.Parent = tagsOrderdList[k];
+                        break;
+                    }
+                    k--;
+                }
+            }
+
+            return tagsOrderdList;
+        }
+
+        
 
 
         /// <summary>
