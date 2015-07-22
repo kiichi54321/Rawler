@@ -1,0 +1,88 @@
+﻿<Window x:Class="RawlerView.Form.FormWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:l="clr-namespace:RawlerView.Form"
+        xmlns:tool ="http://schemas.xceed.com/wpf/xaml/toolkit"
+        Title="FormWindow" Height="300" Width="400">
+    <Window.Resources>
+        <DataTemplate x:Key="TextProperty" DataType="{x:Type l:TextProperty}">
+            <StackPanel Orientation="Horizontal">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="100"></ColumnDefinition>
+                        <ColumnDefinition Width="200*"></ColumnDefinition>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Text="{Binding Name}" TextAlignment="Left" VerticalAlignment="Center" >
+                 
+                    </TextBlock>
+                    <Border BorderBrush="Gray" BorderThickness="1" HorizontalAlignment="Right"  Margin="3" CornerRadius="4" Visibility="{Binding HelpVisibility}">
+                        <Border.ToolTip>
+                            <TextBlock Text="{Binding Help}"></TextBlock>
+                        </Border.ToolTip>
+                        <TextBlock Text="?"/>
+                    </Border>
+                    <TextBox Grid.Column="1" Text="{Binding Value,Mode=TwoWay}" MinWidth="200" MaxLines="{Binding Lines}" VerticalScrollBarVisibility="Auto" AcceptsReturn="{Binding AcceptsReturn}"></TextBox>
+                </Grid>
+            </StackPanel>
+        </DataTemplate>
+        <DataTemplate x:Key="FileProperty" DataType="{x:Type l:FileProperty}">
+            <StackPanel Orientation="Horizontal">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="100"></ColumnDefinition>
+                        <ColumnDefinition Width="200*"></ColumnDefinition>
+                        <ColumnDefinition Width="20"></ColumnDefinition>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Text="{Binding Name}" TextAlignment="Left" VerticalAlignment="Center" >
+                    </TextBlock>
+                    <Border BorderBrush="Gray" BorderThickness="1" HorizontalAlignment="Right" Margin="3" CornerRadius="4"  Visibility="{Binding HelpVisibility}">
+                        <Border.ToolTip>
+                            <TextBlock Text="{Binding Help}"></TextBlock>
+                        </Border.ToolTip>
+                        <TextBlock Text="?"/>
+                    </Border>
+                    <TextBox Grid.Column="1" Text="{Binding Value,Mode=TwoWay}" MinWidth="200"></TextBox>
+                    <Button Grid.Column="2" Command="{Binding Command}" Content="..."></Button>
+                </Grid>
+            </StackPanel>
+        </DataTemplate>
+        <DataTemplate x:Key="IntProperty" DataType="{x:Type l:IntProperty}">
+            <StackPanel Orientation="Horizontal">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="100"></ColumnDefinition>
+                        <ColumnDefinition Width="200*"></ColumnDefinition>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Text="{Binding Name}" TextAlignment="Left" VerticalAlignment="Center" >
+                    </TextBlock>
+                    <Border BorderBrush="Gray" BorderThickness="1" HorizontalAlignment="Right" Margin="3" CornerRadius="4"  Visibility="{Binding HelpVisibility}">
+                        <Border.ToolTip>
+                            <TextBlock Text="{Binding Help}"></TextBlock>
+                        </Border.ToolTip>
+                        <TextBlock Text="?"/>
+                    </Border>
+                    <tool:IntegerUpDown Grid.Column="1" Value="{Binding IntValue,Mode=TwoWay}" Maximum="{Binding Max}" Minimum="{Binding Min}" ></tool:IntegerUpDown>
+                </Grid>
+            </StackPanel>
+        </DataTemplate>
+
+    </Window.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="233*"/>
+            <RowDefinition Height="30"/>            
+        </Grid.RowDefinitions>
+        <Grid>
+            <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
+            <ItemsControl Name="ItemsControl">
+                <ItemsControl.ItemTemplateSelector>
+                    <l:FormPropertySelector></l:FormPropertySelector>
+                </ItemsControl.ItemTemplateSelector>
+            </ItemsControl>
+            </ScrollViewer>
+        </Grid>
+        <Grid Grid.Row="1">
+            <Button Content="Submit" Click="Button_Click"></Button>
+        </Grid>
+    </Grid>
+</Window>
