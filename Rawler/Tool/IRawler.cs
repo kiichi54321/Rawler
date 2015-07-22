@@ -206,6 +206,7 @@ namespace Rawler.Tool
         /// </summary>
         public void Run()
         {
+            Init.Run(this);
             if (enable)
             {
                 try
@@ -220,6 +221,13 @@ namespace Rawler.Tool
                 }
             }
         }
+
+        InitTreeCollection initTree = new InitTreeCollection();
+
+        public InitTreeCollection Init
+        {
+            get { return initTree; }
+        } 
 
         bool enable = true;
 

@@ -72,4 +72,64 @@ namespace Rawler.Tool
         }
         #endregion
     }
+
+    public class AppendFileName:RawlerBase
+    {
+        /// <summary>
+        /// Header　親のTextの前に足すText
+        /// </summary>
+        public string Header { get; set; }
+        /// <summary>
+        /// Footer 親のTextの後に足すText
+        /// </summary>
+        public string Footer { get; set; }
+        public string Value { get; set; }
+        public override void Run(bool runChildren)
+        {
+            string t = string.Empty;
+            if (string.IsNullOrEmpty(Value))
+            {
+                t = GetText();
+            }
+            else
+            {
+                t = Value;
+            }
+            try
+            {
+                var dir = System.IO.Path.GetDirectoryName(t)+"\\";                
+                var file = System.IO.Path.GetFileNameWithoutExtension(t);
+                var ext = System.IO.Path.GetExtension(t);
+                t = file;
+                if (Header != null)
+                {
+                    t = Header + t;
+                }
+                if (HeaderTree != null)
+                {
+                    t = RawlerBase.GetText(this.Parent.Text, HeaderTree, this.Parent) + t;
+                }
+                if (Footer != null)
+                {
+                    t = t + Footer;
+                }
+                if (FooterTree != null)
+                {
+                    t = t + RawlerBase.GetText(this.Parent.Text, FooterTree, this.Parent);
+                }
+                t = dir  + t + ext;
+            }
+            catch
+            {
+                ReportManage.ErrReport(this, "File名として不正です。");
+            }
+
+            SetText(t);
+            base.Run(runChildren);
+        }
+        public RawlerBase HeaderTree { get; set; }
+        public RawlerBase FooterTree { get; set; }
+
+
+    }
 }

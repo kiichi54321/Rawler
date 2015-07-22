@@ -64,6 +64,45 @@ namespace RawlerLib.MyExtend
             list.AddRange(list1);
             return list;
         }
+
+        public static bool ContainsAny<T>(this IEnumerable<T> list, IEnumerable<T> list2)
+        {
+            HashSet<T> hash = new HashSet<T>(list2);
+            return ContainsAny(list, hash);
+        }
+
+        public static bool ContainsAny<T>(this IEnumerable<T> list, HashSet<T> list2)
+        {
+            bool flag = false;
+            foreach (var item in list)
+            {
+                if (list2.Contains(item))
+                {
+                    flag = true;
+                    break;
+                }
+            }
+            return flag;
+        }
+
+
+        /// <summary>
+        /// ObservableCollection を一度空にして、Addしていく。
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="observableList"></param>
+        /// <param name="list2"></param>
+        /// <returns></returns>
+        public static System.Collections.ObjectModel.ObservableCollection<T> SetList<T>(this System.Collections.ObjectModel.ObservableCollection<T> observableList, IEnumerable<T> list2)
+        {
+            var list3 = list2.ToArray();
+            observableList.Clear();
+            foreach (var item in list3)
+            {
+                observableList.Add(item);
+            }
+            return observableList;
+        }
     }
 
 
@@ -239,7 +278,30 @@ namespace RawlerLib.MyExtend
             return dic;
         }
 
+
     }
+
+    public static class Stream
+    {
+        /// <summary>
+        /// 一行読み出しでIEnumerable<string>を返す
+        /// </summary>
+        /// <param name="stream"></param>
+        /// <returns></returns>
+        public static IEnumerable<string> ReadLines(this System.IO.StreamReader stream)
+        {
+            while(true)
+            {
+                var line = stream.ReadLine();
+                if(line ==null)
+                {
+                    break;
+                }
+                yield return line;                    
+            }
+        }
+    }
+
 
     public static class StringRegexExtentions
     {
@@ -463,6 +525,21 @@ namespace RawlerLib.MyExtend
                     }
                 }
             }
+        }
+
+        /// <summary>
+        /// IEnumerable<string> を　Stringにする。
+        /// </summary>
+        /// <param name="list"></param>
+        /// <returns></returns>
+        public static string Lines2String(this IEnumerable<string> list)
+        {
+            StringBuilder sb = new StringBuilder();
+            foreach (var item in list)
+            {
+                sb.AppendLine(item);
+            }
+            return sb.ToString();
         }
     }
 }

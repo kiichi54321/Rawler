@@ -210,6 +210,11 @@ namespace Rawler.Tool
                 list = new List<RawlerLib.Web.Link>(list.Where(n => n.TagWithoutUrl.Contains(TagFilter)));
             }
 
+            if(list.Count == 0 && EmptyTree !=null)
+            {
+                EmptyTree.SetParent(this.Parent);
+                EmptyTree.Run();
+            }
 
             if (emptyReport && list.Count() == 0)
             {

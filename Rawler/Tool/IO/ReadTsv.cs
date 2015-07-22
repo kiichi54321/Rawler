@@ -93,6 +93,10 @@ namespace Rawler.Tool
             set { columnNameDic = value; }
         }
 
+        public IEnumerable<string> GetColumns()
+        {
+            return columnNameDic.Keys;
+        }
          
 
         public string GetValue(string columnName)

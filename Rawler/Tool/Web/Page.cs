@@ -107,7 +107,7 @@ namespace Rawler.Tool
             return startUrl;
         }
 
-        Stack<string> urlStack = new Stack<string>();
+       protected  Stack<string> urlStack = new Stack<string>();
         bool oncePageLoad = true;
 
         /// <summary>
@@ -130,7 +130,7 @@ namespace Rawler.Tool
             set { clearUrlHistory = value; }
         }
 
-        HashSet<string> urlHash = new HashSet<string>();
+        protected HashSet<string> urlHash = new HashSet<string>();
 
         public void PushUrl(string url)
         {
@@ -276,7 +276,7 @@ namespace Rawler.Tool
             }
         }
 
-        private bool visbleErr = true;
+        protected bool visbleErr = true;
 
         public bool VisbleErr
         {
@@ -297,7 +297,7 @@ namespace Rawler.Tool
 
         public RawlerBase InputParameterTree { get; set; }
 
-        private Dictionary<string, string> parameterDic = new Dictionary<string, string>();
+        protected Dictionary<string, string> parameterDic = new Dictionary<string, string>();
 
         public void AddParameter(string key, string value)
         {

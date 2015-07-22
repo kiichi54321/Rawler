@@ -6,6 +6,9 @@ using Rawler.Tool;
 
 namespace Rawler.Tool
 {
+    /// <summary>
+    /// Javascriptのファンクションの取得。そして、その中の変数の取得も行う。
+    /// </summary>
     public class GetScriptFunction : RawlerMultiBase
     {
         #region テンプレ

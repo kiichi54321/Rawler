@@ -5,6 +5,43 @@ using System.Text;
 
 namespace Rawler.Tool
 {
+    /// <summary>
+    /// 親の文字列はURLなのか？
+    /// </summary>
+    public class IsUrl:RawlerBase
+    {
+        bool result = true;
+
+        public bool Result
+        {
+            get { return result; }
+            set { result = value; }
+        }
+
+        public override void Run(bool runChildren)
+        {
+            Uri u = null;
+            bool r = true;
+            if (Uri.TryCreate(GetText(), UriKind.Absolute, out u))
+            {
+                r = true;
+            }
+            else
+            {
+                r = false;
+            } 
+            if(r == result)
+            {
+                SetText(GetText());
+                base.Run(runChildren);
+            }
+        }
+    }
+
+
+    /// <summary>
+    /// Urlのホスト名があっているかを調べます。
+    /// </summary>
     public class HostFilter : RawlerBase
     {
         /// <summary>

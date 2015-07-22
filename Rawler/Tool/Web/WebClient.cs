@@ -468,6 +468,51 @@ namespace Rawler.Tool
             return string.Empty;
         
         }
+
+        /// <summary>
+        /// HttpPost
+        /// </summary>
+        /// <param name="url"></param>
+        /// <param name="vals"></param>
+        /// <returns></returns>
+        public virtual byte[] HttpPostByte(string url, List<KeyValue> vals)
+        {
+            try
+            {
+                Sleep();
+                wc.Referer = referer;
+                wc.UserAgent = userAgent;
+                wc.BasicAuthorization = BasicAuthorization;
+
+                System.Collections.Specialized.NameValueCollection list = new System.Collections.Specialized.NameValueCollection();
+                foreach (var item in vals)
+                {
+                    list.Add(item.Key, item.Value);
+                }
+                var data2 = wc.UploadValues(url, list);
+                return data2;
+            }
+            catch (Exception e)
+            {
+                if (visbleErr)
+                {
+                    ReportManage.ErrReport(this, "Url:" + url + " " + e.Message);
+                }
+                //if (e is System.UriFormatException)
+                //{
+                //    ReportManage.ErrReport(this,"["+url+"]は無効なURLです。");
+                //}
+                ErrMessage = e.Message;
+
+                //                throw new Exception("HttpGet:"+url+"に失敗しました");
+
+            }
+            return null;
+
+        }
+
+
+
         /// <summary>
         /// ObjectのName。表示用
         /// </summary>

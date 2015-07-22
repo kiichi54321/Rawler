@@ -81,9 +81,7 @@
     <Compile Include="NPL\RawlerTinySegmenter.cs" />
     <Compile Include="NPL\TFIDF.cs" />
     <Compile Include="NPL\WordsCount.cs" />
-    <Compile Include="RawlerLib\BackgroundWorker.cs">
-      <SubType>Component</SubType>
-    </Compile>
+    <Compile Include="RawlerLib\BackgroundWorker.cs" />
     <Compile Include="RawlerLib\DynamicDictionary.cs" />
     <Compile Include="RawlerLib\DynamicJson.cs" />
     <Compile Include="RawlerLib\EventStringArgs.cs" />
@@ -106,6 +104,7 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="RawlerLib\WPF.cs" />
+    <Compile Include="TextTool\Tsv2Text.cs" />
     <Compile Include="Tool\Condition\ChangeText.cs" />
     <Compile Include="Tool\Condition\CompareInt.cs" />
     <Compile Include="Tool\Condition\RandomRun.cs" />
@@ -120,6 +119,7 @@
     <Compile Include="Tool\Html\RemoveHtmlComment.cs" />
     <Compile Include="Tool\Html\TagSplit.cs" />
     <Compile Include="Tool\Html\XPath.cs" />
+    <Compile Include="Tool\InitTree.cs" />
     <Compile Include="Tool\IO\ContainLineInFile.cs" />
     <Compile Include="Tool\IO\CreateFolder.cs" />
     <Compile Include="Tool\IO\FileApendLine.cs" />
@@ -147,6 +147,7 @@
     <Compile Include="Tool\Condition\Equal.cs" />
     <Compile Include="Tool\IO\FileOpen.cs" />
     <Compile Include="Tool\Data\FileSave.cs" />
+    <Compile Include="Tool\Text\GetDateString.cs" />
     <Compile Include="Tool\Text\GetJsonData.cs" />
     <Compile Include="Tool\Text\ConvertDateTime.cs" />
     <Compile Include="Tool\Text\RemoveWordByRegular.cs" />
