@@ -23,9 +23,10 @@ namespace Rawler.Tool
                 }
                 Task.WaitAll(list.ToArray());
             }
+            
        
         }
-
-        
     }
+
+
 }

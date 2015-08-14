@@ -564,6 +564,7 @@ namespace Rawler.Tool
             set { stock = value; }
         }
 
+
         public event EventHandler DataNullEvent;
 
         public bool GetCurrentDataNull()

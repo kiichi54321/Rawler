@@ -111,11 +111,14 @@
     <Compile Include="Tool\Data\ChangeCurrentDataRow.cs" />
     <Compile Include="Tool\Data\CheckDataRow.cs" />
     <Compile Include="Tool\Data\DataGrouping.cs" />
+    <Compile Include="Tool\Data\ReportCurrentDataRow.cs" />
     <Compile Include="Tool\Data\ReportDataRow2Json.cs" />
+    <Compile Include="Tool\Date\DateTime.cs" />
     <Compile Include="Tool\Enumeration\Loop.cs" />
     <Compile Include="Tool\Html\DefinitionLists.cs" />
     <Compile Include="Tool\Html\GetScriptFunction.cs" />
     <Compile Include="Tool\Html\GetTagParameters.cs" />
+    <Compile Include="Tool\Html\HTMLextend.cs" />
     <Compile Include="Tool\Html\RemoveHtmlComment.cs" />
     <Compile Include="Tool\Html\TagSplit.cs" />
     <Compile Include="Tool\Html\XPath.cs" />
@@ -133,6 +136,7 @@
     <Compile Include="Tool\Condition\SwitchTextContainsNode.cs" />
     <Compile Include="Tool\Enumeration\Range.cs" />
     <Compile Include="Tool\Query\BasicQuery.cs" />
+    <Compile Include="Tool\Script\RawlerScript.cs" />
     <Compile Include="Tool\Text\AppendText.cs" />
     <Compile Include="Tool\IO\CheckFileExists.cs" />
     <Compile Include="Tool\Text\ClipText.cs" />
@@ -266,6 +270,7 @@
     <Folder Include="Attribute\" />
     <Folder Include="Template\" />
     <Folder Include="Tool\NewFolder1\" />
+    <Folder Include="Tool\NewFolder2\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

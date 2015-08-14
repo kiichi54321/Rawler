@@ -33,6 +33,7 @@ namespace Rawler.Tool
 
     public interface IData
     {
+        DataRowObject GetCurrentDataRow();
         void DataWrite(string attribute, string value, DataWriteType type, DataAttributeType attributeType);
         void DataWrite(string attribute, string value, DataWriteType type);
     }

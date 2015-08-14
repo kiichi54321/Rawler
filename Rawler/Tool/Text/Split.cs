@@ -26,11 +26,16 @@ namespace Rawler.Tool
         }
 
         bool emptyTextSkip = false;
-
+        StringSplitOptions stringSplitOptions = StringSplitOptions.None;
         public bool EmptyTextSkip
         {
             get { return emptyTextSkip; }
-            set { emptyTextSkip = value; }
+            set
+            {
+                emptyTextSkip = value;
+                if (emptyTextSkip) { stringSplitOptions = StringSplitOptions.RemoveEmptyEntries; }
+                else { stringSplitOptions = StringSplitOptions.None; }
+            }
         }
 
         int num = -1;
@@ -44,34 +49,24 @@ namespace Rawler.Tool
         public override void Run(bool runChildren)
         {
             string[] data;
-            if (separatorType == SeparatorType.Tab)
-            {
-                data = GetText().Split('\t');
-            }
-            else if (separatorType == SeparatorType.Comma)
-            {
-                data = GetText().Split(',');
-            }
-            else if (separatorType == SeparatorType.Space)
-            {
-                data = GetText().Split(' ');
-            }
-            else
+
+            if(SeparatorType == SeparatorType.Other)
             {
                 if (separator.Length > 0)
                 {
-                    data = GetText().Split(separator.ToCharArray());
+                    data = GetText().Split(new string[] { separator },stringSplitOptions);
                 }
                 else
                 {
                     ReportManage.ErrReport(this, "Split でsepartorの指定がありません");
                     return;
-                }
+                }               
             }
-            if (emptyTextSkip)
+            else
             {
-                data = data.Where(n => n.Length > 0).ToArray();
+                data = GetText().Split(separatorType.GetSeparators(new string[] { separator }), stringSplitOptions);
             }
+
             if (num > -1)
             {
                 if (data.Length >= num)
@@ -111,7 +106,7 @@ namespace Rawler.Tool
 
     public enum SeparatorType
     {
-        Tab, Comma,Space,Other
+        Tab, Comma,Space,Br_Tag,Other
     }
 
     public static partial class Extend
@@ -121,7 +116,18 @@ namespace Rawler.Tool
             if (s == SeparatorType.Comma) return ",";
             if (s == SeparatorType.Tab) return "\t";
             if (s == SeparatorType.Space) return " ";
+            if (s == SeparatorType.Br_Tag) return "<br>";
             return other;
         }
+
+        public static string[] GetSeparators(this SeparatorType s, string[] other)
+        {
+            if (s == SeparatorType.Comma) return new string[] { "," };
+            if (s == SeparatorType.Tab) return new string[] { "\t" };
+            if (s == SeparatorType.Space) return new string[] { " " };
+            if (s == SeparatorType.Br_Tag) return new string[] { "<br>", "<br />", "<BR>", "<BR />" };
+            return other;
+        }
+
     }
 }

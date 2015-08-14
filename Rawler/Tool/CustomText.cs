@@ -12,7 +12,7 @@ namespace Rawler.Tool
         /// </summary>
         public override string ObjectName
         {
-            get { return this.GetType().Name; }
+            get { return this.GetType().DeclaringType.Name; }
         }
 
         /// <summary>

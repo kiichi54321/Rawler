@@ -8,10 +8,20 @@ using System.Diagnostics;
 
 namespace Rawler.Tool
 {
+    /// <summary>
+    /// データの一行分を示す。終了時に親のDataに集めたデータを投げる。
+    /// </summary>
     public class DataRow:RawlerBase,IData
     {
         DataRowObject currentDataRow = new DataRowObject();
 
+        /// <summary>
+        /// データを書き込む
+        /// </summary>
+        /// <param name="attribute"></param>
+        /// <param name="value"></param>
+        /// <param name="type"></param>
+        /// <param name="attributeType"></param>
         public void DataWrite(string attribute, string value, DataWriteType type, DataAttributeType attributeType)
         {
             if (type == DataWriteType.add)
@@ -29,16 +39,51 @@ namespace Rawler.Tool
             DataWrite(attribute, value, type, DataAttributeType.Text);
         }
 
+        /// <summary>
+        /// データが空のとき実行するTree
+        /// </summary>
+        public RawlerBase EmptyTree { get; set; }
+
+
+        /// <summary>
+        /// 必ず入って欲しいAttributes（カンマ区切り）
+        /// </summary>
+        public string MustAttributes { get; set; }
+
         public override void Run(bool runChildren)
         {
             currentDataRow = new DataRowObject();
             SetText(GetText());
             base.Run(runChildren);
             var d = this.GetUpperRawler<Data>();
-            if(d !=null)
+            if (d != null)
             {
-                d.AddDataRow(currentDataRow);
+                if (MustAttributes.IsNullOrEmpty() == false)
+                {
+                    var must = MustAttributes.Split(',');
+                    if (currentDataRow.Attributes.Intersect(must).Count() == must.Count())
+                    {
+                        d.AddDataRow(currentDataRow);
+                    }
+                }
+                else
+                {
+                    d.AddDataRow(currentDataRow);
+                }
+                if (currentDataRow.IsDataNull())
+                {
+                    if (EmptyTree != null)
+                    {
+                        EmptyTree.SetParent(this);
+                        EmptyTree.Run();
+                    }
+                }
             }
+        }
+
+        public DataRowObject GetCurrentDataRow()
+        {
+            return currentDataRow;
         }
     }
 
@@ -140,7 +185,7 @@ namespace Rawler.Tool
                 }
                 strBuilder.AppendLine();
             }
-            return base.ToString();
+            return strBuilder.ToString();
         }
 
 
@@ -249,6 +294,8 @@ namespace Rawler.Tool
             get { return Value; }
         }
     }
+
+   
 
 
     public enum DataAttributeType

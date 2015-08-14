@@ -81,6 +81,7 @@ namespace Rawler.Tool
                 {                    
                     list = Query.RunQuery(list,this);
                 }
+                list = DoElementAt<string>(list);
                 SetTexts(list);
         
                 foreach (var item in list)
@@ -138,6 +139,8 @@ namespace Rawler.Tool
                 {
                     dataList = Query.RunQuery(dataList, this).ToList();
                 }
+                dataList = DoElementAt<TextPair<T>>(dataList).ToList();
+
                 SetTexts(dataList.Select(n=>n.Text));
 
                 foreach (var item in dataList)
@@ -177,6 +180,40 @@ namespace Rawler.Tool
             }
         }
 
+        /// <summary>
+        /// Listのほしい場所を示す。マイナスの場合後ろから。
+        /// </summary>
+        public int? ElementAt { get; set; }
+
+        /// <summary>
+        ///  ElementAt を適応する。
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="list"></param>
+        /// <returns></returns>
+        IEnumerable<T> DoElementAt<T>(IEnumerable<T> list)
+        {
+            if (list.Count() == 0) return list;
+            if (ElementAt.HasValue)
+            {
+                try
+                {
+                    if (ElementAt.Value > -1)
+                    {
+                        return new List<T>() { list.ElementAt(ElementAt.Value) };
+                    }
+                    else
+                    {
+                        return new List<T>() { list.ElementAt(list.Count() + ElementAt.Value) };
+                    }
+                }
+                catch
+                {
+                    ReportManage.ErrReport(this, "ElementAtの値がレンジから外れました。ElementAt:"+ElementAt.Value);
+                }
+            }
+            return list;
+        }
 
 
         private IEnumerable<string> Convert(IEnumerable<string> list)

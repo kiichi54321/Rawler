@@ -78,6 +78,8 @@ namespace Rawler.Tool
         /// </summary>
         public string TargetTag { get; set; }
 
+        bool checkUrl = false;
+
 
         private void oldMethod(bool runChildren)
         {
@@ -209,6 +211,17 @@ namespace Rawler.Tool
             {
                 list = new List<RawlerLib.Web.Link>(list.Where(n => n.TagWithoutUrl.Contains(TagFilter)));
             }
+            if (CheckUrl)
+            {
+                if (useAbsolutetLink)
+                {
+                    list = list.Where(n => Uri.IsWellFormedUriString(n.Url, UriKind.Absolute)).ToList();
+                }
+                else
+                {
+                    list = list.Where(n => Uri.IsWellFormedUriString(n.Url, UriKind.RelativeOrAbsolute)).ToList();
+                }
+            }
 
             if(list.Count == 0 && EmptyTree !=null)
             {
@@ -292,6 +305,24 @@ namespace Rawler.Tool
         {
             get { return this.GetType().Name; }
         }
+
+        /// <summary>
+        /// URLがURLとして適切かどうかをチェックします。
+        /// </summary>
+        public bool CheckUrl
+        {
+            get
+            {
+                return checkUrl;
+            }
+
+            set
+            {
+                checkUrl = value;
+            }
+        }
+
+
     }
 
 
