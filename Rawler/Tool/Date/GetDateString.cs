@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Rawler.Tool
+namespace Rawler.Tool.Date
 {
     public class GetDateString:RawlerMultiBase
     {
@@ -28,7 +28,7 @@ namespace Rawler.Tool
                     list.Add(item.Value);
                 }
             }
-            else if(DateType == Tool.DateType.ShortDate)
+            else if(DateType ==DateType.ShortDate)
             {
                 System.Text.RegularExpressions.Regex reg = new System.Text.RegularExpressions.Regex(@"\d{4}/\d{1,2}/\d{1,2}");
 

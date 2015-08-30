@@ -244,7 +244,7 @@ namespace Rawler.Tool
             }
         }
 
-        public sealed override void Dispose()
+        public override void Dispose()
         {
             
             if (streamWriter != null)

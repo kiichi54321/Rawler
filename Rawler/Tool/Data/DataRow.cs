@@ -63,12 +63,12 @@ namespace Rawler.Tool
                     var must = MustAttributes.Split(',');
                     if (currentDataRow.Attributes.Intersect(must).Count() == must.Count())
                     {
-                        d.AddDataRow(currentDataRow);
+                        Data.AddDataRow(this, currentDataRow);
                     }
                 }
                 else
                 {
-                    d.AddDataRow(currentDataRow);
+                    Data.AddDataRow(this, currentDataRow);
                 }
                 if (currentDataRow.IsDataNull())
                 {

@@ -13,7 +13,7 @@ namespace Rawler.Tool
         [ContentProperty("Children")]
     [Serializable]
     
-    public class Data : RawlerBase,IData
+    public class Data : RawlerBase,IData, IDataRows
     {
         /// <summary>
         /// データを蓄積するRawlerクラス。
@@ -173,6 +173,28 @@ namespace Rawler.Tool
         {
             DataWrite(attribute, value, type, DataAttributeType.Text);
         }
+
+        /// <summary>
+        /// DataWriteの共通呼び出し
+        /// </summary>
+        /// <param name="rawler"></param>
+        /// <param name="attribute"></param>
+        /// <param name="value"></param>
+        /// <param name="type"></param>
+        /// <param name="attributeType"></param>
+        public static void DataWrite(RawlerBase rawler, string attribute, string value, DataWriteType type, DataAttributeType attributeType)
+        {
+            var d = (IData)rawler.GetUpperInterface<IData>();
+            if(d !=null)
+            {
+                d.DataWrite(attribute, value, type, attributeType);
+            }
+            else
+            {
+                ReportManage.ErrUpperNotFound<IData>(rawler);
+            }
+        }
+
         bool errReportNullData = true;
             /// <summary>
             /// NextDataRow時にNullDataの時、エラーを報告する。
@@ -183,10 +205,23 @@ namespace Rawler.Tool
             set { errReportNullData = value; }
         }
 
-        public void AddDataRow(DataRowObject datarow)
+
+        /// <summary>
+        /// AddDataRowの共通呼び出し。
+        /// </summary>
+        /// <param name="rawler"></param>
+        /// <param name="datarow"></param>
+        public static void AddDataRow(RawlerBase rawler, DataRowObject datarow)
+        {
+            var r = (IDataRows)rawler.GetUpperInterface<IDataRows>();
+            if (r != null) r.AddDataRow(datarow);
+            else ReportManage.ErrUpperNotFound<IDataRows>(rawler);
+        }
+
+
+        public virtual void AddDataRow(DataRowObject datarow)
         {
             currentDataRow.UpDate(datarow);
-            ReportManage.Report(this, "NextDataRow");
             NextDataRow();
         }
 
@@ -208,18 +243,22 @@ namespace Rawler.Tool
             }
             else
             {
-                if (Commited != null)
-                {
-                    Commited(this, new EventDataRow(currentDataRow));
-                }
-                currentDataRow = new DataRowObject();
-                if (stock)
-                {
-                    dataList.Add(currentDataRow);
-                }
+                NextDataRow(currentDataRow);
             }
+        }
 
-            
+        public void NextDataRow(DataRowObject cDataRow)
+        {
+            ReportManage.Report(this, "NextDataRow");
+            if (Commited != null)
+            {
+                Commited(this, new EventDataRow(cDataRow));
+            }
+            currentDataRow = new DataRowObject();
+            if (stock)
+            {
+                dataList.Add(cDataRow);
+            }
         }
 
         public override void Run(bool runChildren)
@@ -652,6 +691,7 @@ namespace Rawler.Tool
             /// </summary>
             public DataRowObject DataRow { get; set; }
         }
+
 
     }
         public class TableData

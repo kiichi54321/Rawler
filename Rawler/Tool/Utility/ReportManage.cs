@@ -149,6 +149,17 @@ namespace Rawler.Tool
             }
         }
 
+        /// <summary>
+        /// 上流に指定の型が見つからない時のエラー
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="rawler"></param>
+        public static void ErrUpperNotFound<T>(RawlerBase rawler)            
+        {
+            var t = typeof(T);
+            ErrReport(rawler,"上流に「"+ t.Name+"」が見つかりません");
+        }
+
         public static void Report(RawlerBase sender, string message, bool returncode)
         {
             ReportEvnetArgs args = new ReportEvnetArgs(sender, GetTopComment(sender) + message, returncode);

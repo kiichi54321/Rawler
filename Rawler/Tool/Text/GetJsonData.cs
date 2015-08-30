@@ -173,10 +173,6 @@ namespace Rawler.Tool
             var t = GetText();
             bool flag = false;
             var json = JObject.Parse(t);
-            var idata = this.GetUpperInterface<IData>();
-
-            var data = (IData)idata;
-
             foreach (var item in FieldName.Split('.'))
             {
                 if (json.Properties().Where(n => n.Name == item).Any())
@@ -187,7 +183,7 @@ namespace Rawler.Tool
                     }
                     else
                     {
-                        data.DataWrite(FieldName, json.Property(item).Value.ToString(), this.WriteType);
+                        Data.DataWrite(this,FieldName, json.Property(item).Value.ToString(), this.WriteType, DataAttributeType.Text);
                         flag = true;
                     }
                 }
@@ -199,7 +195,7 @@ namespace Rawler.Tool
             }          
             if( json.Type == JTokenType.Object && flag == false)
             {
-                data.DataWrite(FieldName, json.ToString(), this.WriteType);
+                Data.DataWrite(this, FieldName, json.ToString(), this.WriteType, DataAttributeType.Text);
             }
             if(flag == false)
             {

@@ -122,17 +122,14 @@ namespace RawlerTool
         {
             Task reportProgressTask = Task.Factory.StartNew(() =>
             {
-
-                {
                     try
                     {
-                        textBox2.Text += text;
+                        textBox2.AppendText(text);
                     }
                     catch (Exception e)
                     {
                         textBox2.Text = text;
                     }
-                }
             },
                       CancellationToken.None,
                       TaskCreationOptions.None,

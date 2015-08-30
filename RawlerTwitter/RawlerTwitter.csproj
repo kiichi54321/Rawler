@@ -89,6 +89,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TweetPost.cs" />
     <Compile Include="TweetUser.cs" />
+    <Compile Include="TwitterList.cs" />
     <Compile Include="TwitterLogin.cs" />
     <Compile Include="TwitterSearch.cs" />
     <Compile Include="TwitterStreaming.cs" />

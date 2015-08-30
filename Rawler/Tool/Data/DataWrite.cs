@@ -109,6 +109,8 @@ namespace Rawler.Tool
 
         public string Value { get; set; }
 
+
+
         //public new void Run()
         //{
         //    Run(true);
@@ -120,75 +122,104 @@ namespace Rawler.Tool
         /// <param name="runChildren"></param>
         public override void Run(bool runChildren)
         {
-            IData data = null;
-
-            IRawler current = this.Parent;
-            while (current != null)
-            { 
-                if (current is IData)
-                {
-                    data = current as IData;
-                    break;
-                }
-                current = current.Parent;
-            }
-            if (data != null)
+            string txt = string.Empty;
+            if (Value == null || Value.Length == 0)
             {
-                string txt = string.Empty;
-                if (Value == null || Value.Length == 0)
-                {
-                    txt = GetText();
-                }
-                else
-                {
-                    txt = Value;
-                }
-                if (useHtmlDecode)
-                {
-                    txt = System.Net.WebUtility.HtmlDecode(txt);
-                }
-
-                if (this.Attribute == null && attributeTree != null)
-                {
-                    string tmpAttributeText = string.Empty;
-                    if (this.Parent != null)
-                    {
-                        tmpAttributeText = RawlerBase.GetText(this.Parent.Text, attributeTree,this);
-
-                    }
-                    data.DataWrite(tmpAttributeText, txt, writeType,AttributeType);
-
-                }
-                else
-                {
-                    if (this.Attribute != null)
-                    {
-                        data.DataWrite(this.Attribute, txt, writeType,AttributeType);
-                    }
-                    else
-                    {
-                        data.DataWrite(string.Empty, txt, writeType, AttributeType);
-                    }
-                }
-
-                //if (this.AttributeObjectName != null && this.AttributeObjectName.Length>0)
-                //{
-                //    var list = this.GetConectAllRawler().Where(n => n.Name == this.AttributeObjectName);
-                //    if (list.Count() > 0)
-                //    {
-                //        data.DataWrite(list.First().Text, txt,writeType);
-                //    }
-                //    else
-                //    {
-                //        ReportManage.ErrReport(this, "AttributeObjectNameの指定が不正です。オブジェクトが見つかりませんでした。");
-                //    }
-                //}
-
+                txt = GetText();
             }
             else
             {
-                ReportManage.ErrReport(this,"書き込み先のDataオブジェクトが見つかりません。");
+                txt = Value;
             }
+            if (useHtmlDecode)
+            {
+                txt = System.Net.WebUtility.HtmlDecode(txt);
+            }
+
+            string attribute = string.Empty;
+            if (this.Attribute == null && attributeTree != null)
+            {               
+                if (this.Parent != null)
+                {
+                    attribute = RawlerBase.GetText(this.Parent.Text, attributeTree, this);
+                }
+            }
+            else
+            {
+                attribute = this.Attribute;
+            }
+
+            Data.DataWrite(this,attribute,txt, writeType, AttributeType);
+
+            //IData data = null;
+
+            //IRawler current = this.Parent;
+            //while (current != null)
+            //{ 
+            //    if (current is IData)
+            //    {
+            //        data = current as IData;
+            //        break;
+            //    }
+            //    current = current.Parent;
+            //}
+            //if (data != null)
+            //{
+            //    string txt = string.Empty;
+            //    if (Value == null || Value.Length == 0)
+            //    {
+            //        txt = GetText();
+            //    }
+            //    else
+            //    {
+            //        txt = Value;
+            //    }
+            //    if (useHtmlDecode)
+            //    {
+            //        txt = System.Net.WebUtility.HtmlDecode(txt);
+            //    }
+
+            //    if (this.Attribute == null && attributeTree != null)
+            //    {
+            //        string tmpAttributeText = string.Empty;
+            //        if (this.Parent != null)
+            //        {
+            //            tmpAttributeText = RawlerBase.GetText(this.Parent.Text, attributeTree,this);
+
+            //        }
+            //        data.DataWrite(tmpAttributeText, txt, writeType,AttributeType);
+
+            //    }
+            //    else
+            //    {
+            //        if (this.Attribute != null)
+            //        {
+            //            data.DataWrite(this.Attribute, txt, writeType,AttributeType);
+            //        }
+            //        else
+            //        {
+            //            data.DataWrite(string.Empty, txt, writeType, AttributeType);
+            //        }
+            //    }
+
+            //    //if (this.AttributeObjectName != null && this.AttributeObjectName.Length>0)
+            //    //{
+            //    //    var list = this.GetConectAllRawler().Where(n => n.Name == this.AttributeObjectName);
+            //    //    if (list.Count() > 0)
+            //    //    {
+            //    //        data.DataWrite(list.First().Text, txt,writeType);
+            //    //    }
+            //    //    else
+            //    //    {
+            //    //        ReportManage.ErrReport(this, "AttributeObjectNameの指定が不正です。オブジェクトが見つかりませんでした。");
+            //    //    }
+            //    //}
+
+            //}
+            //else
+            //{
+            //    ReportManage.ErrReport(this,"書き込み先のDataオブジェクトが見つかりません。");
+            //}
             this.RunChildren(runChildren);
         }
 

@@ -43,6 +43,7 @@ namespace Rawler.RawlerLib.WPF
 
         public void AddText(string name ,string text)
         {
+            if (name == null) name = string.Empty;
             if (tagDic.ContainsKey(name))
             {
                 ((ViewTextControl)tagDic[name].Content).Text = text;

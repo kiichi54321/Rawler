@@ -25,18 +25,6 @@ namespace Rawler.Tool
         RawlerBase Clone(RawlerBase parent);
     }
 
-    public interface IDataWrite
-    {
-        string Attribute { get; set; }
-        DataWriteType WriteType { get; set; }
-    }
-
-    public interface IData
-    {
-        DataRowObject GetCurrentDataRow();
-        void DataWrite(string attribute, string value, DataWriteType type, DataAttributeType attributeType);
-        void DataWrite(string attribute, string value, DataWriteType type);
-    }
 
     /// <summary>
     /// このオブジェクトは、末尾に来ないとダメ。
@@ -561,9 +549,10 @@ namespace Rawler.Tool
         public RawlerBase GetUpperInterface<T>()
         {
             bool flag = false;
-            RawlerBase rawler = this;
+            RawlerBase rawler = this.Parent;
             while (true)
             {
+                if (rawler == null) break;
                 if (rawler is T)
                 {
                     flag = true;

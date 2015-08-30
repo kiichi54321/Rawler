@@ -111,8 +111,10 @@
     <Compile Include="Tool\Data\ChangeCurrentDataRow.cs" />
     <Compile Include="Tool\Data\CheckDataRow.cs" />
     <Compile Include="Tool\Data\DataGrouping.cs" />
+    <Compile Include="Tool\Data\IData.cs" />
     <Compile Include="Tool\Data\ReportCurrentDataRow.cs" />
     <Compile Include="Tool\Data\ReportDataRow2Json.cs" />
+    <Compile Include="Tool\Data\TempDataRows.cs" />
     <Compile Include="Tool\Date\DateTime.cs" />
     <Compile Include="Tool\Enumeration\Loop.cs" />
     <Compile Include="Tool\Html\DefinitionLists.cs" />
@@ -151,7 +153,7 @@
     <Compile Include="Tool\Condition\Equal.cs" />
     <Compile Include="Tool\IO\FileOpen.cs" />
     <Compile Include="Tool\Data\FileSave.cs" />
-    <Compile Include="Tool\Text\GetDateString.cs" />
+    <Compile Include="Tool\Date\GetDateString.cs" />
     <Compile Include="Tool\Text\GetJsonData.cs" />
     <Compile Include="Tool\Text\ConvertDateTime.cs" />
     <Compile Include="Tool\Text\RemoveWordByRegular.cs" />
