@@ -43,6 +43,14 @@
     <Reference Include="Accessibility">
       <EmbedInteropTypes>True</EmbedInteropTypes>
     </Reference>
+    <Reference Include="CoreTweet, Version=0.5.3.40351, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\CoreTweet.0.5.3\lib\net40\CoreTweet.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="CoreTweet.Streaming.Reactive, Version=0.5.3.40352, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\CoreTweet.Streaming.Reactive.0.5.3\lib\net40\CoreTweet.Streaming.Reactive.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\Newtonsoft.Json.6.0.5\lib\net40\Newtonsoft.Json.dll</HintPath>
@@ -96,14 +104,6 @@
     <Compile Include="UserState.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\Users\kiichi\Documents\GitHub\CoreTweet\CoreTweet.Streaming.Reactive\CoreTweet.Streaming.Reactive.csproj">
-      <Project>{7f946219-a568-4e49-955d-f18c20cef016}</Project>
-      <Name>CoreTweet.Streaming.Reactive</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\Users\kiichi\Documents\GitHub\CoreTweet\CoreTweet\CoreTweet.csproj">
-      <Project>{b8237636-ec72-47bd-887b-e66d4123f422}</Project>
-      <Name>CoreTweet</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Rawler\Rawler.csproj">
       <Project>{D0FF1894-5D72-40C4-91FD-774A8D87D34F}</Project>
       <Name>Rawler</Name>
@@ -116,6 +116,7 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
+    <None Include="app.config" />
     <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

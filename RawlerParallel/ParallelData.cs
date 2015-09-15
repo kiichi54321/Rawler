@@ -10,56 +10,26 @@ namespace RawlerParallel
 {
     public class ParallelData : FileSave, IDisposable
     {
-        BufferBlock<DataRowObject> DataRowObjectList = new System.Threading.Tasks.Dataflow.BufferBlock<Rawler.Tool.DataRowObject>();
-        bool threadFlag = true;
-        Task task;
-        
+         ActionBlock<DataRowObject> DataRowBlock;
 
         public override void Run(bool runChildren)
         {
-            task = Task.Factory.StartNew(() => {
-                while(threadFlag)
-                {
-                    IList<Rawler.Tool.DataRowObject> list;
-                    if (DataRowObjectList.TryReceiveAll(out list))
-                    {
-                        foreach (var item in list)
-                        {
-                            NextDataRow(item);
-                        }
-                    }
-                    System.Threading.Thread.Sleep(10);
-                }
-            }).ContinueWith( (n)=>{
-                IList<Rawler.Tool.DataRowObject> list;
-                if (DataRowObjectList.TryReceiveAll(out list))
-                {
-                    foreach (var item in list)
-                    {
-                        NextDataRow(item);
-                    }
-                }
-            });
-            threadFlag = true;
+            DataRowBlock = new ActionBlock<DataRowObject>((n) => NextDataRow(n));
+         
             base.Run(runChildren);
-            threadFlag = false;
-            
         }
 
         public override void Dispose()
         {
-            if(task !=null)
-            {
-                threadFlag = false;
-                task.Wait();
-                task.Dispose();
-            }
+            DataRowBlock.Complete();
+            DataRowBlock.Completion.Wait();
+           
             base.Dispose();
         }
 
         public override void AddDataRow(DataRowObject datarow)
         {
-            DataRowObjectList.Post(datarow);
+            DataRowBlock.Post(datarow);
         }
 
        

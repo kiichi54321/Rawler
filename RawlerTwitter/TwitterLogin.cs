@@ -15,19 +15,28 @@ namespace RawlerTwitter
         {
         }
 
-        public void SetUp()
+        public void SetUp(RawlerBase rawler)
         {
-            if (string.IsNullOrEmpty(SetTwitterApiKeys.consumerKey) || string.IsNullOrEmpty(SetTwitterApiKeys.consumerSecret))
+            if (string.IsNullOrEmpty(this.ConsumerKey) || string.IsNullOrEmpty(this.ConsumerSecret))
             {
-                this.ConsumerKey = "gHVupgapEXlTZdu7rf3oOg";
-                this.ConsumerSecret = "YOicLtW8utx3NJyy88wtzq8QN3ilXeQoEGCPIJNzo";
-                ReportManage.Report(null, "RawlerのAPI Keyを使います",true,true);
+                if( KeyValueStore.ContainsKey(rawler, "ConsumerKey", "ConsumerSecret"))
+                {
+                    this.ConsumerKey = KeyValueStore.GetValueByKey(rawler, "ConsumerKey");
+                    this.ConsumerSecret = KeyValueStore.GetValueByKey(rawler, "ConsumerSecret");
+                    ReportManage.Report(rawler, "KeyValueStoreからのAPI Keyを使います", true, true);
+                }
+                else if (string.IsNullOrEmpty(SetTwitterApiKeys.consumerKey) || string.IsNullOrEmpty(SetTwitterApiKeys.consumerSecret))
+                {
+                    this.ConsumerKey = "gHVupgapEXlTZdu7rf3oOg";
+                    this.ConsumerSecret = "YOicLtW8utx3NJyy88wtzq8QN3ilXeQoEGCPIJNzo";
+                    ReportManage.Report(rawler, "RawlerのAPI Keyを使います", true, true);
+                }
+                else
+                {
+                    this.ConsumerKey = SetTwitterApiKeys.consumerKey;
+                    this.ConsumerSecret = SetTwitterApiKeys.consumerSecret;
+                }
             }
-            else
-            {
-                this.ConsumerKey = SetTwitterApiKeys.consumerKey;
-                this.ConsumerSecret = SetTwitterApiKeys.consumerSecret;
-            } 
         }
         public string ConsumerKey { get; set; }
         public string ConsumerSecret { get; set; }
@@ -98,17 +107,19 @@ namespace RawlerTwitter
         /// <param name="runChildren"></param>
         public override void Run(bool runChildren)
         {
+            //App認証の場合
             if (SetTwitterApiKeys.UseAppOnlyAutherentcation || AppOnlyAuthentication != null)
             {
                 if(AppOnlyAuthentication == null)
                 {
                     AppOnlyAuthentication = new AppOnlyAuthentication();                    
                 }
-                AppOnlyAuthentication.SetUp();
+                AppOnlyAuthentication.SetUp(this);
                 token = OAuth2.GetToken(AppOnlyAuthentication.ConsumerKey, AppOnlyAuthentication.ConsumerSecret);
             }
             else
             {
+                //普通の認証の場合
                 if (GetOAuthTokens() == null)
                 {
                     var session = OAuth.Authorize(ConsumerKey, ConsumerSecret);

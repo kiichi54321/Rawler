@@ -50,6 +50,9 @@ Global
 	GlobalSection(Performance) = preSolution
 		HasPerformanceSessions = true
 	EndGlobalSection
+	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		..\..\Users\kiichi\Documents\GitHub\CoreTweet\CoreTweet.Shared\CoreTweet.Shared.projitems*{b8237636-ec72-47bd-887b-e66d4123f422}*SharedItemsImports = 4
+	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		CCNET|Any CPU = CCNET|Any CPU
 		CCNET|Mixed Platforms = CCNET|Mixed Platforms

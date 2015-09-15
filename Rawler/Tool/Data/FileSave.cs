@@ -25,7 +25,7 @@ namespace Rawler.Tool
         }
 
         public string AttributeOrderString { get; set; }
-
+        public int MaxFileSize { get; set; } = 1024;
 
 
 
@@ -92,7 +92,7 @@ namespace Rawler.Tool
                     if (System.IO.File.Exists(n))
                     {
                         FileInfo fi2 = new FileInfo(n);
-                        if (fi2.Length < 1024 * 1024 * 200) return true;
+                        if (fi2.Length < 1024 * 1024 * MaxFileSize) return true;
                         else return false;
                     }
                     else

@@ -51,7 +51,7 @@ namespace RawlerTwitter
                     {
                         dic.Add("screen_name", GetText());
                     }
-                    else if (ParentUserIdType == RawlerTwitter.ParentUserIdType.UsetId)
+                    else if (ParentUserIdType == RawlerTwitter.ParentUserIdType.UserId)
                     {
                         dic.Add("user_id", GetText());
                     }

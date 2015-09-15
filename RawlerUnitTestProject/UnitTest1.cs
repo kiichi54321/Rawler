@@ -1,6 +1,7 @@
 ﻿using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using RawlerExpressLib.TestExtend;
+using System.Collections.Generic;
 
 namespace RawlerUnitTestProject
 {
@@ -26,8 +27,18 @@ namespace RawlerUnitTestProject
             date.ToShortDateString().ConsoleWriteLine();
             date.ToShortTimeString().ConsoleWriteLine();
             date.ToString().ConsoleWriteLine();
+
+
         }
     }
+    public class Node
+    {
+        public string Name { get; set; }
+        List<Node> children = new List<Node>();
+        public void Add(Node node) => children.Add(node);
+    }
+
+    
 
 
     public class class1

@@ -59,6 +59,7 @@
     <Compile Include="DataRows.cs" />
     <Compile Include="ParallelData.cs" />
     <Compile Include="ParallelQueue.cs" />
+    <Compile Include="ParallelRun.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

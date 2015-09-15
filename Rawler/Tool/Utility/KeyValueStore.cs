@@ -80,6 +80,46 @@ namespace Rawler.Tool
         {
             dic.Clear();
         }
+
+        /// <summary>
+        /// 指定したキーが上流のKeyValueStoreにあるかを調べる
+        /// </summary>
+        /// <param name="rawler"></param>
+        /// <param name="keys"></param>
+        /// <returns></returns>
+        public static bool ContainsKey(RawlerBase rawler,params string[] keys)
+        {
+            var r = rawler.GetUpperRawler<KeyValueStore>();
+            if(r !=null)
+            {
+                return  keys.All((n) => r.dic.ContainsKey(n));
+            }
+            else
+            {
+                ReportManage.ErrUpperNotFound<KeyValueStore>(rawler);
+            }
+            return false;
+        }
+
+        /// <summary>
+        /// 指定したキーで上流のKeyValueStoreから値を取得する。
+        /// </summary>
+        /// <param name="rawler"></param>
+        /// <param name="key"></param>
+        /// <returns></returns>
+        public static string GetValueByKey(RawlerBase rawler,string key)
+        {
+            var r = rawler.GetUpperRawler<KeyValueStore>();
+            if (r != null)
+            {
+                return r.GetKeyValue(key);
+            }
+            else
+            {
+                ReportManage.ErrUpperNotFound<KeyValueStore>(rawler);
+            }
+            return null;
+        }
     }
 
 

@@ -1,0 +1,7 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Node Name ="root">
+  <Node Name ="node1">
+    <Node Name="node2"/>
+    <Node Name="node3"/>
+  </Node>
+</Node>

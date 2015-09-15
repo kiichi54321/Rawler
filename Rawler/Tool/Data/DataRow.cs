@@ -55,28 +55,25 @@ namespace Rawler.Tool
             currentDataRow = new DataRowObject();
             SetText(GetText());
             base.Run(runChildren);
-            var d = this.GetUpperRawler<Data>();
-            if (d != null)
+
+            if (MustAttributes.IsNullOrEmpty() == false)
             {
-                if (MustAttributes.IsNullOrEmpty() == false)
-                {
-                    var must = MustAttributes.Split(',');
-                    if (currentDataRow.Attributes.Intersect(must).Count() == must.Count())
-                    {
-                        Data.AddDataRow(this, currentDataRow);
-                    }
-                }
-                else
+                var must = MustAttributes.Split(',');
+                if (currentDataRow.Attributes.Intersect(must).Count() == must.Count())
                 {
                     Data.AddDataRow(this, currentDataRow);
                 }
-                if (currentDataRow.IsDataNull())
+            }
+            else
+            {
+                Data.AddDataRow(this, currentDataRow);
+            }
+            if (currentDataRow.IsDataNull())
+            {
+                if (EmptyTree != null)
                 {
-                    if (EmptyTree != null)
-                    {
-                        EmptyTree.SetParent(this);
-                        EmptyTree.Run();
-                    }
+                    EmptyTree.SetParent(this);
+                    EmptyTree.Run();
                 }
             }
         }

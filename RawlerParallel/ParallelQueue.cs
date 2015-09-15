@@ -20,57 +20,87 @@ namespace RawlerParallel
     public class ParallelQueue:Rawler.Tool.RawlerBase
     {
         BufferBlock<string> queue = new BufferBlock<string>();
-        BufferBlock<DateValue<string>> workingBlock = new BufferBlock<DateValue<string>>();
+     //   BufferBlock<DateValue<string>> workingBlock = new BufferBlock<DateValue<string>>();
         HashSet<string> completedHash = new HashSet<string>();
         BufferBlock<string> completdBlock = new BufferBlock<string>();
-
+        System.Collections.Concurrent.BlockingCollection<DateValue<string>> workingList = new BlockingCollection<DateValue<string>>();
         Task workcheckTask;
         Task completedTask;
         System.Threading.CancellationTokenSource canceltoken = new System.Threading.CancellationTokenSource();
 
         public bool IsSingle { get; set; } = false;
         public string CompletedFileName { get; set; } = "ParallelQueueCompleted.txt";
+        public bool UseCompletedFile { get; set; } = false;
+        public int TimeOutMinutes { get; set; } = 10;
 
         public override void Run(bool runChildren)
         {
 
             //作業中のものをチェックして、規定時間以上かかったものをキューに戻す。
-            workcheckTask = Task.Factory.StartNew(() => {
-                while(canceltoken.IsCancellationRequested == false)
+            //workcheckTask = Task.Factory.StartNew(() => {
+            //    while(canceltoken.IsCancellationRequested == false)
+            //    {
+            //       var list =  workingList.Where(n => DateTime.Now - n.Date > TimeSpan.FromMinutes(TimeOutMinutes)).ToArray();
+            //        foreach (var item in list)
+            //        {
+            //            queue.Post(item.Value);
+            //            workingList.GetConsumingEnumerable()
+            //        }
+            //        DateValue<string> val;
+            //        do
+            //        {
+                        
+            //        }
+            //        while (val != null);
+            //        System.Threading.Thread.Sleep(1000);
+            //    }
+            //},canceltoken.Token, TaskCreationOptions.PreferFairness,TaskScheduler.Default);
+           
+                ReadCompletedFile();
+                //完了処理。ファイルに書き込む。
+                completedTask = Task.Factory.StartNew(() =>
                 {
-                    DateValue<string> val;
-                    do
+                    while (canceltoken.IsCancellationRequested == false)
                     {
-                        if (workingBlock.TryReceive(n => DateTime.Now - n.Date > TimeSpan.FromMinutes(10), out val))
+                        IList<string> list;
+                        if (completdBlock.TryReceiveAll(out list))
                         {
-                            queue.Post(val.Value);
-                        }
-                    }
-                    while (val != null);
-                    System.Threading.Thread.Sleep(1000);
-                }
-            },canceltoken.Token, TaskCreationOptions.PreferFairness,TaskScheduler.Default);
-            //完了処理。ファイルに書き込む。
-            completedTask = Task.Factory.StartNew(() => {
-                while (canceltoken.IsCancellationRequested == false)
-                {
-                    IList<string> list;
-                    if(completdBlock.TryReceiveAll(out list))
-                    {
-                        using (var fs = System.IO.File.AppendText(CompletedFileName) )
-                        {
+                            if (UseCompletedFile)
+                            {
+                                using (var fs = System.IO.File.AppendText(CompletedFileName))
+                                {
+                                    foreach (var item in list)
+                                    {
+                                        fs.WriteLine(item);
+                                        if (IsSingle) completedHash.Add(item);
+                                    }
+                                }
+                            }
                             foreach (var item in list)
                             {
-                                fs.WriteLine(item);
-                                if(IsSingle) completedHash.Add(item);
+                                if (IsSingle) completedHash.Add(item);
                             }
                         }
+                        System.Threading.Thread.Sleep(100);
                     }
-                    System.Threading.Thread.Sleep(100);
-                }
-            },canceltoken.Token, TaskCreationOptions.PreferFairness, TaskScheduler.Default);
-
+                }, canceltoken.Token, TaskCreationOptions.PreferFairness, TaskScheduler.Default);
+            
             base.Run(runChildren);
+        }
+
+        protected void ReadCompletedFile()
+        {
+            if (UseCompletedFile)
+            {
+                if (System.IO.File.Exists(CompletedFileName))
+                {
+                    ReportManage.Report(this, CompletedFileName + "を読み込んでいます。", true, true);
+                    foreach (var item in System.IO.File.ReadAllLines(CompletedFileName))
+                    {
+                        if (IsSingle) completedHash.Add(item);
+                    }
+                }
+            }
         }
 
 
@@ -98,7 +128,7 @@ namespace RawlerParallel
             string val;
             if( queue.TryReceive(out val))
             {
-                workingBlock.Post(new DateValue<string>() { Date = DateTime.Now, Value = val });
+            //    workingBlock.Post(new DateValue<string>() { Date = DateTime.Now, Value = val });
                 return val;
             }
             else
@@ -112,10 +142,10 @@ namespace RawlerParallel
         {
             //workingから消す
             DateValue<string> val2;
-            if (workingBlock.TryReceive(n => n.Value == val, out val2))
-            {
+            //if (workingBlock.TryReceive(n => n.Value == val, out val2))
+            //{
                 
-            }            
+            //}            
             //完了処理をする。
             if (completedTask != null)
             {
@@ -163,11 +193,11 @@ namespace RawlerParallel
             {
                 if (string.IsNullOrEmpty(Value))
                 {
-                    queue.Enqueue(Value);
+                    queue.Enqueue(GetText());                   
                 }
                 else
                 {
-                    queue.Enqueue(GetText());
+                    queue.Enqueue(Value);
                 }
                 base.Run(runChildren);
             }

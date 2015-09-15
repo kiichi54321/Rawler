@@ -27,7 +27,14 @@ namespace Rawler.RawlerLib.WPF
         public void SetText(string text)
         {
             textBox1.Text = text;
-            webBrowser1.NavigateToString(text);
+            try
+            {
+                webBrowser1.NavigateToString(text);
+            }
+            catch(Exception ex)
+            {
+                
+            }
         }
         public string Text
         {

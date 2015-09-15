@@ -156,6 +156,7 @@
     <Compile Include="Tool\Date\GetDateString.cs" />
     <Compile Include="Tool\Text\GetJsonData.cs" />
     <Compile Include="Tool\Text\ConvertDateTime.cs" />
+    <Compile Include="Tool\Condition\Once.cs" />
     <Compile Include="Tool\Text\RemoveWordByRegular.cs" />
     <Compile Include="Tool\Text\StringFormat.cs" />
     <Compile Include="Tool\Text\StringLength.cs" />
@@ -167,6 +168,7 @@
     <Compile Include="Tool\Utility\KeyValueStore.cs" />
     <Compile Include="Tool\Utility\RandomIntValue.cs" />
     <Compile Include="Tool\Utility\RScript.cs" />
+    <Compile Include="Tool\Utility\RunXaml.cs" />
     <Compile Include="Tool\Utility\SetTempVar.cs" />
     <Compile Include="Tool\Utility\FunctionTree.cs" />
     <Compile Include="Tool\Utility\SetWorkFolder.cs" />

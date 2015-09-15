@@ -17,16 +17,6 @@ namespace Rawler.Tool
     [Serializable]
     public class WebClient : RawlerBase
     {
-        //private bool onceEncodingCheck = true;
-        ///// <summary>
-        ///// 初めだけエンコードのチェックをする。
-        ///// </summary>
-        //public bool OnceEncodingCheck
-        //{
-        //    get { return onceEncodingCheck; }
-        //    set { onceEncodingCheck = value; }
-        //}
-
         private Encoding encoder = null;
 
         private string encoding = string.Empty;
@@ -47,19 +37,26 @@ namespace Rawler.Tool
         }
         double sleepSeconds = 0;
 
+        /// <summary>
+        /// ページ読み込むときに必ず停止する秒の設定。
+        /// </summary>
         public double SleepSeconds
         {
             get { return sleepSeconds; }
             set { sleepSeconds = value; }
         }
 
-        private void Sleep()
+        protected void Sleep()
         {
             if (sleepSeconds > 0)
             {
                 System.Threading.Thread.Sleep((int)(1000 * sleepSeconds));
             }
         }
+        /// <summary>
+        /// 読み込んでいるURLをレポートする。
+        /// </summary>
+        public bool ReportUrl { get; set; } = false;
 
         public override void Run(bool runChildren)
         {
@@ -201,8 +198,14 @@ namespace Rawler.Tool
             ErrMessage = string.Empty;
             string result = string.Empty;
             bool retry = false;
+            if(ReportUrl)
+            {
+                ReportManage.Report(this, "GET " + url, true, true);
+            }
+
             try
             {
+
                 wc.Referer = referer;
                 wc.UserAgent = userAgent;
                 wc.BasicAuthorization = BasicAuthorization;
@@ -364,6 +367,10 @@ namespace Rawler.Tool
         public virtual byte[] HttpGetByte(string url)
         {
             Sleep();
+            if (ReportUrl)
+            {
+                ReportManage.Report(this, "GET " + url, true, true);
+            }
 
             byte[] data;
             try
@@ -435,6 +442,10 @@ namespace Rawler.Tool
         /// <returns></returns>
         public virtual string HttpPost(string url, List<KeyValue> vals)
         {
+            if (ReportUrl)
+            {
+                ReportManage.Report(this, "POST " + url, true, true);
+            }
             try
             {
                 Sleep();
@@ -477,6 +488,10 @@ namespace Rawler.Tool
         /// <returns></returns>
         public virtual byte[] HttpPostByte(string url, List<KeyValue> vals)
         {
+            if (ReportUrl)
+            {
+                ReportManage.Report(this, "POST " + url, true, true);
+            }
             try
             {
                 Sleep();

@@ -67,6 +67,7 @@ namespace RawlerTwitter
 
         public IEnumerable<string> ReadData()
         {
+            List<string> list = new List<string>();
             var login = this.GetUpperRawler<TwitterLogin>();
             int totalCount = 0;
             if (login != null)
@@ -120,18 +121,53 @@ namespace RawlerTwitter
                         dic.Add("max_id", max_id - 1);
                     }
                     int count = 0;
-
+                    long tmp_max_id = max_id;
+        
+                    bool retry = false;
+                    try
+                    {
                         foreach (var item in login.Token.Statuses.UserTimeline(dic))
                         {
-                           
+
                             count++;
                             totalCount++;
                             max_id = Math.Min(max_id, item.Id);
-                            yield return JObject.FromObject(item).ToString();
+                            list.Add(JObject.FromObject(item).ToString());
+                            //       yield return JObject.FromObject(item).ToString();
                             if (MaxCount > 0 && MaxCount <= totalCount) break;
                         }
-                    
-                   
+                    }
+                    catch (Exception e)
+                    {
+                      
+                        ReportManage.ErrReport(this, GetText() + "\t" + e.Message);
+                        if (e.Message == "Not authorized.")
+                        {
+                            break;
+                        }
+                        else if (e.Message == "Rate limit exceeded")
+                        {
+                            retry = true;
+                        }
+                        else if (e.Message == "Over capacity")
+                        {
+                            retry = true;
+                        }
+                        else
+                        {
+                            throw e;
+                        }
+
+                    }
+
+                    if (retry)
+                    {
+                        ReportManage.Report(this, "3分Sleep", true, true);
+                        this.GetUpperRawler<TwitterLogin>().ReLogin();                     
+                        System.Threading.Thread.Sleep(new TimeSpan(0, 3, 0));
+                        max_id = tmp_max_id;
+                    }
+
                     if (MaxCount > 0 && MaxCount <= totalCount) break;
                     
                     if(count < 10)
@@ -149,6 +185,7 @@ namespace RawlerTwitter
             {
                 ReportManage.ErrReport(this, "TwitterLoginをTweetUserTimelineの上流に配置してください");
             }
+            return list;
         }
 
 
@@ -161,28 +198,13 @@ namespace RawlerTwitter
         public override void Run(bool runChildren)
         {
             bool flag = true;
-            bool retry = false;
             try
             {
-                this.RunChildrenForArray(true, ReadData());
+                this.RunChildrenForArray(true, ReadData().Distinct());
             }
             catch (Exception e)
             {
                 flag = false;
-                ReportManage.ErrReport(this, GetText() + "\t" + e.Message);
-                flag = true;
-                if (e.Message == "Not authorized.") flag = true;
-                if (e.Message == "Rate limit exceeded")
-                {
-                    retry = true;
-                    flag = false;
-                }
-                if (e.Message == "Over capacity")
-                {
-                    retry = true;
-                    flag = false;
-                }
-                
                 if (ErrorTree != null && flag == false)
                 {
                     ErrorTree.SetParent(this);
@@ -198,16 +220,6 @@ namespace RawlerTwitter
                     CompletedTree.Run();
                 }
             }
-            if(retry)
-            {
-                ReportManage.Report(this, "3分Sleep", true, true);
-                this.GetUpperRawler<TwitterLogin>().ReLogin();
-//                GC.Collect();
-                System.Threading.Thread.Sleep(new TimeSpan(0, 3, 0));
-                Run(runChildren);
-            }
-            if (flag == false && retry == false) max_id = long.MaxValue;
-          
             GC.Collect();
         }
 
@@ -215,6 +227,6 @@ namespace RawlerTwitter
 
     public enum ParentUserIdType
     {
-        ScreenName, UsetId
+        ScreenName, UserId
     }
 }

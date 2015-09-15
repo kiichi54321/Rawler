@@ -58,7 +58,7 @@ namespace Rawler.Tool
         }
 
         public string Format { get; set; }
-        public IEnumerable<RawlerBase> Args { get; set; }
+        public RawlerCollection Args { get; set; } = new RawlerCollection();
 
         /// <summary>
         /// 子が参照するテキスト。

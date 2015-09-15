@@ -41,6 +41,8 @@ namespace Rawler.Tool
                 System.Threading.Thread.Sleep(time);
                }
         }
+
+
         Random randam = new Random();
         int sleepTime = 3;
 
@@ -78,5 +80,25 @@ namespace Rawler.Tool
         }
 
 
+    }
+
+    /// <summary>
+    /// Loopに対して終了命令を出す。
+    /// </summary>
+    public class LoopEnd:RawlerBase
+    {
+        public override void Run(bool runChildren)
+        {
+            var loop = this.GetUpperRawler<Loop>();
+            if(loop !=null)
+            {
+                loop.Break();
+            }
+            else
+            {
+                ReportManage.ErrUpperNotFound<Loop>(this);
+            }
+            base.Run(runChildren);
+        }
     }
 }
