@@ -208,7 +208,7 @@ namespace Rawler.Tool
         {
             try
             {
-                string fileName = this.FileName;
+                string fileName = this.FileName.Convert(this);
                 if (FileNameTree != null)
                 {
                     FileNameTree.SetParent();

@@ -15,11 +15,6 @@ namespace Rawler.Tool
         {
         }
 
-        public Report(string Header, string Footer)
-        {
-            this.Header = Header;
-            this.Footer = Footer;
-        }
             
 
         public string Header { get; set; }
@@ -56,11 +51,11 @@ namespace Rawler.Tool
             string text;
             if (viewParentText && string.IsNullOrEmpty(Message))
             {
-                text = Header + GetText() + this.Footer;
+                text = Header.Convert(this) + GetText() + Footer.Convert(this);
             }
             else
             {
-                text = Header + Message + this.Footer;
+                text = Header.Convert(this) + Message.Convert(this) + this.Footer.Convert(this);
             }
             ReportManage.Report(this, System.Net.WebUtility.HtmlDecode( text),returncode, visible);
             this.RunChildren(runChildren);

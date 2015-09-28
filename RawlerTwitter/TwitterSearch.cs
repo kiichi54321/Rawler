@@ -34,7 +34,6 @@ namespace RawlerTwitter
         /// <param name="runChildren"></param>
         public override void Run(bool runChildren)
         {
-
             base.RunChildrenForArray(runChildren, ReadSearch());
             GC.Collect();
         }
@@ -48,7 +47,7 @@ namespace RawlerTwitter
         public string Locale { get; set; }
  
         public string SearchWord { get; set; }
- 
+
         protected IEnumerable<string> ReadSearch()
         {
             var login = this.GetAncestorRawler().OfType<TwitterLogin>().First();
@@ -59,7 +58,7 @@ namespace RawlerTwitter
             string searchWord = GetText();
             if (string.IsNullOrEmpty(SearchWord) == false)
             {
-                searchWord = SearchWord;
+                searchWord = SearchWord.Convert(this);
             }
             bool isFrist = true;
             if (searchWordDic.ContainsKey(searchWord)) isFrist = false;

@@ -91,6 +91,7 @@
   <ItemGroup>
     <Compile Include="ChopMention.cs" />
     <Compile Include="GetFollowers.cs" />
+    <Compile Include="GetFriend.cs" />
     <Compile Include="PinDialog.xaml.cs">
       <DependentUpon>PinDialog.xaml</DependentUpon>
     </Compile>
@@ -101,6 +102,7 @@
     <Compile Include="TwitterLogin.cs" />
     <Compile Include="TwitterSearch.cs" />
     <Compile Include="TwitterStreaming.cs" />
+    <Compile Include="UserLookup.cs" />
     <Compile Include="UserState.cs" />
   </ItemGroup>
   <ItemGroup>

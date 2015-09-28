@@ -53,6 +53,7 @@ namespace RawlerTwitter
 
 
         public string ScreenName { get; set; }
+        string screenName;
         ParentUserIdType parentTextType = ParentUserIdType.ScreenName;
 
         public ParentUserIdType ParentUserIdType
@@ -65,11 +66,13 @@ namespace RawlerTwitter
         public double SleepSecond { get; set; }
         long max_id = long.MaxValue;
 
+
         public IEnumerable<string> ReadData()
         {
             List<string> list = new List<string>();
             var login = this.GetUpperRawler<TwitterLogin>();
             int totalCount = 0;
+            
             if (login != null)
             {
                // long max_id = long.MaxValue;
@@ -91,9 +94,9 @@ namespace RawlerTwitter
                        {"exclude_replies", exclude_replies},                    
                        {"count", 100}                                
                 };
-                    if (string.IsNullOrEmpty(ScreenName) == false)
+                    if (string.IsNullOrEmpty(screenName) == false)
                     {
-                        dic.Add("screen_name", ScreenName);
+                        dic.Add("screen_name", screenName);
                     }
                     else
                     {
@@ -197,6 +200,7 @@ namespace RawlerTwitter
         /// <param name="runChildren"></param>
         public override void Run(bool runChildren)
         {
+            screenName = ScreenName.Convert(this);
             bool flag = true;
             try
             {

@@ -294,7 +294,7 @@ namespace Rawler.Tool
 
         public void JsonFileSave()
         {
-            string filename = this.FileName;
+            string filename = this.FileName.Convert(this);
             if (this.FileNameTree != null)
             {
                 filename = RawlerBase.GetText(this.GetText(), this.FileNameTree, this);
@@ -329,7 +329,7 @@ namespace Rawler.Tool
         private void TsvFileSave()
         {
             if (doLastFileSave == false) return;            
-            string filename = this.FileName;
+            string filename = this.FileName.Convert(this);
             if (this.FileNameTree != null)
             {
                 filename = RawlerBase.GetText(this.GetText(), this.FileNameTree, this);

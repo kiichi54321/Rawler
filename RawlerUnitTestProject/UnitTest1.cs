@@ -2,6 +2,7 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using RawlerExpressLib.TestExtend;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace RawlerUnitTestProject
 {
@@ -29,6 +30,13 @@ namespace RawlerUnitTestProject
             date.ToString().ConsoleWriteLine();
 
 
+        }
+        [TestMethod]
+        public void Text()
+        {
+            string text = "[[key]][value].txt";
+            System.Text.RegularExpressions.Regex r = new System.Text.RegularExpressions.Regex(@"\[\w*\]");
+            r.Matches(text).OfType<System.Text.RegularExpressions.Match>().Select(n => n.Value).ConsoleWriteLine();
         }
     }
     public class Node

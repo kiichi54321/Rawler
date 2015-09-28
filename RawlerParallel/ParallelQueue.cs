@@ -7,6 +7,7 @@ using System.Threading.Tasks.Dataflow;
 using Rawler.Tool;
 using System.Collections.Concurrent;
 using System.Reactive.Linq;
+using Rawler.Tool;
 
 namespace RawlerParallel
 {
@@ -32,10 +33,11 @@ namespace RawlerParallel
         public string CompletedFileName { get; set; } = "ParallelQueueCompleted.txt";
         public bool UseCompletedFile { get; set; } = false;
         public int TimeOutMinutes { get; set; } = 10;
+        private string completedFileName;
 
         public override void Run(bool runChildren)
         {
-
+            completedFileName = CompletedFileName.Convert(this);
             //作業中のものをチェックして、規定時間以上かかったものをキューに戻す。
             //workcheckTask = Task.Factory.StartNew(() => {
             //    while(canceltoken.IsCancellationRequested == false)
@@ -67,7 +69,7 @@ namespace RawlerParallel
                         {
                             if (UseCompletedFile)
                             {
-                                using (var fs = System.IO.File.AppendText(CompletedFileName))
+                                using (var fs = System.IO.File.AppendText(completedFileName))
                                 {
                                     foreach (var item in list)
                                     {
@@ -92,10 +94,10 @@ namespace RawlerParallel
         {
             if (UseCompletedFile)
             {
-                if (System.IO.File.Exists(CompletedFileName))
+                if (System.IO.File.Exists(completedFileName))
                 {
-                    ReportManage.Report(this, CompletedFileName + "を読み込んでいます。", true, true);
-                    foreach (var item in System.IO.File.ReadAllLines(CompletedFileName))
+                    ReportManage.Report(this, completedFileName + "を読み込んでいます。", true, true);
+                    foreach (var item in System.IO.File.ReadAllLines(completedFileName))
                     {
                         if (IsSingle) completedHash.Add(item);
                     }

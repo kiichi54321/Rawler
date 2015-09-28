@@ -202,6 +202,7 @@ namespace Rawler.Tool
                 {
                     OnBeginRunEvent();
                     Run(true);
+                    Completed();
                     OnEndRunEvent();
                 }
                 catch(Exception e)
@@ -217,6 +218,12 @@ namespace Rawler.Tool
         {
             get { return initTree; }
         } 
+
+        /// <summary>
+        /// 終了時に実行する。
+        /// </summary>
+        public virtual void Completed()
+        { }
 
         bool enable = true;
 

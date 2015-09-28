@@ -102,7 +102,7 @@ namespace Rawler.Tool
         /// <param name="runChildren"></param>
         public override void Run(bool runChildren)
         {
-            string containsText = this.ContainsText;
+            string containsText = this.ContainsText.Convert(this);
             string text = this.GetText();
             if (ContainsTextTree != null)
             {

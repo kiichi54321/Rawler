@@ -6,6 +6,9 @@ using Rawler.Tool;
 
 namespace Rawler.Tool
 {
+    /// <summary>
+    /// 変更された時実行する。
+    /// </summary>
     public class ChangeText : RawlerBase
     {
         #region テンプレ

@@ -98,6 +98,7 @@ namespace Rawler.Tool
                     }
 
                 }
+
                 if(LoopEndEvent !=null)
                 {
                     LoopEndEvent(this, new EventArgs());
@@ -156,6 +157,10 @@ namespace Rawler.Tool
                         }
                     }
 
+                }
+                foreach (var item in children)
+                {
+                    item.Completed();
                 }
                 if (LoopEndEvent != null)
                 {

@@ -6,7 +6,7 @@ using Rawler.Tool;
 
 namespace RawlerTwitter
 {
-    public class UserState:RawlerBase
+     class UserState:RawlerBase
     {
         public override void Run(bool runChildren)
         {

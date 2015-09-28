@@ -109,16 +109,21 @@ namespace Rawler.Tool
         /// <returns></returns>
         public static string GetValueByKey(RawlerBase rawler,string key)
         {
-            var r = rawler.GetUpperRawler<KeyValueStore>();
-            if (r != null)
+            var r = rawler.GetAncestorRawler().OfType<KeyValueStore>();
+            string val = null;
+            foreach (var item in r)
             {
-                return r.GetKeyValue(key);
+                if (item.dic.ContainsKey(key))
+                {
+                    val = item.dic[key];
+                    break;
+                }
             }
-            else
+            if(val == null)
             {
-                ReportManage.ErrUpperNotFound<KeyValueStore>(rawler);
+                ReportManage.ErrReport(rawler, "key:" + key + "が見つかりません");
             }
-            return null;
+            return val;
         }
     }
 
@@ -373,4 +378,44 @@ namespace Rawler.Tool
 
     }
 
+
+    public static class KeyValueLib
+    {
+        /// <summary>
+        /// {key} という記法で上流のKeyValueの値を取得する。
+        /// </summary>
+        /// <param name="text"></param>
+        /// <param name="rawler"></param>
+        /// <returns></returns>
+        public static string Convert(this string text, RawlerBase rawler)
+        {
+            if (text == null)
+            {
+                return null;
+            }
+            else
+            {
+                var text2 = text.Replace("[[", "&(").Replace("]]", "&)");
+                System.Text.RegularExpressions.Regex r = new System.Text.RegularExpressions.Regex(@"\[\w*\]");
+                foreach (var item in r.Matches(text).OfType<System.Text.RegularExpressions.Match>())
+                {
+                    var key = item.Value.Replace("[", "").Replace("]", "");
+                    var val = KeyValueStore.GetValueByKey(rawler, key);
+                    if (val.Length > 0)
+                    {
+                        text2 = text2.Replace(item.Value, val);
+                    }
+                }
+                return text2.Replace("&(", "[").Replace("&)", "]");
+            }
+        }
+
+
+
+        //public static string Convert(this string text,RawlerBase rawler)
+        //{
+        //    var list = RawlerLib.Web.GetTagContentList(text, "{", "}", true);
+
+        //}
+    }
 }
