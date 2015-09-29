@@ -19,6 +19,7 @@ namespace RawlerTwitter
 
         public string ScreenName { get; set; }
         public string UserId { get; set; }
+        long cursor = -1;
 
         public IEnumerable<string> ReadAPI()
         {
@@ -26,12 +27,11 @@ namespace RawlerTwitter
             if(login == null)
             {           
                 ReportManage.ErrReport(this, "TwitterLoginをTweetUserTimelineの上流に配置してください");
-                yield break;
+                return new List<string>();
             }
-            long cursor = -1;
+ 
+            List<long> list = new List<long>();
 
-            while (true)
-            {
                 Dictionary<string, object> dic = new Dictionary<string, object>()
                 {
                        {"cursor", cursor},
@@ -43,7 +43,7 @@ namespace RawlerTwitter
                 }
                 else if (UserId.IsNullOrEmpty() == false)
                 {
-                    dic.Add("user_id", UserId);
+                    dic.Add("user_id", UserId.Convert(this));
                 }
                 else
                 {
@@ -57,23 +57,37 @@ namespace RawlerTwitter
                     }
                 }
 
-                var result = login.Token.Followers.Ids(dic);
-                var result1 = login.Token.Friends.Ids(dic);
-                foreach (var item in result.Result)
+                try
                 {
-                    yield return item.ToString();
+                    var result = login.Token.Followers.Ids(dic);
+
+                    foreach (var item in result.Result)
+                    {
+                        list.Add(item);
+                    }
+                    if (result.NextCursor > 0) cursor = result.NextCursor;
+                    else
+                    {
+                        cursor = -1;                      
+                    }
                 }
-                if (result.NextCursor > 0) cursor = result.NextCursor;
-                else
+                catch(Exception ex)
                 {
-                    break;
+                    ReportManage.ErrReport(this, ex.Message);
+                    System.Threading.Thread.Sleep(1000*60);                 
                 }
-            }
+            
+            
+            return list.Select(n=>n.ToString()).ToList();
         }
 
         public override void Run(bool runChildren)
         {
-            RunChildrenForArray(runChildren, ReadAPI());
+            cursor = -1;
+            do
+            {
+                RunChildrenForArray(runChildren, ReadAPI());
+            } while (cursor > 0);
         }
     }
 }

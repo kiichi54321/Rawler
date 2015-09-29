@@ -84,7 +84,7 @@ namespace Rawler.Tool
         private void CheckFileSizeAndCreate()
         {
             FileInfo fi = new FileInfo(currentFileName);
-            if( fi.Length > 1024*1024*200)
+            if( fi.Length > 1024*1024* MaxFileSize)
             {
                 streamWriter.Close();
                 var file = RawlerLib.IO.GenerateFileName(baseFileName, (n) =>

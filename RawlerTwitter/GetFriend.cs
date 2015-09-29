@@ -40,11 +40,11 @@ namespace RawlerTwitter
                 };
                 if (ScreenName.IsNullOrEmpty() == false)
                 {
-                    dic.Add("screen_name", ScreenName);
+                    dic.Add("screen_name", ScreenName.Convert(this));
                 }
                 else if (UserId.IsNullOrEmpty() == false)
                 {
-                    dic.Add("user_id", UserId);
+                    dic.Add("user_id", UserId.Convert(this));
                 }
                 else
                 {
