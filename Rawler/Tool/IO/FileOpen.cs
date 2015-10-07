@@ -30,7 +30,7 @@ namespace Rawler.Tool
             {
                 return  RawlerBase.GetText(this.GetText(), FileNameTree, this);
             }
-            return this.FileName;
+            return this.FileName.Convert(this);
         }
 
 

@@ -533,21 +533,24 @@ namespace Rawler.Tool
             where T:RawlerBase 
         {
             T result = null;
-            RawlerBase rawler = this;
-            while(true)
+            RawlerBase rawler = this.Parent;
+            if (rawler != null)
             {
-                if(rawler is T)
+                while (true)
                 {
-                    result = rawler as T;
-                    break;
-                }
-                else if(rawler.Parent == null)
-                {
-                    break;
-                }
-                else
-                {
-                    rawler = rawler.Parent;
+                    if (rawler is T)
+                    {
+                        result = rawler as T;
+                        break;
+                    }
+                    else if (rawler.Parent == null)
+                    {
+                        break;
+                    }
+                    else
+                    {
+                        rawler = rawler.Parent;
+                    }
                 }
             }
             return result;

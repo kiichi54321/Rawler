@@ -1628,7 +1628,7 @@ namespace TinySegmenterDotNet
         }
         public void AddRangeWordDic(IEnumerable<string> words)
         {
-            wordList.AddRange(words);
+            wordList.AddRange(words.Select(n=>n.Split('\t').First()));
             wordDic = null;
         }
         public List<string> WordDicList
@@ -1811,7 +1811,7 @@ namespace TinySegmenterDotNet
         HashSet<char> endChar = new HashSet<char>("!?！？、。「」『』:");
         HashSet<char> alfabet = new HashSet<char>("0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ");
 
-        private IEnumerable<string> Ngram(IEnumerable<string> list, int n, string separeter)
+        public IEnumerable<string> Ngram(IEnumerable<string> list, int n, string separeter)
         {            
             List<List<string>> list2 = new List<List<string>>();
             List<string> l = new List<string>();
@@ -1908,6 +1908,33 @@ namespace TinySegmenterDotNet
             CreateDic();
             if (LearnEnd != null) LearnEnd(this,new EventArgs());
         }
+
+        /// <summary>
+        /// 入力テキストを、分かち書きをして、Ngramで組み合わせを作って、指定割合以上のものを採用する。(並列版)
+        /// </summary>
+        /// <param name="lines"></param>
+        /// <param name="rate">閾値とする出現確率</param>
+        /// <param name="maxNgram">最大のNgram数</param>
+        /// <param name="threadNum">スレッド数</param>
+        public void LearningParallel(IEnumerable<string> lines, double rate,int maxNgram,Action<int> progressAction)
+        {
+            LearnWordList.Clear();
+            CreateDic();
+            var c = (double)lines.Count();
+            var dic = lines.ParalellCount(n => {
+                var d = SegmentExted(n);
+                List<string> l = new List<string>();
+                for (int i = 2; i <= maxNgram; i++)
+                {
+                    l.AddRange(Ngram(d, i, string.Empty).Distinct());
+                }
+                return l;
+            }, (int)c / 60, Environment.ProcessorCount, progressAction);
+            learnWordList = dic.Where(n => n.Value / c >= rate).Select(n => n.Key).ToList();
+            CreateDic();
+            if (LearnEnd != null) LearnEnd(this, new EventArgs());
+        }
+
 
 
         public Func<string, PreSegment> PreSegmentFunc { get; set; }

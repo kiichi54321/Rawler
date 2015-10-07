@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,11 +9,11 @@ namespace RawlerLib.MyExtend
 {
     public static class Collection
     {
-        public static T2 FirstDefault<T,T2>(this IEnumerable<T> list,Func<T,T2> func ,T2 defaultValue)
+        public static T2 FirstDefault<T, T2>(this IEnumerable<T> list, Func<T, T2> func, T2 defaultValue)
         {
-            if(list.Any())
+            if (list.Any())
             {
-                return func( list.First());
+                return func(list.First());
             }
             else
             {
@@ -20,7 +21,7 @@ namespace RawlerLib.MyExtend
             }
         }
 
-        public static string JoinText(this IEnumerable<char> list,string separator)
+        public static string JoinText(this IEnumerable<char> list, string separator)
         {
             StringBuilder sb = new StringBuilder();
             foreach (var item in list)
@@ -41,7 +42,7 @@ namespace RawlerLib.MyExtend
             foreach (var item in list)
             {
                 sb.Append(item);
-                sb.Append(separator);            
+                sb.Append(separator);
             }
             if (list.Any())
             {
@@ -50,16 +51,16 @@ namespace RawlerLib.MyExtend
             return sb.ToString();
         }
 
-        public static IEnumerable<string> Ngram(this IEnumerable<string> list, int n,string separeter)
-        {           
-             var d = list.ToArray();
-             for (int i = 0; i < d.Length-n+1; i++)
-             {
-                 yield return d.Skip(i).Take(n).JoinText(separeter);
-             }
+        public static IEnumerable<string> Ngram(this IEnumerable<string> list, int n, string separeter)
+        {
+            var d = list.ToArray();
+            for (int i = 0; i < d.Length - n + 1; i++)
+            {
+                yield return d.Skip(i).Take(n).JoinText(separeter);
+            }
         }
 
-        public static List<T> Adds<T>(this List<T> list,IEnumerable<T> list1)
+        public static List<T> Adds<T>(this List<T> list, IEnumerable<T> list1)
         {
             list.AddRange(list1);
             return list;
@@ -137,7 +138,7 @@ namespace RawlerLib.MyExtend
     //        }
     //        catch (Exception e)
     //        {
-               
+
     //        }
     //        return text_utf8;
     //    }
@@ -193,9 +194,9 @@ namespace RawlerLib.MyExtend
         /// <param name="key"></param>
         /// <param name="defaultVal"></param>
         /// <returns></returns>
-        public static TValue GetValueOrAdd<TKey,TValue>(this IDictionary<TKey, TValue> source, TKey key, TValue defaultVal = default(TValue))
+        public static TValue GetValueOrAdd<TKey, TValue>(this IDictionary<TKey, TValue> source, TKey key, TValue defaultVal = default(TValue))
         {
-            if (source == null )
+            if (source == null)
                 return defaultVal;
 
             TValue result;
@@ -220,7 +221,7 @@ namespace RawlerLib.MyExtend
             }
             else
             {
-                source.Add(key,new List<T1>(){obj});
+                source.Add(key, new List<T1>() { obj });
             }
             return source;
         }
@@ -235,11 +236,11 @@ namespace RawlerLib.MyExtend
         /// <returns></returns>
         public static Dictionary<T, int> AddCount<T>(this Dictionary<T, int> source, T key, int count)
         {
-            if(source == null)
+            if (source == null)
             {
                 return null;
             }
-            if( source.ContainsKey(key))
+            if (source.ContainsKey(key))
             {
                 source[key] = source[key] + count;
             }
@@ -261,12 +262,12 @@ namespace RawlerLib.MyExtend
             return AddCount(source, key, 1);
         }
 
-        public static Dictionary<T,int> Marge<T>(this IEnumerable<Dictionary<T,int>> list)
+        public static Dictionary<T, int> Marge<T>(this IEnumerable<Dictionary<T, int>> list)
         {
             Dictionary<T, int> dic = new Dictionary<T, int>();
-            foreach (var item in list.SelectMany(n=>n))
+            foreach (var item in list.SelectMany(n => n))
             {
-                if(dic.ContainsKey(item.Key))
+                if (dic.ContainsKey(item.Key))
                 {
                     dic[item.Key] = dic[item.Key] + item.Value;
                 }
@@ -277,9 +278,8 @@ namespace RawlerLib.MyExtend
             }
             return dic;
         }
-
-
     }
+
 
     public static class Stream
     {
@@ -290,14 +290,14 @@ namespace RawlerLib.MyExtend
         /// <returns></returns>
         public static IEnumerable<string> ReadLines(this System.IO.StreamReader stream)
         {
-            while(true)
+            while (true)
             {
                 var line = stream.ReadLine();
-                if(line ==null)
+                if (line == null)
                 {
                     break;
                 }
-                yield return line;                    
+                yield return line;
             }
         }
     }
@@ -312,22 +312,22 @@ namespace RawlerLib.MyExtend
             return (mc.Count == 0) ? null : mc[0].Value;
         }
 
-        public static string Match(this string target, string pattern,int group)
+        public static string Match(this string target, string pattern, int group)
         {
             var rx = new Regex(pattern);
             var mc = rx.Matches(target);
             return (mc.Count == 0) ? null : mc[0].Groups[group].Value;
         }
 
-        public static string Match(this string target, string pattern, int group,RegexOptions regexOption)
+        public static string Match(this string target, string pattern, int group, RegexOptions regexOption)
         {
-            var rx = new Regex(pattern,regexOption);
+            var rx = new Regex(pattern, regexOption);
             var mc = rx.Matches(target);
             return (mc.Count == 0) ? null : mc[0].Groups[group].Value;
         }
 
 
-        public static IEnumerable<Match> Matches(this string target,string pattern)
+        public static IEnumerable<Match> Matches(this string target, string pattern)
         {
             var rx = new Regex(pattern);
             var mc = rx.Matches(target);
@@ -350,9 +350,9 @@ namespace RawlerLib.MyExtend
         /// <param name="d1"></param>
         /// <param name="d2"></param>
         /// <returns></returns>
-        public static bool Between(this DateTime d, DateTime d1,DateTime d2)
+        public static bool Between(this DateTime d, DateTime d1, DateTime d2)
         {
-            if(d>= d1 && d<= d2)
+            if (d >= d1 && d <= d2)
             {
                 return true;
             }
@@ -369,8 +369,8 @@ namespace RawlerLib.MyExtend
         /// <returns></returns>
         public static int GetWeek(this DateTime d)
         {
-            var dd = 7-( d.DayOfWeek - DayOfWeek.Sunday);
-            return  ( d.Day + dd )/7+1;
+            var dd = 7 - (d.DayOfWeek - DayOfWeek.Sunday);
+            return (d.Day + dd) / 7 + 1;
         }
     }
 
@@ -451,6 +451,21 @@ namespace RawlerLib.MyExtend
         }
     }
 
+    public static class Int
+    {
+        /// <summary>
+        /// 最大値と最小値の間に値を収める。
+        /// </summary>
+        /// <param name="i"></param>
+        /// <param name="max"></param>
+        /// <param name="min"></param>
+        /// <returns></returns>
+        public static int MaxMin(this int i,int max,int min)
+        {
+            return Math.Min(Math.Max(i, min), max);
+        }
+    }
+
 
     public static class Text
     {
@@ -508,14 +523,14 @@ namespace RawlerLib.MyExtend
         /// <param name="text"></param>
         /// <param name="skipEmpty"></param>
         /// <returns></returns>
-        public static IEnumerable<string> ReadLines(this string text,bool skipEmpty)
+        public static IEnumerable<string> ReadLines(this string text, bool skipEmpty)
         {
             using (System.IO.StringReader sr = new System.IO.StringReader(text))
             {
                 while (sr.Peek() > -1)
                 {
                     string line = sr.ReadLine();
-                    if(skipEmpty == false)
+                    if (skipEmpty == false)
                     {
                         yield return line;
                     }
@@ -542,6 +557,58 @@ namespace RawlerLib.MyExtend
             return sb.ToString();
         }
 
+    }
 
+    /// <summary>
+    /// LTSV (Labeled Tab-separated Values) parser and builder.
+    /// https://github.com/ne-sachirou/LTSV.NET
+    /// を拡張メソッド化
+    /// </summary>
+    public static class Ltsv
+    {
+        /// <summary>
+        /// LTSV record parser.
+        /// 
+        /// ex.)
+        /// new LTSV.ParseLine("time:28/Feb/2013:12:00:00 +0900\thost:192.168.0.1\treq:GET /list HTTP/1.1\tstatus:200\n");
+        /// => new Dictionary&lt;string, string&gt;
+        ///       {
+        ///           { "time", "28/Feb/2013:12:00:00 +0900" },
+        ///           { "host", "192.168.0.1" },
+        ///           { "req", "GET /list HTTP/1.1" },
+        ///           { "status", "200" }
+        ///       };
+        /// </summary>
+        /// <param name="recordStr">LTSV record string</param>
+        /// <returns>LTSV record</returns>
+        static public Dictionary<string, string> ParseLtsvLine(this string recordStr)
+        {
+            var fieldStrs = Regex.Split(recordStr, @"\t");
+            var record = new Dictionary<string, string>();
+            foreach (var fieldStr in fieldStrs)
+            {
+                var match = Regex.Match(fieldStr, @"^([^:]+):(.+)$");
+                record[match.Groups[1].Value] = match.Groups[2].Value;
+            }
+            return record;
+        }
+
+        /// <summary>
+        /// Dictionary<string, string>をLTSV形式のテキストにする。
+        /// </summary>
+        /// <param name="record"></param>
+        /// <returns></returns>
+        static public string ToLtsvLine(this Dictionary<string, string> record)
+        {
+            StringBuilder recordStr = new StringBuilder();
+            bool isFirstField = true;
+            foreach (var field in record)
+            {
+                if (isFirstField) isFirstField = false;
+                else recordStr.Append("\t");
+                recordStr.Append(string.Format("{0}:{1}", field.Key, field.Value));
+            }
+            return recordStr.ToString();
+        }
     }
 }

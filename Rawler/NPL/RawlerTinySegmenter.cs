@@ -27,7 +27,8 @@ namespace Rawler.NPL
                 {
                     seg.PreSegmentFunc = (n) => new TinySegmenterDotNet.PreSegment(n).PreprocessingForJapanese();
                 }
-                if(string.IsNullOrEmpty(DicFile)==false && System.IO.File.Exists(DicFile))
+                var dicfile = DicFile.Convert(this);
+                if(string.IsNullOrEmpty(dicfile) ==false && System.IO.File.Exists(dicfile))
                 {
                     seg.AddRangeWordDic(System.IO.File.ReadLines(DicFile));
                 }

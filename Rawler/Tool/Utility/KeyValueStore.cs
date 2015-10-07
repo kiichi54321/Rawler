@@ -401,6 +401,7 @@ namespace Rawler.Tool
                 {
                     var key = item.Value.Replace("[", "").Replace("]", "");
                     var val = KeyValueStore.GetValueByKey(rawler, key);
+                    val = HeaderConvert(val, rawler);
                     if (val.Length > 0)
                     {
                         text2 = text2.Replace(item.Value, val);
@@ -410,6 +411,50 @@ namespace Rawler.Tool
             }
         }
 
+        /// <summary>
+        /// [File:key]でファイル名のみを取得するなどの方法を提供。
+        /// </summary>
+        /// <param name="val"></param>
+        /// <param name="rawler"></param>
+        /// <returns></returns>
+        public static string HeaderConvert(string val, RawlerBase rawler)
+        {
+            var d = val.Split(':');
+            if(d.Length==1)
+            {
+                return val;
+            }
+            else
+            {
+                var h = d.First();
+                string v = string.Empty;
+                try
+                {
+                    switch (h)
+                    {
+                        case "File":
+                            v = System.IO.Path.GetFileNameWithoutExtension(val);
+                            break;
+                        case "Directory":
+                            v = System.IO.Path.GetDirectoryName(val);
+                            break;
+                        default:
+                            break;
+                    }
+                }
+                catch(Exception ex)
+                {
+                    ReportManage.ErrReport(rawler, "値:" + val+"で"+ex.Message);
+                }
+                if(v == null)
+                {
+                    ReportManage.ErrReport(rawler, "値:" + h+"は、存在しない識別子です。"+ val);
+                }
+                return v;
+            }
+
+
+        }
 
 
         //public static string Convert(this string text,RawlerBase rawler)

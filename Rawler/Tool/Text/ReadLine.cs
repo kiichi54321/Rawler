@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using RawlerLib.MyExtend;
 
 namespace Rawler.Tool
 {
@@ -21,7 +22,7 @@ namespace Rawler.Tool
             //Linesがあるとき。
             if (string.IsNullOrEmpty(Lines) == false)
             {
-                var  t1 = Lines.Split(' ');
+                var  t1 = Lines.Convert(this).ReadLines();
                 if(trim)
                 {
                     t1 = t1.Select(n => n.Trim()).ToArray();

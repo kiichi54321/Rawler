@@ -34,7 +34,7 @@ namespace Rawler.Tool
         /// <param name="runChildren"></param>
         public override void Run(bool runChildren)
         {
-            if (probability > random.NextDouble())
+            if (probability >= random.NextDouble())
             {
                 base.Run(runChildren);
             }

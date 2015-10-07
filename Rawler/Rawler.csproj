@@ -79,6 +79,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="NPL\Chop.cs" />
+    <Compile Include="NPL\CreateTinySegmenterDictionary.cs" />
     <Compile Include="NPL\LevenshteinDistance.cs" />
     <Compile Include="NPL\PreprocessingForJapanese.cs" />
     <Compile Include="NPL\RawlerTinySegmenter.cs" />
@@ -89,6 +91,7 @@
     <Compile Include="RawlerLib\DynamicJson.cs" />
     <Compile Include="RawlerLib\EventStringArgs.cs" />
     <Compile Include="RawlerLib\Extend\Extend.cs" />
+    <Compile Include="RawlerLib\Extend\MyExtend2.cs" />
     <Compile Include="RawlerLib\Io.cs" />
     <Compile Include="RawlerLib\Jcode.cs" />
     <Compile Include="RawlerLib\kanaxs-1.0.0.cs" />
@@ -170,11 +173,13 @@
     <Compile Include="Tool\Utility\GlobalVar.cs" />
     <Compile Include="Tool\Utility\KeyValueStore.cs" />
     <Compile Include="Tool\Utility\RandomIntValue.cs" />
+    <Compile Include="Tool\Utility\Root.cs" />
     <Compile Include="Tool\Utility\RScript.cs" />
     <Compile Include="Tool\Utility\RunXaml.cs" />
     <Compile Include="Tool\Utility\SetTempVar.cs" />
     <Compile Include="Tool\Utility\FunctionTree.cs" />
     <Compile Include="Tool\Utility\SetWorkFolder.cs" />
+    <Compile Include="Tool\Utility\Shutdown.cs" />
     <Compile Include="Tool\Utility\StopWatch.cs" />
     <Compile Include="Tool\Utility\ThrowCatch.cs" />
     <Compile Include="Tool\Web\AddAllInputParameter.cs" />

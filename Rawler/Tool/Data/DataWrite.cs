@@ -129,7 +129,7 @@ namespace Rawler.Tool
             }
             else
             {
-                txt = Value;
+                txt = Value.Convert(this);
             }
             if (useHtmlDecode)
             {
@@ -146,7 +146,7 @@ namespace Rawler.Tool
             }
             else
             {
-                attribute = this.Attribute;
+                attribute = this.Attribute.Convert(this);
             }
 
             Data.DataWrite(this,attribute,txt, writeType, AttributeType);
