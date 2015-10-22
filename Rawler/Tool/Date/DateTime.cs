@@ -32,8 +32,15 @@ namespace Rawler.Tool.Date
             base.Run(runChildren);
         }
 
+        public string Format { get; set; } = string.Empty;
+
         public string GetDateString(System.DateTime date)
         {
+            if (string.IsNullOrEmpty(Format) == false)
+            {
+                return date.ToString(Format);
+            }
+
             if(stringType == DateTimeStringType.ToString)
             {
                 return date.ToString();
@@ -102,6 +109,21 @@ namespace Rawler.Tool.Date
         public Now()
         {
             this.dateTime = System.DateTime.Now;
+        }
+    }
+
+    public class TryParseDate : DateTime
+    {
+        public override void Run(bool runChildren)
+        {
+            if( System.DateTime.TryParse(GetText(), out dateTime))
+            {
+                base.Run(runChildren);
+            }
+            else
+            {
+                ReportManage.ErrReport(this, "DateTime.TryParseに失敗しました");
+            }
         }
     }
 }

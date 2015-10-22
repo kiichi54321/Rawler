@@ -4,13 +4,19 @@ using System.Linq;
 using System.Text;
 using Rawler.Tool;
 using RawlerLib.MyExtend;
-
+using Newtonsoft.Json.Linq;
 
 namespace RawlerTwitter
 {
 
-    class UserLookup : Rawler.Tool.RawlerMultiBase
+    public class UserLookup : RawlerBatchMultiBase
     {
+        public UserLookup()
+            :base()
+        {
+            base.BatchSize = 100;
+        }
+
         ParentUserIdType parentUserIdType = ParentUserIdType.ScreenName;
 
         public ParentUserIdType ParentUserIdType
@@ -19,62 +25,58 @@ namespace RawlerTwitter
             set { parentUserIdType = value; }
         }
 
-        public string ScreenName { get; set; }
-        public string UserId { get; set; }
+        /// <summary>
+        /// BatchSizeを隠す用
+        /// </summary>
+        protected int BatchSize { get; set; }
 
-        public IEnumerable<string> ReadAPI()
+        public override void RunBatch(IEnumerable<string> list)
         {
             var login = this.GetUpperRawler<TwitterLogin>();
             if (login == null)
             {
-                ReportManage.ErrReport(this, "TwitterLoginをTweetUserTimelineの上流に配置してください");
-                yield break;
+                ReportManage.ErrUpperNotFound<TwitterLogin>(this);
             }
-            long cursor = -1;
-
-            while (true)
+            string[] list1 = null;
+            bool flag = true;
+            do
             {
-                Dictionary<string, object> dic = new Dictionary<string, object>()
+                flag = true;
+                try
                 {
-                       {"cursor", cursor},
-                       {"count", 5000}
-                };
-                if (ScreenName.IsNullOrEmpty() == false)
-                {
-                    dic.Add("screen_name", ScreenName);
-                }
-                else if (UserId.IsNullOrEmpty() == false)
-                {
-                    dic.Add("user_id", UserId);
-                }
-                else
-                {
-                    if (ParentUserIdType == RawlerTwitter.ParentUserIdType.ScreenName)
+
+                    if (ParentUserIdType == ParentUserIdType.ScreenName)
                     {
-                        dic.Add("screen_name", GetText());
+                        var l = login.Token.Users.Lookup(list);
+                        list1 = l.Select(n => Codeplex.Data.DynamicJson.Serialize(n)).ToArray();
                     }
-                    else if (ParentUserIdType == RawlerTwitter.ParentUserIdType.UserId)
+                    else
                     {
-                        dic.Add("user_id", GetText());
+                        long[] longList = null;
+                        try
+                        {
+                            longList = list.Select(n => long.Parse(n)).ToArray();
+                        }
+                        catch (Exception ex)
+                        {
+                            ReportManage.ErrReport(this, "tweetIdが数値ではありません。" + ex.Message+"\t"+list.JoinText(","));
+                        }
+                        var l = login.Token.Users.Lookup(longList);
+                        list1 = l.Select(n => Codeplex.Data.DynamicJson.Serialize(n)).ToArray();
                     }
                 }
-                //var result = login.Token.Users.Lookup(.Friends.Ids(dic);
-                //foreach (var item in result.Result)
-                //{
-                //    yield return item.ToString();
-                //}
-                //if (result.NextCursor > 0) cursor = result.NextCursor;
-                //else
-                //{
-                //    break;
-                //}
-            }
+                catch (Exception ex1)
+                {
+                    ReportManage.ErrReport(this, ex1.Message);
+                    flag = false;
+                    System.Threading.Thread.Sleep(TimeSpan.FromMinutes(3));
+                }
+            } while (flag);
+            base.RunBatch(list1);
+
         }
 
-        public override void Run(bool runChildren)
-        {
-            RunChildrenForArray(runChildren, ReadAPI());
-        }
+
     }
 }
 

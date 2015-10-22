@@ -154,7 +154,7 @@ namespace Rawler.Tool
             var file = this.GetUpperRawler<TsvReadLines>();
             if (file !=null)
             {
-                string columnName = this.ColumnName;
+                string columnName = this.ColumnName.Convert(this);
                 if (this.ColumnNameTree != null)
                 {
                     columnName = RawlerBase.GetText(GetText(), ColumnNameTree, this);

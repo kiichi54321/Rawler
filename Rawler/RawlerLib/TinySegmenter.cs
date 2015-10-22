@@ -1916,7 +1916,7 @@ namespace TinySegmenterDotNet
         /// <param name="rate">閾値とする出現確率</param>
         /// <param name="maxNgram">最大のNgram数</param>
         /// <param name="threadNum">スレッド数</param>
-        public void LearningParallel(IEnumerable<string> lines, double rate,int maxNgram,Action<int> progressAction)
+        public void LearningParallel(IEnumerable<string> lines, double rate,int take,int maxNgram,Action<int> progressAction)
         {
             LearnWordList.Clear();
             CreateDic();
@@ -1930,7 +1930,7 @@ namespace TinySegmenterDotNet
                 }
                 return l;
             }, (int)c / 60, Environment.ProcessorCount, progressAction);
-            learnWordList = dic.Where(n => n.Value / c >= rate).Select(n => n.Key).ToList();
+            learnWordList = dic.OrderByDescending(n=>n.Value).Take(take).Where(n => n.Value / c >= rate).Select(n => n.Key).ToList();
             CreateDic();
             if (LearnEnd != null) LearnEnd(this, new EventArgs());
         }

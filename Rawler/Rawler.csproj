@@ -113,6 +113,7 @@
     <Compile Include="TextTool\Tsv2Text.cs" />
     <Compile Include="Tool\Condition\ChangeText.cs" />
     <Compile Include="Tool\Condition\CompareInt.cs" />
+    <Compile Include="Tool\Condition\HashSet.cs" />
     <Compile Include="Tool\Condition\RandomRun.cs" />
     <Compile Include="Tool\Data\ChangeCurrentDataRow.cs" />
     <Compile Include="Tool\Data\CheckDataRow.cs" />
@@ -122,6 +123,7 @@
     <Compile Include="Tool\Data\ReportDataRow2Json.cs" />
     <Compile Include="Tool\Data\TempDataRows.cs" />
     <Compile Include="Tool\Date\DateTime.cs" />
+    <Compile Include="Tool\Enumeration\GroupBy.cs" />
     <Compile Include="Tool\Enumeration\Loop.cs" />
     <Compile Include="Tool\Html\DefinitionLists.cs" />
     <Compile Include="Tool\Html\GetScriptFunction.cs" />
@@ -137,6 +139,7 @@
     <Compile Include="Tool\IO\GetFileExtension.cs" />
     <Compile Include="Tool\IO\GetFileName.cs" />
     <Compile Include="Tool\IO\ReadTsv.cs" />
+    <Compile Include="Tool\RawlerBatchBase.cs" />
     <Compile Include="Tool\RawlerMultiBase.cs" />
     <Compile Include="Tool\Condition\Switch.cs" />
     <Compile Include="Tool\Condition\SwitchDateTimeNode.cs" />

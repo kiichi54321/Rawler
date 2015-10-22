@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
+using RawlerLib.MyExtend;
 
 namespace RawlerView.Form
 {
@@ -139,6 +140,7 @@ namespace RawlerView.Form
             }
         }
 
+        public bool MultiSelect { get; set; } = false;
 
         public string DefaultExt { get; set; }
 
@@ -155,9 +157,10 @@ namespace RawlerView.Form
                         openFileDialog.FileName = this.Value;
                         openFileDialog.DefaultExt = this.DefaultExt;
                         openFileDialog.Title = this.Name;
+                        openFileDialog.Multiselect = MultiSelect;
                         if (openFileDialog.ShowDialog() == true)
                         {
-                            this.Value = openFileDialog.FileName;
+                            this.Value = openFileDialog.FileNames.JoinText("\n");
                         }
                     });
                 }

@@ -17,6 +17,7 @@ using Rawler.Tool;
 using System.Threading;
 using ICSharpCode.AvalonEdit.Folding;
 using System.Windows.Threading;
+using System.Threading.Tasks.Dataflow;
 
 namespace RawlerTool
 {
@@ -105,31 +106,57 @@ namespace RawlerTool
 
         TaskScheduler UISyncContext = TaskScheduler.FromCurrentSynchronizationContext();
 
+        ActionBlock<int> rowCountActionBlock;
         void AddRowCount()
         {
-            Task reportProgressTask = Task.Factory.StartNew(() =>
+            if(rowCountActionBlock ==null)
             {
+                rowCountActionBlock = new ActionBlock<int>((n) =>
+                {
+                    textBlock2.Text = n.ToString();
+                }, new ExecutionDataflowBlockOptions() { TaskScheduler = UISyncContext });
+            }
+            rowCountActionBlock.Post(ReportManage.RowCount);
 
-                textBlock2.Text = ReportManage.RowCount.ToString();
-            },
-                     CancellationToken.None,
-                     TaskCreationOptions.None,
-                     UISyncContext);
-            reportProgressTask.Wait();
+            //Task reportProgressTask = Task.Factory.StartNew(() =>
+            //{
+
+            //    textBlock2.Text = ReportManage.RowCount.ToString();
+            //},
+            //         CancellationToken.None,
+            //         TaskCreationOptions.None,
+            //         UISyncContext);
+            //reportProgressTask.Wait();
         }
 
+     //   ActionBlock<string> messageActionBlock;
         void AddMessage(string text)
         {
+            //if(messageActionBlock == null)
+            //{
+            //    messageActionBlock = new ActionBlock<string>((n)=>
+            //    {
+            //        try
+            //        {
+            //            textBox2.AppendText(text);
+            //        }
+            //        catch (Exception e)
+            //        {
+            //            textBox2.Text = text;
+            //        }
+            //    }, new ExecutionDataflowBlockOptions() { TaskScheduler = UISyncContext });
+            //}
+            //messageActionBlock.SendAsync(text).Wait();
             Task reportProgressTask = Task.Factory.StartNew(() =>
             {
-                    try
-                    {
-                        textBox2.AppendText(text);
-                    }
-                    catch (Exception e)
-                    {
-                        textBox2.Text = text;
-                    }
+                try
+                {
+                    textBox2.AppendText(text);
+                }
+                catch (Exception e)
+                {
+                    textBox2.Text = text;
+                }
             },
                       CancellationToken.None,
                       TaskCreationOptions.None,
@@ -472,6 +499,14 @@ namespace RawlerTool
             
         }
 
-
+        /// <summary>
+        /// 今のワークフォルダーを開きます。
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void Button_Click_2(object sender, RoutedEventArgs e)
+        {
+            System.Diagnostics.Process.Start(Environment.CurrentDirectory);
+        }
     }
 }

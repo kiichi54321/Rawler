@@ -12,16 +12,16 @@
                         <ColumnDefinition Width="100"></ColumnDefinition>
                         <ColumnDefinition Width="200*"></ColumnDefinition>
                     </Grid.ColumnDefinitions>
-                    <TextBlock Text="{Binding Name}" TextAlignment="Left" VerticalAlignment="Center" >
+                    <TextBlock Text="{Binding Name}" TextAlignment="Left" TextWrapping="WrapWithOverflow" VerticalAlignment="Center" >
                  
                     </TextBlock>
-                    <Border BorderBrush="Gray" BorderThickness="1" HorizontalAlignment="Right"  Margin="3" CornerRadius="4" Visibility="{Binding HelpVisibility}">
+                    <Border BorderBrush="Gray" BorderThickness="1" HorizontalAlignment="Right" MaxHeight="20"  Margin="3" CornerRadius="4" Visibility="{Binding HelpVisibility}">
                         <Border.ToolTip>
                             <TextBlock Text="{Binding Help}"></TextBlock>
                         </Border.ToolTip>
                         <TextBlock Text="?"/>
                     </Border>
-                    <TextBox Grid.Column="1" Text="{Binding Value,Mode=TwoWay}" MinWidth="200" MaxLines="{Binding Lines}" VerticalScrollBarVisibility="Auto" AcceptsReturn="{Binding AcceptsReturn}"></TextBox>
+                    <TextBox Grid.Column="1" Text="{Binding Value,Mode=TwoWay}" HorizontalAlignment="Stretch" MaxHeight="500"  MinWidth="300" MinLines="{Binding Lines}" VerticalScrollBarVisibility="Auto" AcceptsReturn="{Binding AcceptsReturn}" AcceptsTab="True"></TextBox>
                 </Grid>
             </StackPanel>
         </DataTemplate>

@@ -61,21 +61,14 @@ namespace Rawler.Tool
         public override void Run(bool runChildren)
         {
             string filename = this.GetFileName();
-            //if (filename == null)
-            //{
-            //    Microsoft.Win32.OpenFileDialog dialog = new Microsoft.Win32.OpenFileDialog();
-            //    if(string.IsNullOrEmpty(ExtendFilter)==false)
-            //    {
-            //        dialog.Filter = FilterStringCreate(ExtendFilter);
-            //    }
-            //    if (dialog.ShowDialog() == true)
-            //    {
-            //        filename = dialog.FileName;           
-            //    }
-            //}
             if (string.IsNullOrEmpty(filename))
             {
-                ReportManage.ErrReport(this, "FileNameが空です。");
+                ReportManage.ErrEmptyPropertyName(this, nameof(FileName));
+                return;
+            }
+            if(System.IO.File.Exists(filename) == false)
+            {
+                ReportManage.ErrReport(this, "File「"+filename+"」は存在しません");
                 return;
             }
             try
@@ -117,8 +110,7 @@ namespace Rawler.Tool
             return "<> files (*.<>)|*.<>|All files (*.*)|*.*".Replace("<>", extend);
         }
     }
-
-
+    
 
     /// <summary>
     /// 現在のFileReadLineの値を返します。上流にFileReadLinesがないと機能しません
@@ -134,7 +126,7 @@ namespace Rawler.Tool
             }
             else
             {
-                ReportManage.ErrReport(this, "GetCurrentFileReadLine の上流にFileReadLinesがありません");
+                ReportManage.ErrUpperNotFound<FileReadLines>(this);
             }
             base.Run(runChildren);
         }
@@ -150,5 +142,46 @@ namespace Rawler.Tool
         {
             return base.Clone<GetCurrentFileReadLine>(parent);
         }
+    }
+
+    /// <summary>
+    /// ファイルを開いてその内容全てを子に流す。
+    /// </summary>
+    public class FileReadAllText :RawlerBase
+    {
+        /// <summary>
+        /// ファイルの名前
+        /// </summary>
+        public string FileName { get; set; }
+        public override void Run(bool runChildren)
+        {
+            string filename = FileName.Convert(this);
+            if(string.IsNullOrEmpty( filename))
+            {
+                filename = GetText();
+            }
+            if (string.IsNullOrEmpty(filename))
+            {
+                ReportManage.ErrEmptyPropertyName(this, nameof(FileName));
+                return;
+            }
+            if (System.IO.File.Exists(filename) == false)
+            {
+                ReportManage.ErrReport(this, "File「" + filename + "」は存在しません");
+                return;
+            }
+            try
+            {
+                SetText(System.IO.File.ReadAllText(filename));
+            }
+            catch(Exception ex)
+            {
+                ReportManage.ErrReport(this, filename + "を開くのに失敗しました" + ex.Message);
+                return;
+            }
+
+            base.Run(runChildren);
+        }
+
     }
 }

@@ -123,15 +123,18 @@ namespace Rawler.Tool
     /// <summary>
     /// レポートに改行をいれる。
     /// </summary>
-    public class ReportAddCount : Report
+    public class ReportAddCount : RawlerBase
     {
         public ReportAddCount()
             : base()
         {
-            this.ReturnCode = false;
-            this.ViewParentText = false;
-            this.Visible = false;
-            this.Header = "NextDataRow";
+
+        }
+
+        public override void Run(bool runChildren)
+        {
+            ReportManage.ReportProgress(this);
+            base.Run(runChildren);
         }
 
         /// <summary>

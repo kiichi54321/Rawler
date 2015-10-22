@@ -165,6 +165,11 @@ namespace Rawler.Tool
         #endregion
 
         /// <summary>
+        /// 存在しないFieldNameの場合、エラーを出す。
+        /// </summary>
+        public bool ErrorThrow { get; set; } = true;
+
+        /// <summary>
         /// このクラスでの実行すること。
         /// </summary>
         /// <param name="runChildren"></param>
@@ -199,7 +204,10 @@ namespace Rawler.Tool
             }
             if(flag == false)
             {
-                ReportManage.ErrReport(this, "FieldNameがありません。");
+                if (ErrorThrow)
+                {
+                    ReportManage.ErrReport(this, "FieldName:「" + FieldName + "」がありません。");
+                }
             }
             base.Run(runChildren);
         }

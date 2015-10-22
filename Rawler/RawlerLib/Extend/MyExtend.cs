@@ -466,6 +466,20 @@ namespace RawlerLib.MyExtend
         }
     }
 
+    public static class TaskExtend
+    {
+        /// <summary>
+        /// TaskSchedulerからTaskを呼び出し。
+        /// </summary>
+        /// <param name="scheduler"></param>
+        /// <param name="action"></param>
+        /// <returns></returns>
+        public static System.Threading.Tasks.Task TaskStart(this System.Threading.Tasks.TaskScheduler scheduler,Action action)
+        {
+            return System.Threading.Tasks.Task.Factory.StartNew(action, System.Threading.CancellationToken.None, System.Threading.Tasks.TaskCreationOptions.None, scheduler);
+        }
+    }
+
 
     public static class Text
     {
@@ -606,7 +620,7 @@ namespace RawlerLib.MyExtend
             {
                 if (isFirstField) isFirstField = false;
                 else recordStr.Append("\t");
-                recordStr.Append(string.Format("{0}:{1}", field.Key, field.Value));
+                recordStr.Append(string.Format("{0}:{1}", field.Key.Replace("\t",string.Empty), field.Value.Replace("\t", string.Empty)));
             }
             return recordStr.ToString();
         }

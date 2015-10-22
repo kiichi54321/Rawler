@@ -135,7 +135,7 @@ namespace RawlerTwitter
                             count++;
                             totalCount++;
                             max_id = Math.Min(max_id, item.Id);
-                            list.Add(JObject.FromObject(item).ToString());
+                            list.Add(JObject.FromObject(item).ToString(Newtonsoft.Json.Formatting.None));
                             //       yield return JObject.FromObject(item).ToString();
                             if (MaxCount > 0 && MaxCount <= totalCount) break;
                         }
@@ -166,7 +166,7 @@ namespace RawlerTwitter
                     if (retry)
                     {
                         ReportManage.Report(this, "3分Sleep", true, true);
-                        this.GetUpperRawler<TwitterLogin>().ReLogin();                     
+                     //   this.GetUpperRawler<TwitterLogin>().ReLogin();                     
                         System.Threading.Thread.Sleep(new TimeSpan(0, 3, 0));
                         max_id = tmp_max_id;
                     }

@@ -13,7 +13,7 @@ namespace Rawler.Tool
     /// </summary>
     public class DataRow:RawlerBase,IData
     {
-        DataRowObject currentDataRow = new DataRowObject();
+        protected DataRowObject currentDataRow = new DataRowObject();
 
         /// <summary>
         /// データを書き込む
@@ -158,9 +158,22 @@ namespace Rawler.Tool
             list.Add(value);
         }
 
+        /// <summary>
+        /// Jsonにして返す
+        /// </summary>
+        /// <returns></returns>
         public string ToJson()
         {
            return   JsonConvert.SerializeObject(dataDic);
+        }
+
+        /// <summary>
+        /// Ltsvにしたテキストを返す。
+        /// </summary>
+        /// <returns></returns>
+        public string ToLtsv()
+        {
+            return dataDic.ToDictionary(n => n.Key, n => n.Value.JoinText(",")).ToLtsvLine();
         }
 
         /// <summary>

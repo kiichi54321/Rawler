@@ -6,7 +6,7 @@ using Rawler.Tool;
 
 namespace Rawler.Tool
 {
-    public class RawlerMultiBase : RawlerBase
+    public class RawlerMultiBase : RawlerBase,ILoopEnd
     {
         #region テンプレ
         /// <summary>
@@ -62,6 +62,7 @@ namespace Rawler.Tool
         /// 繰り返しが終わったことを知らせる。
         /// </summary>
         public event EventHandler LoopEndEvent;
+
 
 
         /// <summary>
@@ -203,13 +204,16 @@ namespace Rawler.Tool
             {
                 try
                 {
+                    var l = list.ToArray();
                     if (ElementAt.Value > -1)
                     {
-                        return new List<T>() { list.ElementAt(ElementAt.Value) };
+                        return new T[] { l[ElementAt.Value] };
+                        //return new List<T>() { list.ElementAt(ElementAt.Value) };
                     }
                     else
                     {
-                        return new List<T>() { list.ElementAt(list.Count() + ElementAt.Value) };
+                        return new T[] { l[list.Count() + ElementAt.Value] };
+                     //   return new List<T>() { list.ElementAt(list.Count() + ElementAt.Value) };
                     }
                 }
                 catch

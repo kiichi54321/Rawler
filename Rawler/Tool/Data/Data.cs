@@ -10,10 +10,10 @@ namespace Rawler.Tool
     /// <summary>
     /// データを蓄積するRawlerクラス。
     /// </summary>
-        [ContentProperty("Children")]
+    [ContentProperty("Children")]
     [Serializable]
-    
-    public class Data : RawlerBase,IData, IDataRows
+
+    public class Data : RawlerBase, IData, IDataRows
     {
         /// <summary>
         /// データを蓄積するRawlerクラス。
@@ -21,19 +21,19 @@ namespace Rawler.Tool
         public Data()
             : base()
         {
-            dataList.Add(currentDataRow);
-           
+        //    dataList.Add(currentDataRow);
+
         }
 
         public string FileName { get; set; }
-         FileSaveMode fileSaveMode = FileSaveMode.Create;
-         private bool endReport = true;
+        FileSaveMode fileSaveMode = FileSaveMode.Create;
+        private bool endReport = true;
 
-         public bool EndReport
-         {
-             get { return endReport; }
-             set { endReport = value; }
-         }
+        public bool EndReport
+        {
+            get { return endReport; }
+            set { endReport = value; }
+        }
         public FileSaveMode FileSaveMode
         {
             get { return fileSaveMode; }
@@ -68,12 +68,15 @@ namespace Rawler.Tool
         /// <param name="filename"></param>
         public void DataSave(string filename)
         {
-            RawlerLib.ObjectLib.SaveToBinaryFile( dataList, filename);
+            RawlerLib.ObjectLib.SaveToBinaryFile(dataList, filename);
 
         }
 
         bool endDataClear = false;
 
+        /// <summary>
+        /// 終了時データを削除する。
+        /// </summary>
         public bool EndDataClear
         {
             get { return endDataClear; }
@@ -104,7 +107,7 @@ namespace Rawler.Tool
         /// <summary>
         /// 蓄積されていくDataRow
         /// </summary>
-        
+
         //public List<DataRow> DataList
         //{
         //    get { return dataList; }
@@ -138,7 +141,7 @@ namespace Rawler.Tool
             else
             {
                 currentDataRow = new DataRowObject();
-                currentDataRow.AddData("Key",key);
+                currentDataRow.AddData("Key", key);
                 dataDic.Add(key, currentDataRow);
                 dataList.Add(currentDataRow);
             }
@@ -152,15 +155,15 @@ namespace Rawler.Tool
         /// </summary>
         /// <param name="attribute"></param>
         /// <param name="value"></param>
-        public void DataWrite(string attribute, string value,DataWriteType type,DataAttributeType attributeType)
+        public void DataWrite(string attribute, string value, DataWriteType type, DataAttributeType attributeType)
         {
             if (type == DataWriteType.add)
             {
-                currentDataRow.AddData(attribute, value,attributeType);
+                currentDataRow.AddData(attribute, value, attributeType);
             }
-            else if(type == DataWriteType.replace)
+            else if (type == DataWriteType.replace)
             {
-                currentDataRow.ReplaceData(attribute, value,attributeType);
+                currentDataRow.ReplaceData(attribute, value, attributeType);
             }
 
             if (attribute.ToLower() == "key")
@@ -169,7 +172,7 @@ namespace Rawler.Tool
             }
 
         }
-        public void DataWrite(string attribute, string value,DataWriteType type)
+        public void DataWrite(string attribute, string value, DataWriteType type)
         {
             DataWrite(attribute, value, type, DataAttributeType.Text);
         }
@@ -185,7 +188,7 @@ namespace Rawler.Tool
         public static void DataWrite(RawlerBase rawler, string attribute, string value, DataWriteType type, DataAttributeType attributeType)
         {
             var d = (IData)rawler.GetUpperInterface<IData>();
-            if(d !=null)
+            if (d != null)
             {
                 d.DataWrite(attribute, value, type, attributeType);
             }
@@ -196,9 +199,9 @@ namespace Rawler.Tool
         }
 
         bool errReportNullData = true;
-            /// <summary>
-            /// NextDataRow時にNullDataの時、エラーを報告する。
-            /// </summary>
+        /// <summary>
+        /// NextDataRow時にNullDataの時、エラーを報告する。
+        /// </summary>
         public bool ErrReportNullData
         {
             get { return errReportNullData; }
@@ -264,16 +267,9 @@ namespace Rawler.Tool
         public override void Run(bool runChildren)
         {
             base.Run(runChildren);
-            if(doLastFileSave)
+            if (doLastFileSave)
             {
-                if (SaveFileType == FileType.Tsv)
-                {
-                    TsvFileSave();
-                }
-                if(saveFileType == FileType.Json || saveFileType == FileType.改行区切りJson)
-                {
-                    JsonFileSave();
-                }
+                SaveFile();
             }
 
             if (EndDataClear)
@@ -291,6 +287,49 @@ namespace Rawler.Tool
         FileType saveFileType = FileType.Tsv;
 
         public FileType SaveFileType { get { return saveFileType; } set { saveFileType = value; } }
+
+        /// <summary>
+        /// ファイルで保存する
+        /// </summary>
+        protected void SaveFile()
+        {
+            string filename = this.FileName.Convert(this);
+            if (this.FileNameTree != null)
+            {
+                filename = RawlerBase.GetText(this.GetText(), this.FileNameTree, this);
+            }
+            if (string.IsNullOrEmpty(filename) == false)
+            {
+                System.IO.StreamWriter sw = null;
+                if (this.FileSaveMode == Tool.FileSaveMode.Create)
+                {
+                    sw = System.IO.File.CreateText(filename);
+                }
+                else if (this.FileSaveMode == Tool.FileSaveMode.Append)
+                {
+                    sw = System.IO.File.AppendText(filename);
+                }
+                if (saveFileType == FileType.Json)
+                {
+                    sw.WriteLine(Codeplex.Data.DynamicJson.Serialize(this.GetDataRows().Select(n => n.DataDic)));
+                }
+                else if( saveFileType == FileType.Tsv)
+                {
+                    sw.WriteLine(this.ToTsv());
+                }
+                else if(saveFileType == FileType.LTsv)
+                {
+                    foreach (var item in this.GetDataRows())
+                    {
+                        var d = item.DataDic.ToDictionary(n => n.Key, n => n.Value.JoinText(","));
+                        sw.WriteLine(d.ToLtsvLine());
+                    }
+                }
+
+                sw.Close();
+                ReportManage.Report(this, filename + "作成完了", true, EndReport);
+            }
+        }
 
         public void JsonFileSave()
         {
@@ -312,29 +351,23 @@ namespace Rawler.Tool
                 }
                 if (saveFileType == FileType.Json)
                 {
-                    sw.WriteLine( Codeplex.Data.DynamicJson.Serialize( this.GetDataRows().Select(n=>n.DataDic)));
+                    sw.WriteLine(Codeplex.Data.DynamicJson.Serialize(this.GetDataRows().Select(n => n.DataDic)));
                 }
-                if(saveFileType == FileType.改行区切りJson)
-                {                    
-                    foreach (var item in this.GetDataRows())
-                    {
-                        sw.WriteLine(item.ToJson().Replace("\r", " ").Replace("\n", " "));
-                    }
-                }
-                sw.Close();                
+
+                sw.Close();
                 ReportManage.Report(this, filename + "作成完了", true, EndReport);
             }
         }
 
         private void TsvFileSave()
         {
-            if (doLastFileSave == false) return;            
+            if (doLastFileSave == false) return;
             string filename = this.FileName.Convert(this);
             if (this.FileNameTree != null)
             {
                 filename = RawlerBase.GetText(this.GetText(), this.FileNameTree, this);
             }
-            if (string.IsNullOrEmpty(filename)==false)
+            if (string.IsNullOrEmpty(filename) == false)
             {
                 System.IO.StreamWriter sw = null;
                 if (this.FileSaveMode == Tool.FileSaveMode.Create)
@@ -369,7 +402,7 @@ namespace Rawler.Tool
                 //}
                 //sw.WriteLine();
 
-            
+
 
                 //foreach (var row in this.GetDataRows())
                 //{
@@ -403,8 +436,8 @@ namespace Rawler.Tool
                 sw.Close();
                 ReportManage.Report(this, filename + "作成完了", true, EndReport);
             }
-                
-            
+
+
         }
 
         private List<string> CreateOrderString()
@@ -439,18 +472,18 @@ namespace Rawler.Tool
             return new List<string>(list.Distinct());
         }
 
-        
+
         public TableData CreateTable()
         {
             TableData table = new TableData();
             var hash = GetDataRows().SelectMany(n => n.DataDic).GroupBy(n => n.Key).Select(n => new { n.Key, Value = n.Max(m => m.Value.Count) }).ToDictionary(n => n.Key, n => n.Value);
 
-//            table.Head = hash.ToList();
+            //            table.Head = hash.ToList();
             List<List<CellData>> list = new List<List<CellData>>();
             list = GetDataRows().Select(n => n.GetCell(hash).ToList()).ToList();
 
             var dic = list.SelectMany(n => n).GroupBy(n => n.Key)
-                .Where(n=>n.Select(m=>m.DataText).Distinct().Count()>1 || n.First().DataType == DataAttributeType.SourceUrl)
+                .Where(n => n.Select(m => m.DataText).Distinct().Count() > 1 || n.First().DataType == DataAttributeType.SourceUrl)
                 .Select(n => new { Key = n.Key, Value = n.Select(m => m.DataText).JoinText("\t") })
                 .ToDictionary(n => n.Key, n => n.Value);
             var keyList = dic.GroupBy(n => n.Value).Select(n => n.First().Key);
@@ -459,7 +492,7 @@ namespace Rawler.Tool
             var h = new HashSet<string>(k);
             foreach (var item in list)
             {
-                foreach(var item2 in item.Where(n=>h.Contains(n.Key) == false).ToArray())
+                foreach (var item2 in item.Where(n => h.Contains(n.Key) == false).ToArray())
                 {
                     item.Remove(item2);
                 }
@@ -468,29 +501,42 @@ namespace Rawler.Tool
             return table;
         }
 
+        /// <summary>
+        /// Json形式で返す。
+        /// </summary>
+        /// <returns></returns>
+        public string ToJson()
+        {
+           var list = this.GetDataRows().Select(n => n.DataDic.ToDictionary(m => m.Key, m => m.Value.JoinText(","))).ToList();
+           return Newtonsoft.Json.JsonConvert.SerializeObject(list);
+        }
 
+        /// <summary>
+        /// 中身のデータをLTSVにする。
+        /// </summary>
+        /// <returns></returns>
+        public string ToLTSV()
+        {
+            StringBuilder strBuilder = new StringBuilder();
+            foreach (var item in this.GetDataRows())
+            {
+                var d = item.DataDic.ToDictionary(n => n.Key, n => n.Value.JoinText(","));
+                strBuilder.AppendLine(d.ToLtsvLine());
+            }
+            return strBuilder.ToString();
+        }
 
+        /// <summary>
+        /// 中身のデータをTSVにする。
+        /// </summary>
+        /// <returns></returns>
         public string ToTsv()
         {
             StringBuilder strBuilder = new StringBuilder();
             var item = this;
             {
                 var hash = item.GetDataRows().SelectMany(n => n.DataDic).GroupBy(n => n.Key).Select(n => new { n.Key, Value = n.Max(m => m.Value.Count) }).ToDictionary(n => n.Key, n => n.Value);
-                //Dictionary<string, int> hash = new Dictionary<string, int>();
-                //foreach (var item2 in item.GetDataRows())
-                //{
-                //    foreach (var item3 in item2.DataDic)
-                //    {
-                //        if (hash.ContainsKey(item3.Key))
-                //        {                            
-                //            hash[item3.Key] = Math.Max(item3.Value.Count, hash[item3.Key]);
-                //        }
-                //        else
-                //        {
-                //            hash.Add(item3.Key,item3.Value.Count);
-                //        }
-                //    }
-                //}
+
                 foreach (var key in hash)
                 {
                     if (key.Value == 1)
@@ -503,8 +549,8 @@ namespace Rawler.Tool
                         for (int i = 0; i < key.Value; i++)
                         {
                             strBuilder.Append(key.Key);
-                            strBuilder.Append("_"+(i+1));
-                            strBuilder.Append("\t");                            
+                            strBuilder.Append("_" + (i + 1));
+                            strBuilder.Append("\t");
                         }
                     }
                 }
@@ -551,10 +597,10 @@ namespace Rawler.Tool
             }
             return strBuilder.ToString();
         }
-        
-            /// <summary>
-            ///　すべての行数
-            /// </summary>
+
+        /// <summary>
+        ///　すべての行数
+        /// </summary>
         public int TotalRows
         {
             get
@@ -562,9 +608,9 @@ namespace Rawler.Tool
                 return dataList.Where(n => n.IsDataNull() == false).Count();
             }
         }
-/// <summary>
-/// すべてのカラム数
-/// </summary>
+        /// <summary>
+        /// すべてのカラム数
+        /// </summary>
         public int TotalColumns
         {
             get
@@ -603,20 +649,29 @@ namespace Rawler.Tool
             set { stock = value; }
         }
 
-
+/// <summary>
+/// DataRowがNullの時のイベント
+/// </summary>
         public event EventHandler DataNullEvent;
 
+        /// <summary>
+        /// currentDataRowはNullかどうか
+        /// </summary>
+        /// <returns></returns>
         public bool GetCurrentDataNull()
         {
             return currentDataRow.IsDataNull();
         }
 
+        /// <summary>
+        /// CurrentDataRowを取得する。
+        /// </summary>
+        /// <returns></returns>
         public DataRowObject GetCurrentDataRow()
         {
             return currentDataRow;
         }
 
-        //private bool useReLogin = false;
 
         ///// <summary>
         ///// 再ログイン機能を使う
@@ -694,46 +749,102 @@ namespace Rawler.Tool
 
 
     }
-        public class TableData
+    public class TableData
+    {
+        public List<string> Head { get; set; }
+        public List<List<CellData>> Rows { get; set; }
+
+        public string ToXAML()
         {
-            public List<string> Head { get; set; }
-            public List<List<CellData>> Rows { get; set; }
-
-            public string ToXAML()
+            try
             {
-                try
-                {
-                    return System.Xaml.XamlServices.Save(this);
-                }
-                catch
-                {
-
-                }
-                //必殺エラー握りつぶし
-                return System.Xaml.XamlServices.Save(new TableData() { Head = new List<string>() { "Err" }, Rows = new List<List<CellData>>() });
+                return System.Xaml.XamlServices.Save(this);
             }
-
-            public IEnumerable<List<CellData>> GetSkipRows()
+            catch
             {
-                foreach (var item in Rows)
-                {
-                    if( item.Where(n=>n.DataText.Length>0 ).Count()>1)
-                    {
-                        yield return item;
-                    }
-                }
+
             }
+            //必殺エラー握りつぶし
+            return System.Xaml.XamlServices.Save(new TableData() { Head = new List<string>() { "Err" }, Rows = new List<List<CellData>>() });
+        }
 
-            public override string ToString()
+        public IEnumerable<List<CellData>> GetSkipRows()
+        {
+            foreach (var item in Rows)
             {
-                StringBuilder sb = new StringBuilder();
-                Head.ForEach(n => sb.Append(n + "\t"));
-                sb.AppendLine();
-                Rows.ForEach(n => { n.ForEach(m => sb.Append(m.DataText.Replace("\n",string.Empty) + "\t")); sb.AppendLine(); });
-                return sb.ToString();
+                if (item.Where(n => n.DataText.Length > 0).Count() > 1)
+                {
+                    yield return item;
+                }
             }
         }
 
-        public enum FileType { Tsv, Json ,改行区切りJson}
+        public override string ToString()
+        {
+            StringBuilder sb = new StringBuilder();
+            Head.ForEach(n => sb.Append(n + "\t"));
+            sb.AppendLine();
+            Rows.ForEach(n => { n.ForEach(m => sb.Append(m.DataText.Replace("\n", string.Empty) + "\t")); sb.AppendLine(); });
+            return sb.ToString();
+        }
+    }
+
+    /// <summary>
+    /// Dataの中身をJson文字列で受け取る
+    /// </summary>
+    public class DataToJson:RawlerBase
+    {
+        public override void Run(bool runChildren)
+        {
+            var d = this.GetUpperRawler<Data>();
+            if(d == null)
+            {
+                ReportManage.ErrUpperNotFound<Data>(this);
+            }
+            else
+            {
+                SetText(d.ToJson());
+            }
+            base.Run(runChildren);
+        }
+    }
+
+    /// <summary>
+    /// Dataの中身をJson文字列で受け取る
+    /// </summary>
+    public class DataClear : RawlerBase
+    {
+        public override void Run(bool runChildren)
+        {
+            var d = this.GetUpperRawler<Data>();
+            if (d == null)
+            {
+                ReportManage.ErrUpperNotFound<Data>(this);
+            }
+            else
+            {
+                
+            }
+            base.Run(runChildren);
+        }
+    }
+
+
+    /// <summary>
+    /// ファイルの保存形式
+    /// </summary>
+    public enum FileType {
+        /// <summary>
+        /// Tsv形式
+        /// </summary>
+        Tsv,
+        /// <summary>
+        /// Json形式
+        /// </summary>
+        Json,
+        /// <summary>
+        /// LTsv形式
+        /// </summary>
+        LTsv }
 
 }

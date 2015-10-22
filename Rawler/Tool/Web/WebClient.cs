@@ -79,6 +79,10 @@ namespace Rawler.Tool
                     enc = null;
                 }
             }
+            if (enc == null)
+            {
+                enc = System.Text.Encoding.UTF8;
+            }
             return enc;
         }
 
@@ -459,6 +463,7 @@ namespace Rawler.Tool
                     list.Add(item.Key, item.Value);
                 }
                 var data2 = wc.UploadValues(url, list);
+                if(encoder == null) { encoder = GetEncoding(); }
                 return encoder.GetString(data2);
             }
             catch (Exception e)

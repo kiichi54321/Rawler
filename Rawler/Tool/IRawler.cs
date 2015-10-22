@@ -34,6 +34,17 @@ namespace Rawler.Tool
         RawlerBase Parent { get; }
     }
 
+    /// <summary>
+    /// 繰り返しを行うクラスであることを示すインターフェース
+    /// </summary>
+    public interface ILoopEnd
+    {
+        /// <summary>
+        /// 繰り返しが終了したことを示すイベント
+        /// </summary>
+        event EventHandler LoopEndEvent;
+    }
+
 
     public interface Imulti
     {

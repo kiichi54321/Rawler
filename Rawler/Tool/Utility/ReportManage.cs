@@ -160,6 +160,21 @@ namespace Rawler.Tool
             ErrReport(rawler,"上流に「"+ t.Name+"」が見つかりません");
         }
 
+        public static void ErrEmptyPropertyName(RawlerBase rawler, string propertyName)
+        {
+            ErrReport(rawler, "プロパティ「"+propertyName+"」の値が空です。");
+        }
+
+        /// <summary>
+        /// ReportProgress表示ようのレポート
+        /// </summary>
+        /// <param name="sender"></param>
+        public static void ReportProgress(RawlerBase sender)
+        {
+            Report(sender, "NextDataRow");
+        }
+
+
         public static void Report(RawlerBase sender, string message, bool returncode)
         {
             ReportEvnetArgs args = new ReportEvnetArgs(sender, GetTopComment(sender) + message, returncode);

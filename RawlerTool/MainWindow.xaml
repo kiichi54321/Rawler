@@ -83,6 +83,7 @@
                 <Button Content="SaveData" Height="20" Name="button9" Width="75" Click="button9_Click" />
                 <Button Content="ReBuild" Height="20" Name="button5" Width="75" Click="button5_Click" />
                 <Button Content="Clear" Height="20" Name="button7" Width="75" Click="button7_Click" />
+                <Button Content="OpenWorkFolder" Height="20" Width="120" Click="Button_Click_2"></Button>
             </StackPanel>
             <TextBox Grid.Row="1" Name="textBox2" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" />
             <TextBlock Height="23" Name="textBlock2" Text="0" HorizontalAlignment="Right" />

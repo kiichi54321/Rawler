@@ -7,7 +7,7 @@ using System.Threading.Tasks.Dataflow;
 using Rawler.Tool;
 using System.Collections.Concurrent;
 using System.Reactive.Linq;
-using Rawler.Tool;
+
 
 namespace RawlerParallel
 {
@@ -140,10 +140,15 @@ namespace RawlerParallel
             }
         }
 
+        //public string[] Dequeue(int num)
+        //{
+            
+        //}
+
         public void Completed(string val)
         {
             //workingから消す
-            DateValue<string> val2;
+         //   DateValue<string> val2;
             //if (workingBlock.TryReceive(n => n.Value == val, out val2))
             //{
                 
@@ -213,8 +218,10 @@ namespace RawlerParallel
     /// <summary>
     /// 上流のParallelQueueから受け取る。繰り返し。
     /// </summary>
-    public class Dequeue:RawlerBase
+    public class Dequeue:RawlerBase,ILoopEnd
     {
+        public event EventHandler LoopEndEvent;
+
         public override void Run(bool runChildren)
         {
             var queue = this.GetUpperRawler<ParallelQueue>();
@@ -227,10 +234,11 @@ namespace RawlerParallel
                     base.Run(runChildren);
                     deqeue = queue.Dequeue();
                 }
+                LoopEndEvent?.Invoke(this,EventArgs.Empty);
             }
             else
             {
-                ReportManage.ErrReport(this, "上流にParallelQueueがありません。");
+                ReportManage.ErrUpperNotFound<ParallelQueue>(this);
             }
 
         }
@@ -259,5 +267,8 @@ namespace RawlerParallel
         }
     }
 
+    public class ParallelFileReadLineQueue:ParallelQueue
+    {
 
+    }
 }

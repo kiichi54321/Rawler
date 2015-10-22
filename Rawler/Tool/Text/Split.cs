@@ -38,13 +38,13 @@ namespace Rawler.Tool
             }
         }
 
-        int num = -1;
+        //int num = -1;
 
-        public int Num
-        {
-            get { return num; }
-            set { num = value; }
-        }
+        //public int Num
+        //{
+        //    get { return num; }
+        //    set { num = value; }
+        //}
 
         public override void Run(bool runChildren)
         {
@@ -66,15 +66,27 @@ namespace Rawler.Tool
             {
                 data = GetText().Split(separatorType.GetSeparators(new string[] { separator }), stringSplitOptions);
             }
-
-            if (num > -1)
+            if (ElementAt.HasValue)
             {
-                if (data.Length >= num)
+                try
                 {
-                    this.SetText(data[num]);
+                    string tmp = null;
+                    if (ElementAt.Value > -1)
+                    {
+                        tmp = data[ElementAt.Value];
+                    }
+                    else
+                    {
+                        tmp = data[data.Length + ElementAt.Value];
+                    }
+                    this.SetText(tmp);
                     base.Run(runChildren);
                 }
-            }
+                catch
+                {
+                    ReportManage.ErrReport(this, "ElementAtの値がレンジから外れました。ElementAt:" + ElementAt.Value);
+                }
+            }           
             else
             {
                 base.RunChildrenForArray(runChildren, data);

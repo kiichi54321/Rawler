@@ -74,6 +74,7 @@ namespace Rawler.Tool
     {
         public void Run(RawlerBase root)
         {
+            if (this.Count == 0) return;
             foreach (var item in this)
             {
                 item.Run(root);

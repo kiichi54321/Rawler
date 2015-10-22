@@ -61,6 +61,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DataRows.cs" />
+    <Compile Include="File.cs" />
+    <Compile Include="MapReduce\MapReduce.cs" />
+    <Compile Include="PalallelFileRead.cs" />
     <Compile Include="ParallelData.cs" />
     <Compile Include="ParallelQueue.cs" />
     <Compile Include="ParallelRun.cs" />
@@ -74,6 +77,9 @@
       <Project>{d0ff1894-5d72-40c4-91fd-774a8d87d34f}</Project>
       <Name>Rawler</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="NPL\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

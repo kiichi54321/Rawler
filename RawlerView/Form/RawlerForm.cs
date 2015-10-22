@@ -74,18 +74,15 @@ namespace RawlerView.Form
             {
                 if(System.IO.File.Exists(SettingFileName))
                 {
-                    Dictionary<string, string> dic = new Dictionary<string, string>();
-                    foreach (var item in System.IO.File.ReadLines(SettingFileName))
+                    var dic = KeyValueDic.Load(SettingFileName);
+                    if(dic !=null)
                     {
-                        var d = item.Split('\t');
-                        if(d.Length > 1) dic.Add(d[0], d[1]);
-                    }
-
-                    foreach (var item in Properties)
-                    {
-                        if(dic.ContainsKey( item.Key))
+                        foreach (var item in Properties)
                         {
-                            item.Value = dic[item.Key];
+                            if (dic.ContainsKey(item.Key))
+                            {
+                                item.Value = dic[item.Key];
+                            }
                         }
                     }
                 }
@@ -96,16 +93,19 @@ namespace RawlerView.Form
         {
             if (string.IsNullOrEmpty(SettingFileName) == false)
             {
-                Dictionary<string, string> dic = new Dictionary<string, string>();
+
+                KeyValueDic dic = new KeyValueDic();
                 if (System.IO.File.Exists(SettingFileName))
                 {
-                    foreach (var item in System.IO.File.ReadLines(SettingFileName))
-                    {
-                        var d = item.Split('\t');
-                        if (d.Length > 1) dic.Add(d[0], d[1]);
-                    }
+                    dic = KeyValueDic.Load(SettingFileName);
+                    //foreach (var item in System.IO.File.ReadLines(SettingFileName))
+                    //{
+                    //    var d = item.Split('\t');
+                    //    if (d.Length > 1) dic.Add(d[0], d[1]);
+                    //}
                 }
-                foreach (var item in Properties)
+                if (dic == null) dic = new KeyValueDic();
+                foreach (var item in Properties.Where(n=>n.DoSave==true))
                 {
                     if (dic.ContainsKey(item.Key))
                     {
@@ -116,12 +116,33 @@ namespace RawlerView.Form
                         dic.Add(item.Key, item.Value);
                     }
                 }
+                dic.Save(SettingFileName);
+            }
+        }
+    }
 
-                using (var f = System.IO.File.CreateText(SettingFileName))
+    public class KeyValueDic:Dictionary<string,string>
+    {
+        public static KeyValueDic Load(string file)
+        {
+            try
+            {
+                var obj = System.Xaml.XamlServices.Load(file);
+                if (obj is KeyValueDic)
                 {
-                    dic.ToList().ForEach(n => f.WriteLine(n.Key + "\t" + n.Value));
+                    return (KeyValueDic)obj;
                 }
             }
+            catch(Exception)
+            {
+                
+            }
+            return null;
+        }
+
+        public void Save(string file)
+        {
+            System.Xaml.XamlServices.Save(file,this);
         }
     }
 }
