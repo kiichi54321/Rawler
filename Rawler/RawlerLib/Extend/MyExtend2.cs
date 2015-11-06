@@ -34,7 +34,7 @@ namespace RawlerLib.MyExtend
                 var task = System.Threading.Tasks.Task.Factory.StartNew<Dictionary<T, int>>((n) =>
                 {
                     T[] range = new T[readRange];
-                    Dictionary<T, int> cDic = new Dictionary<T, int>();
+                    Dictionary<T, int> cDic = new Dictionary<T, int>();                    
                     while (true)
                     {
                         int c = stack.TryPopRange(range);

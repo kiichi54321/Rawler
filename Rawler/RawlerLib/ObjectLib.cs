@@ -212,12 +212,10 @@ namespace RawlerLib
         {
             object obj;
             using (Stream stream = new FileStream(filePath, FileMode.Open, FileAccess.Read))
+            using (DeflateStream ds = new DeflateStream(stream, CompressionMode.Decompress))
             {
-                using (DeflateStream ds = new DeflateStream(stream, CompressionMode.Decompress))
-                {
-                    IFormatter formatter = new BinaryFormatter();
-                    obj = formatter.Deserialize(ds);
-                }
+                IFormatter formatter = new BinaryFormatter();
+                obj = formatter.Deserialize(ds);
             }
             return obj;
         }

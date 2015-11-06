@@ -38,10 +38,6 @@ namespace Rawler.Tool
             this.SetText(GetText());
             if (int.TryParse(GetText(), out tmp))
             {
-                if (CompareType != null)
-                {
-                    CompareType = Tool.CompareType.over;
-                }
                 bool flag = false;
 
                 if (CompareType == Tool.CompareType.over)

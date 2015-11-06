@@ -204,6 +204,15 @@ namespace Rawler.Tool
 
         }
 
+        /// <summary>
+        /// base.Run(runChildren)のあとの処理。
+        /// </summary>
+        /// <param name="action"></param>
+        public void SetEndAction(Action action)
+        {
+            endAction = action;
+        }
+        Action endAction;
         public override void Run(bool runChildren)
         {
             try
@@ -229,6 +238,7 @@ namespace Rawler.Tool
                 FileInit(fileName);
 
                 base.Run(runChildren);
+                endAction?.Invoke();
             }
             catch (Exception e)
             {

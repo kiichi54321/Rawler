@@ -104,6 +104,88 @@ namespace RawlerLib.MyExtend
             }
             return observableList;
         }
+
+
+        /// <summary>
+        /// ObservableCollection を指定したリストで更新する。
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="observableList"></param>
+        /// <param name="list2"></param>
+        /// <returns></returns>
+        public static System.Collections.ObjectModel.ObservableCollection<T> Update<T>(this System.Collections.ObjectModel.ObservableCollection<T> observableList, IEnumerable<T> list2)
+        {
+            var list3 = new HashSet<T>(list2);
+
+            var removeList = observableList.Where(n => list3.Contains(n) == false).ToArray();
+            var addList = list2.Where(n => observableList.Contains(n) == false).ToArray();
+
+            foreach (var item in removeList)
+            {
+                observableList.Remove(item);
+            }
+            foreach (var item in addList)
+            {
+                observableList.Add(item);
+            }
+
+            return observableList;
+        }
+
+
+        /// <summary>
+        /// リストの要素をひとつ前のものと入れ替える。
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="list"></param>
+        /// <param name="item"></param>
+        public static void MoveForward<T>(this IList<T> list, T item)
+        {
+            var index = list.Select((n, i) => new { n, i }).First(n => n.n.Equals(item)).i;
+            if (index > 0)
+            {
+                list.RemoveAt(index);
+                list.Insert(index - 1, item);
+            }
+        }
+
+        /// <summary>
+        /// リストの要素を一つ後ろのものと入れ替える
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="list"></param>
+        /// <param name="item"></param>
+        public static void MoveBack<T>(this IList<T> list, T item)
+        {
+            var index = list.Select((n, i) => new { n, i }).First(n => n.n.Equals(item)).i;
+            if (index + 1 < list.Count)
+            {
+                list.RemoveAt(index);
+                list.Insert(index + 1, item);
+            }
+        }
+
+        /// <summary>
+        /// 指定サイズのArrayにして返す。
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="list"></param>
+        /// <param name="size"></param>
+        /// <returns></returns>
+        public static T[] ToArray<T>(this IEnumerable<T> list,int size)
+        {
+            T[] r = new T[size];
+
+            var l = list.GetEnumerator();
+
+            for (int i = 0; i < size; i++)
+            {
+                if (l.MoveNext() == false) break;
+                r[i] = l.Current;
+            }
+            return r;
+        }
+
     }
 
 

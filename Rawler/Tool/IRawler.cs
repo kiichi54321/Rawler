@@ -636,6 +636,9 @@ namespace Rawler.Tool
             return list2;
         }
 
+        /// <summary>
+        /// Dispose()
+        /// </summary>
         public virtual void Dispose()
         {
             this.text = null;

@@ -566,6 +566,7 @@ namespace Rawler.Tool
         {
             if (wc != null) wc.Dispose();
             base.Dispose();
+            GC.SuppressFinalize(this);
         }
     }
 

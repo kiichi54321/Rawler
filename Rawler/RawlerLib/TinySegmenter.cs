@@ -1910,6 +1910,32 @@ namespace TinySegmenterDotNet
         }
 
         /// <summary>
+        /// 入力テキストを、分かち書きをして、Ngramで組み合わせを作って、指定割合以上のものを採用する。
+        /// </summary>
+        /// <param name="lines"></param>
+        /// <param name="rate"></param>
+        public void Learning(IEnumerable<string> lines, double rate,int ngram)
+        {
+            List<string> list = new List<string>();
+            LearnWordList.Clear();
+            CreateDic();
+            foreach (var item in lines)
+            {
+                var d = SegmentExted(item);
+                for (int i = 2; i <= ngram; i++)
+                {
+                    list.AddRange(Ngram(d, i, string.Empty).Distinct());
+                }
+            }
+            var all = (double)lines.Count();
+
+            var countList = list.GroupBy(n => n).Select(n => new { Word = n.Key, Rate = n.Count() / all });
+            learnWordList = countList.Where(n => n.Rate >= rate).Select(n => n.Word).ToList();
+            CreateDic();
+            if (LearnEnd != null) LearnEnd(this, new EventArgs());
+        }
+
+        /// <summary>
         /// 入力テキストを、分かち書きをして、Ngramで組み合わせを作って、指定割合以上のものを採用する。(並列版)
         /// </summary>
         /// <param name="lines"></param>

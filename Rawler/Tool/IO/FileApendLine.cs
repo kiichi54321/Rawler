@@ -32,6 +32,7 @@ namespace Rawler.Tool
         /// 書き込み先のファイル名
         /// </summary>
         public string FileName { get; set; }
+        public string Line { get; set; }
 
         /// <summary>
         /// このクラスでの実行すること。
@@ -43,7 +44,13 @@ namespace Rawler.Tool
             {
                 try
                 {
-                    System.IO.File.AppendAllText(FileName, GetText() + "\n");
+                    string line = GetText();
+                    if(string.IsNullOrEmpty( Line )==false)
+                    {
+                        line = Line.Convert(this);
+                    }
+
+                    System.IO.File.AppendAllText(FileName.Convert(this), line + "\n");
                 }
                 catch (Exception e)
                 {
