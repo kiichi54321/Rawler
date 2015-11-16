@@ -10,6 +10,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using RawlerView.Form.Core;
 
 namespace RawlerView.Form
 {
@@ -23,7 +24,7 @@ namespace RawlerView.Form
             InitializeComponent();
         }
 
-        public void SetUp(IEnumerable<Form.BaseProperty> list)
+        public void SetUp(IEnumerable<Form.Core.FormParts> list)
         {
             this.ItemsControl.ItemsSource = list;
         }

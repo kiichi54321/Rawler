@@ -15,14 +15,25 @@ namespace RawlerParallel
         public override void Run(bool runChildren)
         {
             DataRowBlock = new ActionBlock<DataRowObject>((n) => NextDataRow(n));
+
+            SetEndAction(() => {
+                DataRowBlock.Complete();
+                DataRowBlock.Completion.Wait();
+            });
          
             base.Run(runChildren);
+           
+
         }
 
-        public override void Dispose()
+        private void ParallelData_EndRunEvent(object sender, EventArgs e)
         {
             DataRowBlock.Complete();
             DataRowBlock.Completion.Wait();
+        }
+
+        public override void Dispose()
+        {         
            
             base.Dispose();
         }

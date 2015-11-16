@@ -188,6 +188,7 @@
     <Compile Include="Tool\Web\AddAllInputParameter.cs" />
     <Compile Include="Tool\Web\AddHiddenInputParameter.cs" />
     <Compile Include="Tool\Web\AddInputParameter.cs" />
+    <Compile Include="Tool\Web\ConvertAbsolutePath.cs" />
     <Compile Include="Tool\Web\DownLoad.cs" />
     <Compile Include="Tool\Web\GetPageUrl.cs" />
     <Compile Include="Tool\Html\GetScriptVariable.cs" />

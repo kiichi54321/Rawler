@@ -40,6 +40,10 @@ namespace Rawler.Tool
             {
                key =  RawlerBase.GetText(this.Parent.Text, KeyTree,this.Parent);
             }
+            else
+            {
+                key = key.Convert(this);
+            }
             if (list.Any())
             {
                 if (string.IsNullOrEmpty(Value))
@@ -48,7 +52,7 @@ namespace Rawler.Tool
                 }
                 else
                 {
-                    list.First().AddParameter(key, Value);
+                    list.First().AddParameter(key, Value.Convert(this));
                 }
             }
             else

@@ -9,10 +9,11 @@ using System.Windows;
 using GalaSoft.MvvmLight.Command;
 using System.Threading.Tasks;
 using System.Threading;
+using RawlerView.Form.Core;
 
 namespace RawlerView.Form
 {
-    public class FormProperties:List<BaseProperty>
+    public class FormProperties:List<FormParts>
     {
 
     }
@@ -27,6 +28,8 @@ namespace RawlerView.Form
         {
             LoadSetting();
             bool flag = true;
+            Properties.ForEach(n => n.SetParent(this));
+
             Task reportProgressTask = Task.Factory.StartNew(() =>
               {
                   FormWindow fw = new FormWindow();
@@ -61,7 +64,7 @@ namespace RawlerView.Form
 
         void PropertiesUpdate()
         {
-            foreach (var item in Properties)
+            foreach (var item in Properties.OfType<BaseProperty>())
             {
                 this.SetKeyValue(item.Key, item.Value);
             }
@@ -77,7 +80,7 @@ namespace RawlerView.Form
                     var dic = KeyValueDic.Load(SettingFileName);
                     if(dic !=null)
                     {
-                        foreach (var item in Properties)
+                        foreach (var item in Properties.OfType<BaseProperty>())
                         {
                             if (dic.ContainsKey(item.Key))
                             {
@@ -105,7 +108,7 @@ namespace RawlerView.Form
                     //}
                 }
                 if (dic == null) dic = new KeyValueDic();
-                foreach (var item in Properties.Where(n=>n.DoSave==true))
+                foreach (var item in Properties.OfType<BaseProperty>().Where(n=>n.DoSave==true))
                 {
                     if (dic.ContainsKey(item.Key))
                     {

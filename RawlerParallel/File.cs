@@ -81,12 +81,20 @@ namespace RawlerParallel
 
     public class FileWriteLine:RawlerBase
     {
+        public string Line { get; set; }
         public override void Run(bool runChildren)
         {
             var file = this.GetUpperRawler<File>();
             if(file !=null)
             {
-                file.WriteLine(GetText());
+                if (string.IsNullOrEmpty(Line))
+                {
+                    file.WriteLine(GetText());
+                }
+                else
+                {
+                    file.WriteLine(Line.Convert(this));
+                }
             }
             else
             {

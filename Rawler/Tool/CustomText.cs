@@ -32,9 +32,9 @@ namespace Rawler.Tool
 
         }
 
-        public delegate string CreateTextDelegate(RawlerBase rawler);
+//        public delegate string CreateTextDelegate(RawlerBase rawler);
 
-        public CreateTextDelegate CreateText { get; set; }
+        public Func<RawlerBase,string>  CreateText { get; set; }
         
 
 

@@ -69,6 +69,7 @@ namespace Rawler.Tool
             {
                 ReportManage.ErrReport(this, e.Message);
             }
+            SetText(System.IO.Directory.GetCurrentDirectory());
 
             base.Run(runChildren);
         }

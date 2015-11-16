@@ -6,16 +6,14 @@ using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using RawlerLib.MyExtend;
+using RawlerView.Form.Core;
+using Rawler.Tool;
 
-namespace RawlerView.Form
+namespace RawlerView.Form.Core
 {
-    public class BaseProperty : System.ComponentModel.INotifyPropertyChanged
+    public class FormParts
     {
-        public string Key { get; set; }
-        public string Name { get; set; }
         public string Help { get; set; }
-        string _value;
-        public string Value { get { return _value; } set { this._value = value; RaisePropertyChanged("Value"); } }
         public Visibility HelpVisibility
         {
             get
@@ -30,6 +28,21 @@ namespace RawlerView.Form
                 }
             }
         }
+        
+        public RawlerBase Parent { get;private set; }
+        public void SetParent(RawlerBase p)
+        {
+            this.Parent = p;
+        }
+ 
+    }
+
+    public class BaseProperty : FormParts, System.ComponentModel.INotifyPropertyChanged
+    {
+        public string Key { get; set; }
+        public string Name { get; set; }
+        string _value;
+        public string Value { get { return _value; } set { this._value = value; RaisePropertyChanged("Value"); } }
 
         bool doSave = true;
 
@@ -44,12 +57,69 @@ namespace RawlerView.Form
 
         protected void RaisePropertyChanged(string name)
         {
-            if(PropertyChanged !=null)
+            if (PropertyChanged != null)
             {
                 PropertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(name));
             }
         }
     }
+}
+
+
+namespace RawlerView.Form
+{
+  
+
+    public class ImagePart:FormParts
+    {
+        string imageUrl = string.Empty;
+        public string ImageUrl {
+            get
+            {
+                return imageUrl.Convert(this.Parent);
+            }
+            set
+            {
+                imageUrl = value;
+            }
+        }
+    }
+
+    public class TextBlockPart:FormParts
+    {
+        string text = string.Empty;
+        public string Text
+        {
+            get
+            {
+                return text.Convert(this.Parent);
+            }
+            set
+            {
+                text = value;
+            }
+        }
+    }
+
+    public class TextBoxPart:FormParts
+    {
+        string text = string.Empty;
+        public string Text
+        {
+            get
+            {
+                return text.Convert(this.Parent);
+            }
+            set
+            {
+                text = value;
+            }
+        }
+    }
+    
+
+ 
+
 
     public class TextProperty:BaseProperty
     {
@@ -203,6 +273,10 @@ namespace RawlerView.Form
         public override System.Windows.DataTemplate SelectTemplate(object item, System.Windows.DependencyObject container)
         {
             if(item is BaseProperty)
+            {
+                return ((FrameworkElement)container).FindResource(item.GetType().Name) as DataTemplate;
+            }
+            if (item is FormParts)
             {
                 return ((FrameworkElement)container).FindResource(item.GetType().Name) as DataTemplate;
             }

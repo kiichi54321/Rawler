@@ -174,19 +174,21 @@ namespace Rawler.Tool
                 urlHash.Clear();
             }
             pastUrl = string.Empty;
+            string url = string.Empty;
 
             if (this.Url != null && this.Url.Length > 0)
             {
-                if (this.Url.Contains("http") == false)
+                url = Url.Convert(this);
+                if (url.Contains("http") == false)
                 {
                     var prePage = this.GetAncestorRawler().Skip(1).OfType<Page>();
                     if (prePage.Any() == true)
                     {
-                        this.Url = System.IO.Path.Combine(prePage.First().GetCurrentUrl(), this.Url);
+                        url = System.IO.Path.Combine(prePage.First().GetCurrentUrl(), this.Url);
                     }
                 }
-                this.startUrl = this.Url;
-                PushUrl(this.Url);
+                this.startUrl = url;
+                PushUrl(url);
             }
             else
             {

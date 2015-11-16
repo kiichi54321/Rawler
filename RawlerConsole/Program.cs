@@ -19,11 +19,13 @@ namespace RawlerConsole
             {
                 try
                 {
+                    Dictionary<string, string> dic = new Dictionary<string, string>();
                     foreach (var item in args.Skip(1))
                     {
                         var d = item.Split('=');
                         if (d.Length > 1)
                         {
+                            dic[d[0]] = d[1];
                             Rawler.Tool.TempVar.SetVar(d[0], d[1]);
                         }
                     }

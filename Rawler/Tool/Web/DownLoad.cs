@@ -35,13 +35,20 @@ namespace Rawler.Tool
         public override void Run(bool runChildren)
         {
             var client = this.GetAncestorRawler().OfType<WebClient>().DefaultIfEmpty(new WebClient()).FirstOrDefault();
-            string url = GetText();
+
+            string url = Url;
+            if (string.IsNullOrEmpty(url))
+            {
+                url = GetText();
+            }
             var page = this.GetUpperRawler<Page>();
             if(page !=null)
             {
                 client.Referer = page.GetCurrentUrl();
+                
             }
-            var data = client.HttpGetByte(GetText());
+
+            var data = client.HttpGetByte(url);
             string path = string.Empty;
             if (FolderNameTree != null)
             {
@@ -49,7 +56,7 @@ namespace Rawler.Tool
             }
             else
             {
-                path = Folder;
+                path = Folder.Convert(this);
             }
             if (path != null)
             {
@@ -80,7 +87,11 @@ namespace Rawler.Tool
             string fileName = string.Empty;
             if (SaveNameTree != null)
             {
-                fileName =  RawlerBase.GetText(this.Parent.Text, SaveNameTree, this.Parent);
+                fileName = RawlerBase.GetText(this.Parent.Text, SaveNameTree, this.Parent);
+            }
+            else if (string.IsNullOrEmpty(SaveName) == false)
+            {
+                fileName = SaveName.Convert(this);
             }
             else
             {
@@ -104,6 +115,10 @@ namespace Rawler.Tool
 
             base.Run(runChildren);
         }
+
+        public string Url { get; set; }
+
+        public string SaveName { get; set; }
 
         public RawlerBase SaveNameTree
         {

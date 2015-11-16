@@ -6,9 +6,13 @@ using System.Windows.Markup;
 
 namespace Rawler.Tool
 {
+    /// <summary>
+    /// 初期化するプロパティ
+    /// </summary>
     [ContentProperty("Child")]
     public class InitProperty
     {
+
         public string PropertyName { get; set; }
         public RawlerBase Child { get; set; }
         public void Run(RawlerBase parent)
@@ -70,8 +74,15 @@ namespace Rawler.Tool
         }
     }
 
+    /// <summary>
+    /// 初期化の集合
+    /// </summary>
     public class InitTreeCollection:List<InitProperty>
     {
+        /// <summary>
+        /// 初期化実行
+        /// </summary>
+        /// <param name="root"></param>
         public void Run(RawlerBase root)
         {
             if (this.Count == 0) return;
