@@ -35,7 +35,7 @@ namespace Rawler.View
         /// <param name="runChildren"></param>
         public override void Run(bool runChildren)
         {
-            RawlerLib.WPF.ViewTextWindowManage.AddText(Header, GetText());
+            RawlerLib.WPF.ViewTextWindowManage.AddText(Header.Convert(this), GetText());
             base.Run(runChildren);
         }
 

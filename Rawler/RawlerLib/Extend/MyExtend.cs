@@ -344,8 +344,62 @@ namespace RawlerLib.MyExtend
             return AddCount(source, key, 1);
         }
 
+        /// <summary>
+        /// 数え上げ用のDictionaryを作る
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <typeparam name="T2"></typeparam>
+        /// <param name="list"></param>
+        /// <param name="func"></param>
+        /// <param name="countFunc"></param>
+        /// <returns></returns>
+        public static Dictionary<T2, int> ToCountDictionary<T, T2>(this IEnumerable<T> list, Func<T, T2> func,Func<T,int> countFunc)
+        {
+            Dictionary<T2, int> dic = new Dictionary<T2, int>();
+            foreach (var item in list)
+            {
+                dic.AddCount(func(item),countFunc(item));
+            }
+            return dic;
+        }
+
+        /// <summary>
+        /// 数え上げ用のDictionaryを作る
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <typeparam name="T2"></typeparam>
+        /// <param name="list"></param>
+        /// <param name="func"></param>
+        /// <returns></returns>
+        public static Dictionary<T2,int> ToCountDictionary<T,T2>(this IEnumerable<T> list,Func<T,T2> func)
+        {
+            Dictionary<T2, int> dic = new Dictionary<T2, int>();
+            foreach (var item in list)
+            {
+                dic.AddCount(func(item));
+            }
+            return dic;
+        }
+
+        /// <summary>
+        /// 数え上げ用のDictionaryを作る
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="list"></param>
+        /// <returns></returns>
+        public static Dictionary<T, int> ToCountDictionary<T>(this IEnumerable<T> list)
+        {
+            Dictionary<T, int> dic = new Dictionary<T, int>();
+            foreach (var item in list)
+            {
+                dic.AddCount(item);
+            }
+            return dic;
+        }
+
         public static Dictionary<T, int> Marge<T>(this IEnumerable<Dictionary<T, int>> list)
         {
+            
             Dictionary<T, int> dic = new Dictionary<T, int>();
             foreach (var item in list.SelectMany(n => n))
             {

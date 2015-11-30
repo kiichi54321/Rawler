@@ -2,6 +2,9 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Rawler.Tool;
 using System.Diagnostics;
+using System.Linq;
+using RawlerLib.MyExtend;
+
 namespace TestRawlerToolProject
 {
     [TestClass]
@@ -19,6 +22,13 @@ namespace TestRawlerToolProject
             Console.WriteLine(html);
         }
 
+        [TestMethod]
+        public void MyTestMethod()
+        {
+            var Files = new string[] { "aaa.tsv", "bbb.tsv", "ccc.tsv" };
+            var dic = Files.AsParallel().WithDegreeOfParallelism(6).Select(path => System.IO.File.ReadLines(path).ToCountDictionary(n => n.Split('\t').First())).Marge();
+
+        }
 
     }
 }

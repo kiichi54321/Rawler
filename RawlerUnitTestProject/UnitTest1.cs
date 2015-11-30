@@ -4,6 +4,7 @@ using RawlerExpressLib.TestExtend;
 using System.Collections.Generic;
 using System.Linq;
 using RawlerLib.MyExtend;
+using System.Reflection;
 
 namespace RawlerUnitTestProject
 {
@@ -38,6 +39,27 @@ namespace RawlerUnitTestProject
             string text = "[[key]][value].txt";
             System.Text.RegularExpressions.Regex r = new System.Text.RegularExpressions.Regex(@"\[\w*\]");
             r.Matches(text).OfType<System.Text.RegularExpressions.Match>().Select(n => n.Value).ConsoleWriteLine();
+        }
+
+        public  IEnumerable<Type> GetBaseTypes(Type t)
+        {
+            do
+            {
+                yield return t;
+                t = t.BaseType;
+            } while (t != null);
+        }
+
+        [TestMethod]
+        public void ListRawlerBase()
+        {
+            // Assembly[] asms = AppDomain.CurrentDomain.GetAssemblies();
+            var t = Assembly.LoadFrom("Rawler.dll").GetTypes();
+//            t = t.Where(n => n.GetNestedTypes().Contains(typeof(Rawler.Tool.RawlerBase))).ToArray();
+            //.Select(n=>n.GetNestedType("RawlerBase")).Where(n=>n!=null).ToArray();
+            t.Count().ToString().ConsoleWriteLine();
+            t = t.Where(n => GetBaseTypes(n).Contains(typeof(Rawler.Tool.RawlerBase))).ToArray();
+            t.ConsoleWriteLine(n => n.Name);
         }
 
         [TestMethod]

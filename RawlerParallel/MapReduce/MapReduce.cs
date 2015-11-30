@@ -27,7 +27,7 @@ namespace RawlerParallel.MapReduce
             BatchBlock<KeyValuePair<string, int>> batch = new BatchBlock<KeyValuePair<string, int>>(BatchSize);
             TransformBlock<KeyValuePair<string, int>[], Dictionary<string, int>> trans = new TransformBlock<KeyValuePair<string, int>[], Dictionary<string, int>>(l =>
             {
-                return l.GroupBy(n => n.Key).ToDictionary(n => n.Key, n => n.Sum(m => m.Value));
+                return l.ToCountDictionary(n => n.Key, n => n.Value);
             });
             BatchBlock<Dictionary<string, int>> dicBatch = new BatchBlock<Dictionary<string, int>>(3);
             TransformBlock<Dictionary<string, int>[], Dictionary<string, int>> margeDic = new TransformBlock<Dictionary<string, int>[], Dictionary<string, int>>(n => {
