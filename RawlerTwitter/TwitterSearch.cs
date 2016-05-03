@@ -34,9 +34,16 @@ namespace RawlerTwitter
         /// <param name="runChildren"></param>
         public override void Run(bool runChildren)
         {
-            base.RunChildrenForArray(runChildren, ReadSearch());
+            ReadSearch();
             GC.Collect();
         }
+
+        void Post(IEnumerable<string> list)
+        {
+            base.RunChildrenForArray(true, list);
+
+        }
+
         public double SleepSecond { get; set; }
 
         private Dictionary<string, Tuple<decimal, decimal>> searchWordDic = new Dictionary<string, Tuple<decimal, decimal>>();
@@ -48,7 +55,7 @@ namespace RawlerTwitter
  
         public string SearchWord { get; set; }
 
-        protected IEnumerable<string> ReadSearch()
+        protected void ReadSearch()
         {
             var login = this.GetAncestorRawler().OfType<TwitterLogin>().First();
             bool flag = true;
@@ -99,66 +106,83 @@ namespace RawlerTwitter
                 {
                     dic.Add("since_id", searchWordDic[searchWord].Item1);
                 }
-
-                var result = login.Token.Search.Tweets(dic.Where(n=>n.Value !=null));
-                
-          
-                int c = 0;
-                int d = 0;
-                if (result !=null )
+                try
                 {
-                    //Jsonを下流に流す
-                    foreach (var item in result)
+                    var result = login.Token.Search.Tweets(dic.Where(n => n.Value != null));
+
+
+                    int c = 0;
+                    int d = 0;
+                    if (result != null)
                     {
-                        maxId = Math.Max(maxId, item.Id);
-                        minId = Math.Min(minId, item.Id);
-                    
-                        if (searchWordDic.ContainsKey(searchWord))
+                        List<string> list = new List<string>();
+                        //Jsonを下流に流す
+                        foreach (var item in result)
                         {
-                            if (searchWordDic[searchWord].Item1 < item.Id || searchWordDic[searchWord].Item2 > item.Id)
-                            {                               
-                                c++;
-                                yield return Newtonsoft.Json.Linq.JObject.FromObject(item).ToString();
-                              //  yield return Codeplex.Data.DynamicJson.Serialize(item);
+                            maxId = Math.Max(maxId, item.Id);
+                            minId = Math.Min(minId, item.Id);
+
+                            if (searchWordDic.ContainsKey(searchWord))
+                            {
+                                if (searchWordDic[searchWord].Item1 < item.Id || searchWordDic[searchWord].Item2 > item.Id)
+                                {
+                                    c++;
+                                    list.Add(Newtonsoft.Json.Linq.JObject.FromObject(item).ToString());
+                                    //  yield return Codeplex.Data.DynamicJson.Serialize(item);
+                                }
+                                else
+                                {
+                                    d++;
+                                }
                             }
                             else
                             {
-                                d++;
+                                c++;
+                                list.Add(Newtonsoft.Json.Linq.JObject.FromObject(item).ToString());
+                                // yield return Codeplex.Data.DynamicJson.Serialize(item);
+                                //   yield return Codeplex.Data.DynamicJson.Serialize(item);
                             }
                         }
-                        else
+                        Post(list);
+
+                        //すでに取得したものを含むとき
+                        if (d > 0 || c == 0)
                         {
-                            c++;
-                            yield return Newtonsoft.Json.Linq.JObject.FromObject(item).ToString();
-                            // yield return Codeplex.Data.DynamicJson.Serialize(item);
-                         //   yield return Codeplex.Data.DynamicJson.Serialize(item);
+                            flag = false;
                         }
                     }
-
-                    //すでに取得したものを含むとき
-                    if (d >0 || c == 0)
+                    else
                     {
                         flag = false;
-                    }                
+                    }
+                    if (searchWordDic.ContainsKey(searchWord))
+                    {
+                        searchWordDic[searchWord] = new Tuple<decimal, decimal>(maxId, minId);
+                    }
+                    else
+                    {
+                        searchWordDic.Add(searchWord, new Tuple<decimal, decimal>(maxId, minId));
+                    }
+                
                 }
-                else
+                catch(Exception ex)
                 {
-                    flag = false;
+                    ReportManage.ErrReport(this, ex.ToString());
+                    if(ex.Message.Contains("Rate limit exceeded"))
+                    {
+                        ReportManage.Report(this, "30秒停止");
+                        System.Threading.Thread.Sleep((int)(30 * 1000));
+                    }
+                    else
+                    {
+                        flag = false;
+                    }
                 }
-       
-                if (searchWordDic.ContainsKey(searchWord))
-                {
-                    searchWordDic[searchWord] = new Tuple<decimal, decimal>(maxId, minId);
-                }
-                else
-                {
-                    searchWordDic.Add(searchWord, new Tuple<decimal, decimal>(maxId, minId));
-                }
+
                 if (SleepSecond > 0)
                 {
                     System.Threading.Thread.Sleep((int)(SleepSecond * 1000));
                 }
-          
             }
 
         }

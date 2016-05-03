@@ -287,6 +287,13 @@ namespace Rawler.Tool
             this.Visible = true;
             this.ReturnCode = returncode;
         }
+
+        public string ToText()
+        {
+            var text = this.DateTime.ToShortTimeString() + " " + Message;
+            if (ReturnCode) return text + "\n";
+            return text;
+        }
     }
 
 

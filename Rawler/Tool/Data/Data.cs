@@ -104,14 +104,7 @@ namespace Rawler.Tool
         [NonSerialized]
         List<DataRowObject> dataList = new List<DataRowObject>();
         Dictionary<string, DataRowObject> dataDic = new Dictionary<string, DataRowObject>();
-        /// <summary>
-        /// 蓄積されていくDataRow
-        /// </summary>
 
-        //public List<DataRow> DataList
-        //{
-        //    get { return dataList; }
-        //}
 
         /// <summary>
         /// 蓄積されたDataRowのリストを取得します。NullのRowは含まれません。
@@ -605,7 +598,7 @@ namespace Rawler.Tool
         {
             get
             {
-                return dataList.Where(n => n.IsDataNull() == false).Count();
+                return GetDataRows().Count;
             }
         }
         /// <summary>

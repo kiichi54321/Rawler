@@ -23,6 +23,7 @@ namespace RawlerView.Form
         FormProperties properties = new  FormProperties();
         public FormProperties Properties { get { return properties; }  }
         public string SettingFileName { get; set; }
+        public string Title { get; set; }
 
         public override void Run(bool runChildren)
         {
@@ -33,6 +34,7 @@ namespace RawlerView.Form
             Task reportProgressTask = Task.Factory.StartNew(() =>
               {
                   FormWindow fw = new FormWindow();
+                  fw.Title = Title.Convert(this);
                   fw.SetUp(Properties);
                   if (fw.ShowDialog() == true)
                   {

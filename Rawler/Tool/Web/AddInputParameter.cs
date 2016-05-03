@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Rawler.Tool;
+using System.Diagnostics;
 
 namespace Rawler.Tool
 {
+    [DebuggerDisplay("{Key} | {Value}")]
     public class AddInputParameter : RawlerBase
     {
         #region テンプレ
@@ -48,11 +50,25 @@ namespace Rawler.Tool
             {
                 if (string.IsNullOrEmpty(Value))
                 {
-                    list.First().AddParameter(key, GetText());
+                    if (AddType == AddInputParameterType.replece)
+                    {
+                        list.First().ReplaceParameter(key, GetText());
+                    }
+                    else
+                    {
+                        list.First().AddParameter(key, GetText());
+                    }
                 }
                 else
                 {
-                    list.First().AddParameter(key, Value.Convert(this));
+                    if (AddType == AddInputParameterType.replece)
+                    {
+                        list.First().ReplaceParameter(key, Value.Convert(this));
+                    }
+                    else
+                    {
+                        list.First().AddParameter(key, Value.Convert(this));
+                    }
                 }
             }
             else
@@ -77,6 +93,13 @@ namespace Rawler.Tool
             }
         }
 
-
+        /// <summary>
+        /// 追加時の挙動です。デフォルトでは、既にある値を置き換えます。
+        /// </summary>
+        public AddInputParameterType AddType { get; set; } = AddInputParameterType.replece;
+    }
+    public enum AddInputParameterType
+    {
+        add,replece
     }
 }

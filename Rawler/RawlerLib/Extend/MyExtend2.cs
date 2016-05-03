@@ -5,9 +5,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-/// <summary>
+
 /// MyExtend .net 4.52以上版
-/// </summary>
 namespace RawlerLib.MyExtend
 {
     public static class Paralell

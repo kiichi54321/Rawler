@@ -43,6 +43,7 @@ namespace Rawler.Tool
         }
         //        public string CurrentUrl { get; set; }
 
+
         private string encoding = string.Empty;
         /// <summary>
         /// 文字コードの指定　
@@ -68,6 +69,17 @@ namespace Rawler.Tool
             set { referer = value; }
         }
 
+        /// <summary>
+        /// HtmlとUrlをセットする。
+        /// </summary>
+        /// <param name="html"></param>
+        /// <param name="url"></param>
+        public void SetHtmlUrl(string html,string url)
+        {
+            this.SetText(html);
+            this.currentUrl=url;
+            this.startUrl = url;
+        }
 
         protected Encoding GetEncoding()
         {
@@ -299,19 +311,34 @@ namespace Rawler.Tool
 
         public RawlerBase InputParameterTree { get; set; }
 
-        protected Dictionary<string, string> parameterDic = new Dictionary<string, string>();
+        protected List<KeyValue> parameterDic = new List<KeyValue>();
 
+        /// <summary>
+        /// formのinputの指定。加えるだけ
+        /// </summary>
+        /// <param name="key"></param>
+        /// <param name="value"></param>
         public void AddParameter(string key, string value)
         {
-            if (parameterDic.ContainsKey(key))
+            parameterDic.Add(new KeyValue() { Key = key, Value = value });
+        }
+
+        /// <summary>
+        /// formのinputの指定。加えるだけ置き換える。
+        /// </summary>
+        /// <param name="key"></param>
+        /// <param name="value"></param>
+        public void ReplaceParameter(string key, string value)
+        {
+            var list = parameterDic.Where(n => n.Key == key);
+            if (list.Any())
             {
-                parameterDic[key] = value;
+                list.First().SetValue(value);
             }
             else
             {
-                parameterDic.Add(key, value);
+                parameterDic.Add(new KeyValue(key, value));
             }
-
         }
 
         bool useReferer = true;

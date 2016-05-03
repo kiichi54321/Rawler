@@ -18,8 +18,11 @@ namespace Rawler.Tool.Web
         /// <returns></returns>
         public PageNoDownLoad SetPage(string url,string html)
         {
-            this.startUrl = url;
-            this.currentUrl = url;
+            if (string.IsNullOrEmpty(url) == false)
+            {
+                this.startUrl = url;
+                this.currentUrl = url;
+            }
             this.SetText(html);
             return this;
         }
@@ -38,25 +41,51 @@ namespace Rawler.Tool.Web
             }
         }
 
-        public List<string> HTMLs { get; set; }
+        public string Html { get; set; }
+        Stack<string> HTMLs { get; set; }
+        public bool UseParentPage { get; set; } = false;
 
         public override void Run(bool runChildren)
         {
-            if(HTMLs !=null && HTMLs.Any())
+            if (UseParentPage)
             {
-                foreach (var item in HTMLs)
+                var page = this.GetUpperRawler<Page>();
+                if (page != null)
                 {
-                    SetText(item);
-                    RunChildren(runChildren);
-//                    base.Run(runChildren);
+                    HTMLs.Push(page.GetCurrentPage());
+                    this.Url = page.GetCurrentUrl();
                 }
             }
-            else
-            {
-                //何もしない。
-                RunChildren(runChildren);
-//                base.Run(runChildren);
+            if(string.IsNullOrEmpty( Html )==false)
+                {
+                HTMLs.Push(Html.Convert(this));
             }
+            do
+            {
+                SetText(HTMLs.Pop());
+                RunChildren(runChildren);
+            }
+            while (HTMLs.Peek() != null);
+
         }
     }
+
+    /// <summary>
+    /// 上流のPageNoDownLoadにテキストを渡す。
+    /// </summary>
+    public class SetPageNoDownLoad : RawlerBase
+    {
+        public string Html { get; set; }
+        public string Url { get; set; }
+        public override void Run(bool runChildren)
+        {
+            var page = this.GetUpperRawler<PageNoDownLoad>();
+            if(page !=null)
+            {
+                page.SetPage(Url.Convert(this), Html.Convert(this));
+            }
+            base.Run(runChildren);
+        }
+    }
+
 }

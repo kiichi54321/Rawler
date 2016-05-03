@@ -98,6 +98,12 @@ namespace Rawler.Tool
             return cc.Count;
         }
 
+        public void SetCookie(Uri uri,Cookie cookie)
+        {
+            cc.Add(uri, cookie);
+        }
+             
+
 
         /// <summary>
         /// eucで対象URLを読み込みます
@@ -448,7 +454,8 @@ namespace Rawler.Tool
         {
             if (ReportUrl)
             {
-                ReportManage.Report(this, "POST " + url, true, true);
+                var t = vals.Select(n => n.Key + ":" + n.Value.Trim().Replace("\n","").Replace("\r","")).JoinText("\n");
+                ReportManage.Report(this, "POST " + url+"\n"+t, true, true);
             }
             try
             {
@@ -458,13 +465,33 @@ namespace Rawler.Tool
                 wc.BasicAuthorization = BasicAuthorization;
 
                 System.Collections.Specialized.NameValueCollection list = new System.Collections.Specialized.NameValueCollection();
+                //foreach (var item in vals.GroupBy(n=>n.Key))
+                //{
+                //    if (item.Count() == 1)
+                //    {
+                //        list.Add(item.Key, item.First().Value);
+                //    }
+                //    //同じ値が複数ある時用？
+                //    else
+                //    {
+                //        int i = 0;
+                //        foreach (var item2 in item)
+                //        {
+                //            list.Add(item2.Key + "[" + i + "]", item2.Value);
+                //            i++;
+                //        }
+                //    }
+                //}
                 foreach (var item in vals)
                 {
                     list.Add(item.Key, item.Value);
                 }
-                var data2 = wc.UploadValues(url, list);
-                if(encoder == null) { encoder = GetEncoding(); }
-                return encoder.GetString(data2);
+                if (encoder == null) { encoder = GetEncoding();
+                }
+                wc.Encoding = encoder;
+                //   wc.UploadValues
+                var data2 = wc.UploadValues2(new Uri( url),vals);
+                return data2;
             }
             catch (Exception e)
             {

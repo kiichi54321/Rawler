@@ -3,13 +3,15 @@ using System.Linq;
 using System.Text;
 using System.Collections.Generic;
 using System.Windows.Markup;
+using System.Diagnostics;
 
 namespace Rawler.Tool
 {
     /// <summary>
     /// KeyとValueをセットにしたクラス
     /// </summary>
-    [ContentProperty("Value")]    
+    [ContentProperty("Value")]
+    [DebuggerDisplay("{Key} | {Value}")]
     public class KeyValue
     {
         public KeyValue()
@@ -20,6 +22,12 @@ namespace Rawler.Tool
             this.Key = key;
             this.Value = value;
         }
+
+        public void SetValue(string value)
+        {
+            this.Value = value;
+        }
+
         public string Key { get; set; }
         public string Value { get; set; }
     }

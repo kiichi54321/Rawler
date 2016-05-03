@@ -33,9 +33,8 @@ namespace Rawler.Tool.Html.Core
 
 }
 
-/// <summary>
 /// htmlのタグと同じ名前にしたTags
-/// </summary>
+
 namespace Rawler.Tool.Html
 {
 

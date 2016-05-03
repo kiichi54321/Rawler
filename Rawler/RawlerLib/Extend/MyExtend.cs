@@ -420,7 +420,7 @@ namespace RawlerLib.MyExtend
     public static class Stream
     {
         /// <summary>
-        /// 一行読み出しでIEnumerable<string>を返す
+        /// 一行読み出しでIEnumerable string を返す
         /// </summary>
         /// <param name="stream"></param>
         /// <returns></returns>
@@ -693,7 +693,7 @@ namespace RawlerLib.MyExtend
         }
 
         /// <summary>
-        /// IEnumerable<string> を　Stringにする。
+        /// IEnumerable string  を　Stringにする。
         /// </summary>
         /// <param name="list"></param>
         /// <returns></returns>
@@ -744,7 +744,7 @@ namespace RawlerLib.MyExtend
         }
 
         /// <summary>
-        /// Dictionary<string, string>をLTSV形式のテキストにする。
+        /// Dictionary string, string をLTSV形式のテキストにする。
         /// </summary>
         /// <param name="record"></param>
         /// <returns></returns>

@@ -84,7 +84,10 @@ namespace Rawler.Tool
                 }
                 catch
                 {
-                    ReportManage.ErrReport(this, "ElementAtの値がレンジから外れました。ElementAt:" + ElementAt.Value);
+                    if (IgnoreErr == false)
+                    {
+                        ReportManage.ErrReport(this, "ElementAtの値がレンジから外れました。ElementAt:" + ElementAt.Value);
+                    }
                 }
             }           
             else
@@ -93,6 +96,11 @@ namespace Rawler.Tool
             }
         }
 
+        /// <summary>
+        /// エラーを無視する。
+        /// </summary>
+        public bool IgnoreErr { get; set; } = false;
+ 
 
         private SeparatorType separatorType = SeparatorType.Tab;
 

@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Rawler.Tool;
+using RawlerLib.Extend;
+using RawlerLib.MyExtend;
 
 namespace Rawler.Tool
 {
@@ -58,15 +60,60 @@ namespace Rawler.Tool
                 else if (dic.ContainsKey("type") && dic["type"] == "submit")
                 {
                 }
-                else
+                else if( dic.ContainsKey("type") && dic["type"] == "text")
                 {
                     if (dic.ContainsKey("name") && dic.ContainsKey("value"))
                     {
                         page.AddParameter(dic["name"], dic["value"]);
                     }
                 }
+                else if (dic.ContainsKey("type") && dic["type"] == "hidden")
+                {
+                    if (dic.ContainsKey("name") && dic.ContainsKey("value"))
+                    {
+                        page.AddParameter(dic["name"], dic["value"]);
+                    }
+                }
+                else
+                {
+                    //if (dic.ContainsKey("name") && dic.ContainsKey("value"))
+                    //{
+                    //    page.AddParameter(dic["name"], dic["value"]);
+                    //}
+                }
 
             }
+            foreach (var item in GetText().ToHtml().GetTag("select"))
+            {
+                var para = GetParameter(item.Parameter);
+                var seleted = item.Inner.ToHtml().GetTag("option").Where(n => n.Parameter.Contains("selected"));
+                if(para.ContainsKey("name"))
+                {
+                    string val = string.Empty;
+                    if (seleted != null && seleted.Any())
+                    {
+                        val = GetParameter(seleted.First().Parameter).GetValueOrDefault("value", string.Empty);
+                    }
+                    else
+                    {
+                        if (para.ContainsKey("value")) val = para["value"];
+                    }
+                    page.AddParameter(para["name"], val);
+                }
+            }
+            foreach (var item in GetText().ToHtml().GetTag("textarea"))
+            {
+                var para = GetParameter(item.Parameter);
+                if (para.ContainsKey("name"))
+                {
+                    string val = string.Empty;
+                    if (para.ContainsKey("value")) val = para["value"];
+                    page.AddParameter(para["name"], val);
+                }
+
+
+            }
+
             base.Run(runChildren);
         }
 

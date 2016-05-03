@@ -1,25 +1,11 @@
-﻿/*
- * 部分的辞書使用に改造。
- * (c) 2014 Takaichi Ito (@kiichi54321)
- * 
- * 元のC#版作者
- * TinySegmenter.NET 0.1.1 -- C# Version of TinySegmenter
- * (c) 2010 DOBON! <http://dobon.net>
-
- * Original JavaScript Version CopyRight Notice
-// TinySegmenter 0.1 -- Super compact Japanese tokenizer in Javascript
-// (c) 2008 Taku Kudo <taku@chasen.org>
-// TinySegmenter is freely distributable under the terms of a new BSD licence.
-// For details, see http://chasen.org/~taku/software/TinySegmenter/LICENCE.txt
-*/
-
+﻿using RawlerLib.MyExtend;
 using System;
 using System.Collections.Generic;
-using System.Text.RegularExpressions;
 using System.Linq;
-using RawlerLib.MyExtend;
+using System.Text;
+using System.Text.RegularExpressions;
 
-namespace TinySegmenterDotNet
+namespace Rawler.RawlerLib
 {
     public class TinySegmenter
     {
@@ -1628,7 +1614,7 @@ namespace TinySegmenterDotNet
         }
         public void AddRangeWordDic(IEnumerable<string> words)
         {
-            wordList.AddRange(words.Select(n=>n.Split('\t').First()));
+            wordList.AddRange(words);
             wordDic = null;
         }
         public List<string> WordDicList
@@ -1648,14 +1634,14 @@ namespace TinySegmenterDotNet
                 get { return word; }
                 set { word = value; }
             }
-            int length; 
+            int length;
 
             public int Length
             {
                 get { return length; }
                 set { length = value; }
             }
-            string replace ;
+            string replace;
 
             public string Replace
             {
@@ -1683,7 +1669,7 @@ namespace TinySegmenterDotNet
                 dd.Length = dd.Word.Length;
                 return dd;
             }
-            public static WordDicData Create(string word,string replace)
+            public static WordDicData Create(string word, string replace)
             {
                 var dd = new WordDicData();
                 dd.Word = word;
@@ -1727,8 +1713,8 @@ namespace TinySegmenterDotNet
         /// </summary>
         private void CreateDic()
         {
-            var list = new List<string>().Adds(learnWordList).Adds(wordList).Where(n=>n.Length>1).OrderBy(n => n.Substring(0, 2)).ThenByDescending(n => n.Length).Distinct().ToList();
-            wordDic = list.GroupBy(n => n.Substring(0, 2)).Select(n => new { Key = n.Key, List = n.Select(m =>WordDicData.Create(m)).OrderByDescending(m => m.Length).ThenByDescending(m=>m.Replace.Length).ToList() }).ToDictionary(n => n.Key, n => n.List);
+            var list = new List<string>().Adds(learnWordList).Adds(wordList).Where(n => n.Length > 1).OrderBy(n => n.Substring(0, 2)).ThenByDescending(n => n.Length).Distinct().ToList();
+            wordDic = list.GroupBy(n => n.Substring(0, 2)).Select(n => new { Key = n.Key, List = n.Select(m => WordDicData.Create(m)).OrderByDescending(m => m.Length).ThenByDescending(m => m.Replace.Length).ToList() }).ToDictionary(n => n.Key, n => n.List);
         }
 
         private WordDicData SearchDic(string head, string text)
@@ -1737,7 +1723,7 @@ namespace TinySegmenterDotNet
 
 
             char firstChar = text.First();
-            if(firstChar == ' ')
+            if (firstChar == ' ')
             {
                 return new WordDicData() { Word = " ", Replace = string.Empty, Length = 1 };
             }
@@ -1784,7 +1770,7 @@ namespace TinySegmenterDotNet
                 {
                     カッコ数++;
                 }
-                if(endカッコ.Contains(item))
+                if (endカッコ.Contains(item))
                 {
                     カッコ数--;
                 }
@@ -1795,7 +1781,7 @@ namespace TinySegmenterDotNet
                     break;
                 }
             }
-            if (sb.Length > 0 && sb.Length<16) return WordDicData.Create(sb.ToString());
+            if (sb.Length > 0 && sb.Length < 16) return WordDicData.Create(sb.ToString());
 
 
 
@@ -1811,25 +1797,21 @@ namespace TinySegmenterDotNet
         HashSet<char> endChar = new HashSet<char>("!?！？、。「」『』:");
         HashSet<char> alfabet = new HashSet<char>("0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ");
 
-        public IEnumerable<string> Ngram(IEnumerable<string> list, int n, string separeter)
-        {            
+        private IEnumerable<string> Ngram(IEnumerable<string> list, int n, string separeter)
+        {
             List<List<string>> list2 = new List<List<string>>();
             List<string> l = new List<string>();
             list2.Add(l);
             foreach (var item in list)
             {
-                if(endChar.Contains(item.First()))
+                if (endChar.Contains(item.First()))
                 {
                     l = new List<string>();
                     list2.Add(l);
                 }
                 else
                 {
-                    var text = item.Trim();
-                    if (text.Length > 0)
-                    {
-                        l.Add(text);
-                    }
+                    l.Add(item);
                 }
             }
             foreach (var item in list2)
@@ -1845,7 +1827,7 @@ namespace TinySegmenterDotNet
                             yield return d.Skip(i).Take(n).JoinText(separeter).Trim();
                         }
                     }
-                }                
+                }
             }
         }
 
@@ -1855,7 +1837,7 @@ namespace TinySegmenterDotNet
         /// <param name="text"></param>
         /// <param name="maxGram"></param>
         /// <returns></returns>
-        public IEnumerable<string> GetNgram(string text,int maxGram)
+        public IEnumerable<string> GetNgram(string text, int maxGram)
         {
             List<string> list = new List<string>();
             var d = this.SegmentExted(text);
@@ -1890,7 +1872,7 @@ namespace TinySegmenterDotNet
         /// </summary>
         /// <param name="lines"></param>
         /// <param name="rate"></param>
-        public void Learning(IEnumerable<string> lines,double rate)
+        public void Learning(IEnumerable<string> lines, double rate)
         {
             List<string> list = new List<string>();
             LearnWordList.Clear();
@@ -1906,32 +1888,6 @@ namespace TinySegmenterDotNet
                 list.AddRange(Ngram(d, 6, string.Empty).Distinct());
             }
             var all = (double)lines.Count();
-           
-            var countList= list.GroupBy(n=>n).Select(n=>new {Word = n.Key,Rate = n.Count()/all});
-            learnWordList = countList.Where(n => n.Rate >= rate).Select(n => n.Word).ToList();
-            CreateDic();
-            if (LearnEnd != null) LearnEnd(this,new EventArgs());
-        }
-
-        /// <summary>
-        /// 入力テキストを、分かち書きをして、Ngramで組み合わせを作って、指定割合以上のものを採用する。
-        /// </summary>
-        /// <param name="lines"></param>
-        /// <param name="rate"></param>
-        public void Learning(IEnumerable<string> lines, double rate,int ngram)
-        {
-            List<string> list = new List<string>();
-            LearnWordList.Clear();
-            CreateDic();
-            foreach (var item in lines)
-            {
-                var d = SegmentExted(item);
-                for (int i = 2; i <= ngram; i++)
-                {
-                    list.AddRange(Ngram(d, i, string.Empty).Distinct());
-                }
-            }
-            var all = (double)lines.Count();
 
             var countList = list.GroupBy(n => n).Select(n => new { Word = n.Key, Rate = n.Count() / all });
             learnWordList = countList.Where(n => n.Rate >= rate).Select(n => n.Word).ToList();
@@ -1940,31 +1896,33 @@ namespace TinySegmenterDotNet
         }
 
         /// <summary>
-        /// 入力テキストを、分かち書きをして、Ngramで組み合わせを作って、指定割合以上のものを採用する。(並列版)
+        /// 入力テキストを、分かち書きをして、Ngramで組み合わせを作って、指定割合以上のものを採用する。
         /// </summary>
         /// <param name="lines"></param>
-        /// <param name="rate">閾値とする出現確率</param>
-        /// <param name="maxNgram">最大のNgram数</param>
-        /// <param name="threadNum">スレッド数</param>
-        public void LearningParallel(IEnumerable<string> lines, double rate,int take,int maxNgram,Action<int> progressAction)
+        /// <param name="rate"></param>
+        public void LearningParallel(IEnumerable<string> lines, double rate)
         {
+            List<string> list = new List<string>();
             LearnWordList.Clear();
             CreateDic();
-            var c = (double)lines.Count();
-            var dic = lines.ParalellCount(n => {
-                var d = SegmentExted(n);
-                List<string> l = new List<string>();
-                for (int i = 2; i <= maxNgram; i++)
-                {
-                    l.AddRange(Ngram(d, i, string.Empty).Distinct());
-                }
-                return l;
-            }, (int)c / 60, Environment.ProcessorCount, progressAction);
-            learnWordList = dic.OrderByDescending(n=>n.Value).Take(take).Where(n => n.Value / c >= rate).Select(n => n.Key).ToList();
+            
+            foreach (var item in lines)
+            {
+                var d = SegmentExted(item);
+
+                list.AddRange(Ngram(d, 2, string.Empty).Distinct());
+                list.AddRange(Ngram(d, 3, string.Empty).Distinct());
+                list.AddRange(Ngram(d, 4, string.Empty).Distinct());
+                list.AddRange(Ngram(d, 5, string.Empty).Distinct());
+                list.AddRange(Ngram(d, 6, string.Empty).Distinct());
+            }
+            var all = (double)lines.Count();
+
+            var countList = list.GroupBy(n => n).Select(n => new { Word = n.Key, Rate = n.Count() / all });
+            learnWordList = countList.Where(n => n.Rate >= rate).Select(n => n.Word).ToList();
             CreateDic();
             if (LearnEnd != null) LearnEnd(this, new EventArgs());
         }
-
 
 
         public Func<string, PreSegment> PreSegmentFunc { get; set; }
@@ -1975,7 +1933,7 @@ namespace TinySegmenterDotNet
                 return new string[] { };
             List<string> result = new List<string>();
 
-            if(PreSegmentFunc !=null)
+            if (PreSegmentFunc != null)
             {
                 var r = PreSegmentFunc(input);
                 input = r.Text;
@@ -2009,21 +1967,21 @@ namespace TinySegmenterDotNet
             string p3 = "U";
 
             int postion = 0;
-            while (input.Length > postion +1)
+            while (input.Length > postion + 1)
             {
                 var i = postion + 4;
-                WordDicData worddicdata = WordDicData.GetEmpty(); 
+                WordDicData worddicdata = WordDicData.GetEmpty();
                 if (postion + 2 < input.Length)
                 {
                     worddicdata = SearchDic(input.Substring(postion, 2), input.Substring(postion));
                 }
-                if (worddicdata.IsEmpty()==false)
+                if (worddicdata.IsEmpty() == false)
                 {
                     var w = worddicdata.GetWord();
                     if (w.Length > 0) result.Add(w);
                     postion += worddicdata.Length;
                     i = postion + 4;
-                    word = seg[i-1];
+                    word = seg[i - 1];
                     p1 = "O";
                     p2 = "O";
                     p3 = "B";
@@ -2126,7 +2084,7 @@ namespace TinySegmenterDotNet
             this.List = new List<string>();
         }
 
-        public PreSegment(string text,IEnumerable<string> list)
+        public PreSegment(string text, IEnumerable<string> list)
         {
             this.Text = text;
             this.List = new List<string>(list);
@@ -2159,7 +2117,7 @@ namespace TinySegmenterDotNet
             }
             foreach (var item in list)
             {
-               // List.Add(item);
+                // List.Add(item);
                 Text = Text.Replace(item, " ");
             }
             return this;
@@ -2169,7 +2127,7 @@ namespace TinySegmenterDotNet
         {
             System.Text.RegularExpressions.Regex r = new Regex(pattern);
             List<string> list = new List<string>();
-            foreach(System.Text.RegularExpressions.Match item in r.Matches(  this.Text))
+            foreach (System.Text.RegularExpressions.Match item in r.Matches(this.Text))
             {
                 list.Add(item.Value);
             }
@@ -2202,11 +2160,10 @@ namespace TinySegmenterDotNet
             t = CSharp.Japanese.Kanaxs.Kana.ToHankaku(t);
             t = CSharp.Japanese.Kanaxs.Kana.ToZenkakuKana(t);
             t = CSharp.Japanese.Kanaxs.Kana.ToPadding(t);
-        //    t = RawlerLib.Web.SimpleHtmlEncode(t);
+            //    t = RawlerLib.Web.SimpleHtmlEncode(t);
             t = t.Replace("～", "ー").Replace("－", "ー").Replace("─", "ー");
             this.Text = t;
             return this;
         }
     }
-
 }
