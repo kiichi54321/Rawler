@@ -38,14 +38,20 @@ namespace Rawler.Tool
             {
                 if (this.Parent != null)
                 {
+                    string t = GetText();
                     if (doChopReturnCode)
                     {
-                        return GetText().Trim().Replace("\n", "").Replace("\r", "");
+                       t = t.Replace("\n", "").Replace("\r", "");
                     }
-                    else
+                    if(DoChopTabCode)
                     {
-                        return GetText().Trim();
+                        t = t.Replace("\t", "");
                     }
+                    if(DoChopSpace)
+                    {
+                        t = t.Replace(" ", "");
+                    }
+                    return t.Trim();
                 }
                 else
                 {
@@ -66,6 +72,26 @@ namespace Rawler.Tool
             set { doChopReturnCode = value; }
         }
 
+        private bool doChopTabCode = false;
+
+
+        /// <summary>
+        /// tabコードを削除するか？
+        /// </summary>
+        public bool DoChopTabCode
+        {
+            get
+            {
+                return doChopTabCode;
+            }
+
+            set
+            {
+                doChopTabCode = value;
+            }
+        }
+
+        private bool doChopSpace = false;
 
 
         /// <summary>
@@ -74,6 +100,19 @@ namespace Rawler.Tool
         public override string ObjectName
         {
             get { return this.GetType().Name; }
+        }
+
+        public bool DoChopSpace
+        {
+            get
+            {
+                return doChopSpace;
+            }
+
+            set
+            {
+                doChopSpace = value;
+            }
         }
 
         /// <summary>

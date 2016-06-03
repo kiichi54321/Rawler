@@ -260,7 +260,7 @@ namespace Rawler.Tool
             }
             else
             {
-                if (client.ErrMessage.Contains("503"))
+                if (client.ErrMessage.Contains("503") || client.ErrMessage.Contains("500"))
                 {
                     ReportManage.Report(this, "待機します", true, true);
                     System.Threading.Thread.Sleep(new TimeSpan(0, 0, 30));
@@ -351,27 +351,22 @@ namespace Rawler.Tool
 
         public WebClient GetWebClient()
         {
-            WebClient client = new WebClient();
-            IRawler current = this.Parent;
+            WebClient client = this.GetUpperRawler<WebClient>();
 
-            var list = this.GetAncestorRawler().Skip(1);
-            //            list.Remove(this);
-            var clients = list.Where(n => n is WebClient);
-            if (clients.Count() > 0)
+            if(client == null)
             {
-                client = (WebClient)clients.First();
+                ReportManage.ErrUpperNotFound<WebClient>(this);
+                ReportManage.ErrReport(this, "新しいWebClientを作成します");
+                client = new WebClient();
             }
+
             if (useReferer)
             {
                 if (pastUrl == string.Empty)
                 {
-                    var pages = list.Where(n => n is Page);
+                    var pages = this.GetUpperRawler<Page>();
 
-                    if (pages.Count() > 0)
-                    {
-                        var prePage = (Page)pages.First();
-                        client.Referer = prePage.GetCurrentUrl();
-                    }
+                    client.Referer = pages?.GetCurrentUrl();
                 }
                 else
                 {

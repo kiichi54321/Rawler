@@ -99,6 +99,7 @@
     <Compile Include="RawlerLib\Extend\MyExtend.cs" />
     <Compile Include="RawlerLib\ObjectLib.cs" />
     <Compile Include="RawlerLib\Pair.cs" />
+    <Compile Include="RawlerLib\StopWatch.cs" />
     <Compile Include="RawlerLib\TagAnalyze.cs" />
     <Compile Include="RawlerLib\TagClass.cs" />
     <Compile Include="RawlerLib\Text.cs" />
@@ -136,6 +137,7 @@
     <Compile Include="Tool\InitTree.cs" />
     <Compile Include="Tool\IO\ContainLineInFile.cs" />
     <Compile Include="Tool\IO\CreateFolder.cs" />
+    <Compile Include="Tool\IO\DirectoryEnumerateFiles.cs" />
     <Compile Include="Tool\IO\FileApendLine.cs" />
     <Compile Include="Tool\IO\GetFileExtension.cs" />
     <Compile Include="Tool\IO\GetFileName.cs" />

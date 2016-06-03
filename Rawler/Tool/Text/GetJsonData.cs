@@ -11,7 +11,7 @@ using RawlerLib.MyExtend;
 
 namespace Rawler.Tool
 {
-    public class GetJsonData : RawlerMultiBase
+    public class GetJsonData : RawlerBase
     {
         #region テンプレ
         /// <summary>
@@ -33,6 +33,13 @@ namespace Rawler.Tool
         }
         #endregion
 
+        JToken CurrentJToken = null;
+
+        public JToken GetCurrentJToken()
+        {
+            return CurrentJToken;
+        }
+
         /// <summary>
         /// このクラスでの実行すること。
         /// </summary>
@@ -41,17 +48,12 @@ namespace Rawler.Tool
         {
             var t = GetText();
             bool flag = false;
-            var json = JObject.Parse(t);
 
+            var json = JObject.Parse(t);
+            
             if (json.Type == JTokenType.Array)
             {
-                dynamic[] array = Codeplex.Data.DynamicJson.Parse(t);
-                List<string> list = new List<string>();
-                foreach (var item in array)
-                {
-                    list.Add(item.ToString());
-                }
-                RunChildrenForArray(runChildren, list);
+ 
             }
             else
             {
@@ -61,11 +63,13 @@ namespace Rawler.Tool
                     {
                         if (json.Property(item).Value.Type == JTokenType.Object)
                         {
-                            json = JObject.Parse(json.Property(item).Value.ToString());
+                            json = json.Property(item).Value as JObject;
+                     //       json =  JObject.Parse(json.Property(item).Value.ToString());
                         }
                         else
                         {
-                            SetText(json.Property(item).Value.ToString());
+                            CurrentJToken = json.Property(item).Value;
+                     //       SetText(json.Property(item).Value.ToString());
                             flag = true;
                         }
                     }
@@ -85,43 +89,7 @@ namespace Rawler.Tool
                 }
                 RunChildren(runChildren);
             }
-          
-            //var t = GetText();
-            //object obj;
-            //Codeplex.Data.DynamicJson data = Codeplex.Data.DynamicJson.Parse(t);
-            //if (data.IsArray)
-            //{
-            //    dynamic[] array = Codeplex.Data.DynamicJson.Parse(t);
-            //    List<string> list = new List<string>();
-            //    foreach (var item in array)
-            //    {
-            //        list.Add(item.ToString());
-            //    }
-            //    RunChildrenForArray(runChildren, list);
-            //}
-            //else
-            //{
-            //    obj = data;
-            //    bool flag = true;
-            //    foreach (var item in this.FieldName.Split('.'))
-            //    {                                    
-            //        try
-            //        {
-            //            var type = obj.GetType();
-            //            PropertyInfo property = type.GetProperty(item);
-            //            obj = property.GetValue(obj, null);
-            //        }
-            //        catch { flag = false; }
-            //    }
-            //    if(flag){
-            //        this.SetText(obj.ToString());
-            //        base.Run(runChildren);
-            //    }
-            //    else
-            //    {
-            //        ReportManage.ErrReport(this, "FieldNameがありません。");
-            //    }
-            //}
+    
         }
 
         public string FieldName { get; set; }
@@ -134,12 +102,51 @@ namespace Rawler.Tool
         {
             get
             {
+                if(CurrentJToken !=null)
+                {
+                    return CurrentJToken.ToString();
+                }
                 return base.Text;
             }
         }
 
     }
 
+    /// <summary>
+    /// 親テキストをJsonArrayとして読み込みます
+    /// </summary>
+    public class ReadJsonArray : RawlerMultiBase
+    {
+        public override void Run(bool runChildren)
+        {
+            List<string> list = new List<string>();
+            JToken json;
+            if(this.Parent is GetJsonData)
+            {
+                json = (this.Parent as GetJsonData).GetCurrentJToken();
+            }
+            else
+            {
+                json = JToken.Parse(GetText());
+            }
+            try
+            {
+                if(json  is JArray)
+                {
+                    foreach (var item in json)
+                    {
+                        list.Add(item.ToString());
+                    }
+                }
+
+            }
+            catch(Exception ex)
+            {
+                ReportManage.ErrReport(this, "GetJsonAarryに失敗しました。文字列:" + GetText());
+            }
+            RunChildrenForArray(runChildren, list);
+        }
+    }
 
 
     public class DataWriteJsonData : RawlerBase,IDataWrite

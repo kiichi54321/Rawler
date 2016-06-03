@@ -38,7 +38,7 @@ namespace Rawler.Tool
             set { maxCount = value; }
         }
 
-        int sleepTime = 10;
+        int sleepTime = 0;
 
         public int SleepSecondTime
         {
@@ -102,6 +102,7 @@ namespace Rawler.Tool
             {
                 if (page != null)
                 {
+                    //始まりがURLと違う場合初期化
                     if (page.GetStartUrl() != baseUrl)
                     {
                         baseUrl = page.GetStartUrl();

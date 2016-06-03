@@ -23,7 +23,7 @@ namespace RawlerView.Form
         FormProperties properties = new  FormProperties();
         public FormProperties Properties { get { return properties; }  }
         public string SettingFileName { get; set; }
-        public string Title { get; set; }
+        public string Title { get; set; } = string.Empty;
 
         public override void Run(bool runChildren)
         {

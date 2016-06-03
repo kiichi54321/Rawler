@@ -144,7 +144,7 @@ namespace Rawler.Tool
                     attribute = RawlerBase.GetText(this.Parent.Text, attributeTree, this);
                 }
             }
-            else
+            else if(this.Attribute !=null)
             {
                 attribute = this.Attribute.Convert(this);
             }

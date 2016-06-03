@@ -28,6 +28,9 @@ namespace Rawler.Tool
 
         ReplaceType replaceType = ReplaceType.Space;
 
+        /// <summary>
+        /// 削除した際、置き換える文字列です。
+        /// </summary>
         public ReplaceType ReplaceType
         {
             get { return replaceType; }
@@ -57,7 +60,7 @@ namespace Rawler.Tool
                         {
                             strBuilder.Append(' ');
                         }
-                        if(ReplaceType == Tool.ReplaceType.Tab)
+                        else if(ReplaceType == Tool.ReplaceType.Tab)
                         {
                             strBuilder.Append('\t');                            
                         }

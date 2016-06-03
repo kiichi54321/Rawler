@@ -15,7 +15,7 @@ namespace Rawler.Tool
         {
             this.Sleep();
             System.Net.Http.HttpClient client = new System.Net.Http.HttpClient(hander, false);
-            
+            client.DefaultRequestHeaders.UserAgent.ParseAdd(this.UserAgent);
             var result = client.GetStringAsync(url);
             result.Wait();
             return result.Result;
@@ -25,16 +25,21 @@ namespace Rawler.Tool
         {
             this.Sleep();
             System.Net.Http.HttpClient client = new System.Net.Http.HttpClient(hander, false);
+            client.DefaultRequestHeaders.UserAgent.ParseAdd(this.UserAgent);
 
             var result = client.GetByteArrayAsync(url);
             result.Wait();
+            
             return result.Result;
         }
+
+
 
         public override string HttpPost(string url, List<KeyValue> vals)
         {
             this.Sleep();
             System.Net.Http.HttpClient client = new System.Net.Http.HttpClient(hander, false);
+            client.DefaultRequestHeaders.UserAgent.ParseAdd(this.UserAgent);
             var r = client.PostAsync(url, new FormUrlEncodedContent(vals.Select(n => new KeyValuePair<string, string>(n.Key, n.Value))));
             r.Wait();
             var r2 = r.Result.Content.ReadAsStringAsync();

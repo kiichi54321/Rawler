@@ -495,13 +495,22 @@ namespace Rawler.Tool
         }
 
         /// <summary>
-        /// Json形式で返す。
+        /// Json形式で返す。(デフォでは、改行なし)
         /// </summary>
         /// <returns></returns>
         public string ToJson()
         {
-           var list = this.GetDataRows().Select(n => n.DataDic.ToDictionary(m => m.Key, m => m.Value.JoinText(","))).ToList();
-           return Newtonsoft.Json.JsonConvert.SerializeObject(list);
+            return ToJson(Newtonsoft.Json.Formatting.None);
+        }
+        /// <summary>
+        /// Json形式で返す。
+        /// </summary>
+        /// <param name="format"></param>
+        /// <returns></returns>
+        public string ToJson(Newtonsoft.Json.Formatting format)
+        {
+            var list = this.GetDataRows().Select(n => n.DataDic.ToDictionary(m => m.Key, m => m.Value.JoinText(","))).ToList();
+            return Newtonsoft.Json.JsonConvert.SerializeObject(list, format);
         }
 
         /// <summary>
@@ -675,7 +684,7 @@ namespace Rawler.Tool
         //    set { useReLogin = value; }
         //}
         /// <summary>
-        /// 汎用性のある　List<Dictionary<string, List<string>>>　形式に変換する。
+        /// 汎用性のある　List　形式に変換する。
         /// </summary>
         /// <returns></returns>
         public List<Dictionary<string, List<string>>> ToList()
