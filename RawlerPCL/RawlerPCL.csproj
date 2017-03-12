@@ -13,7 +13,7 @@
     <DefaultLanguage>ja-JP</DefaultLanguage>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{786C830F-07A1-408B-BD7F-6EE04809D6DB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
-    <TargetFrameworkProfile>Profile111</TargetFrameworkProfile>
+    <TargetFrameworkProfile>Profile7</TargetFrameworkProfile>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -34,11 +34,131 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <!-- A reference to the entire .NET Framework is automatically included -->
+    <Compile Include="Condition\ChangeText.cs" />
+    <Compile Include="Condition\CompareInt.cs" />
+    <Compile Include="Condition\Contains.cs" />
+    <Compile Include="Condition\Equal.cs" />
+    <Compile Include="Condition\HashSet.cs" />
+    <Compile Include="Condition\IsEmpty.cs" />
+    <Compile Include="Condition\Once.cs" />
+    <Compile Include="Condition\RandomRun.cs" />
+    <Compile Include="Condition\Switch.cs" />
+    <Compile Include="Condition\SwitchDateTimeNode.cs" />
+    <Compile Include="Condition\SwitchIntNode.cs" />
+    <Compile Include="Condition\SwitchTextContainsNode.cs" />
+    <Compile Include="Core\IFileBase.cs" />
+    <Compile Include="Core\InitTree.cs" />
+    <Compile Include="Core\IRawler.cs" />
+    <Compile Include="Core\RawlerBase.cs" />
+    <Compile Include="Core\RawlerBatchBase.cs" />
+    <Compile Include="Core\RawlerMultiBase.cs" />
+    <Compile Include="Data\ChangeCurrentDataRow.cs" />
+    <Compile Include="Data\CheckDataRow.cs" />
+    <Compile Include="Data\Data.cs" />
+    <Compile Include="Data\DataRow.cs" />
+    <Compile Include="Data\DataWrite.cs" />
+    <Compile Include="Data\IData.cs" />
+    <Compile Include="Data\NextDataRow.cs" />
+    <Compile Include="Data\ReportCurrentDataRow.cs" />
+    <Compile Include="Data\ReportDataRow2Json.cs" />
+    <Compile Include="Data\TempDataRows.cs" />
+    <Compile Include="Date\DateTime.cs" />
+    <Compile Include="Date\GetDateString.cs" />
+    <Compile Include="Enumeration\GroupBy.cs" />
+    <Compile Include="Enumeration\Iterator.cs" />
+    <Compile Include="Enumeration\Loop.cs" />
+    <Compile Include="Enumeration\Range.cs" />
+    <Compile Include="Enumeration\Stack.cs" />
+    <Compile Include="Html\DefinitionLists.cs" />
+    <Compile Include="Html\GetScriptFunction.cs" />
+    <Compile Include="Html\GetScriptVariable.cs" />
+    <Compile Include="Html\GetTagParameters.cs" />
+    <Compile Include="Html\HTMLextend.cs" />
+    <Compile Include="Html\ImageLink.cs" />
+    <Compile Include="Html\IsUrl.cs" />
+    <Compile Include="Html\Link.cs" />
+    <Compile Include="Html\RemoveHtmlComment.cs" />
+    <Compile Include="Html\TagClear.cs" />
+    <Compile Include="Html\TagExtraction.cs" />
+    <Compile Include="Html\TagSplit.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Query\BasicQuery.cs" />
+    <Compile Include="Query\RawlerQuery.cs" />
+    <Compile Include="RawlerLib\DynamicDictionary.cs" />
+    <Compile Include="RawlerLib\EventStringArgs.cs" />
+    <Compile Include="RawlerLib\Extend\Extend.cs" />
+    <Compile Include="RawlerLib\Extend\MyExtend.cs" />
+    <Compile Include="RawlerLib\Extend\MyExtend2.cs" />
+    <Compile Include="RawlerLib\Io.cs" />
+    <Compile Include="RawlerLib\Jcode.cs" />
+    <Compile Include="RawlerLib\kanaxs-1.0.0.cs" />
+    <Compile Include="RawlerLib\ListDictionary.cs" />
+    <Compile Include="RawlerLib\Pair.cs" />
+    <Compile Include="RawlerLib\StopWatch.cs" />
+    <Compile Include="RawlerLib\TagAnalyze.cs" />
+    <Compile Include="RawlerLib\TagClass.cs" />
+    <Compile Include="RawlerLib\Text.cs" />
+    <Compile Include="RawlerLib\TinySegmenter.cs" />
+    <Compile Include="RawlerLib\TinySegmenterExtend.cs" />
+    <Compile Include="RawlerLib\UIData.cs" />
+    <Compile Include="RawlerLib\UrlEncode.cs" />
+    <Compile Include="RawlerLib\Web.cs" />
+    <Compile Include="RawlerLib\WPF.cs" />
+    <Compile Include="Text\AppendText.cs" />
+    <Compile Include="Text\ClipText.cs" />
+    <Compile Include="Text\ConvertDateTime.cs" />
+    <Compile Include="Text\Document.cs" />
+    <Compile Include="Text\GetJsonData.cs" />
+    <Compile Include="Text\ReadLine.cs" />
+    <Compile Include="Text\RegularExpressions.cs" />
+    <Compile Include="Text\RemoveWordByRegular.cs" />
+    <Compile Include="Text\Replace.cs" />
+    <Compile Include="Text\Split.cs" />
+    <Compile Include="Text\StringFormat.cs" />
+    <Compile Include="Text\StringLength.cs" />
+    <Compile Include="Text\ToCharArray.cs" />
+    <Compile Include="Text\Trim.cs" />
+    <Compile Include="Thread\Concurrent.cs" />
+    <Compile Include="Utility\Counter.cs" />
+    <Compile Include="Utility\FunctionTree.cs" />
+    <Compile Include="Utility\GetObject.cs" />
+    <Compile Include="Utility\GlobalVar.cs" />
+    <Compile Include="Utility\KeyValuePair.cs" />
+    <Compile Include="Utility\KeyValueStore.cs" />
+    <Compile Include="Utility\RandomIntValue.cs" />
+    <Compile Include="Utility\Report.cs" />
+    <Compile Include="Utility\ReportManage.cs" />
+    <Compile Include="Utility\Root.cs" />
+    <Compile Include="Utility\RunXaml.cs" />
+    <Compile Include="Utility\SetTempVar.cs" />
+    <Compile Include="Utility\Shutdown.cs" />
+    <Compile Include="Utility\Sleep.cs" />
+    <Compile Include="Utility\StopWatch.cs" />
+    <Compile Include="Utility\ThrowCatch.cs" />
+    <Compile Include="Web\AddAllInputParameter.cs" />
+    <Compile Include="Web\AddHiddenInputParameter.cs" />
+    <Compile Include="Web\AddInputParameter.cs" />
+    <Compile Include="Web\ConvertAbsolutePath.cs" />
+    <Compile Include="Web\DownLoad.cs" />
+    <Compile Include="Web\GetPageUrl.cs" />
+    <Compile Include="Web\HostFilter.cs" />
+    <Compile Include="Web\HttpClient.cs" />
+    <Compile Include="Web\NextPage.cs" />
+    <Compile Include="Web\Page.cs" />
+    <Compile Include="Web\PageNoDownLoad.cs" />
+    <Compile Include="Web\PageOnce.cs" />
+    <Compile Include="Web\PageParent.cs" />
+    <Compile Include="Web\PageReload.cs" />
+    <Compile Include="Web\UrlEncode.cs" />
+    <Compile Include="Web\UrlParameter.cs" />
+    <Compile Include="Web\WebClient.cs" />
+    <Compile Include="Web\WebForm.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Class1.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
+    <None Include="project.json" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="IO\" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

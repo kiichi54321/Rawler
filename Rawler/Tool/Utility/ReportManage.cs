@@ -48,10 +48,22 @@ namespace Rawler.Tool
             }
         }
     }
+    /// <summary>
+    /// Reportを管理するクラス
+    /// </summary>
     public static class ReportManage
     {
+        /// <summary>
+        /// Errが起きた時のEventです。
+        /// </summary>
         public static event EventHandler<ReportEvnetArgs> ErrReportEvent;
+        /// <summary>
+        /// Reportが起きた時のEventです。
+        /// </summary>
         public static event EventHandler<ReportEvnetArgs> ReportEvnet;
+        /// <summary>
+        /// Rowが変更が起きた時のイベント
+        /// </summary>
         public static event EventHandler<EventArgs> ChangeRowCount;
         private static ObservableCollection<ReportEvnetArgs> reportList = new ObservableCollection<ReportEvnetArgs>();
 
@@ -67,6 +79,9 @@ namespace Rawler.Tool
 
         private static bool visbleTopObjectComment = false;
 
+        /// <summary>
+        /// Topレベルのコメントを参照する。
+        /// </summary>
         public static bool VisbleTopObjectComment
         {
             get { return visbleTopObjectComment; }
@@ -130,7 +145,11 @@ namespace Rawler.Tool
             }
         }
 
-
+        /// <summary>
+        /// Errをレポートする。
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="err"></param>
         public static void ErrReport(RawlerBase sender, string err)
         {
             ReportEvnetArgs args;
@@ -143,10 +162,7 @@ namespace Rawler.Tool
                 args = new ReportEvnetArgs(sender, GetTopComment(sender) + "ERR:" + err, true, true);
             }
             AddReportEventArgs(sender, args);
-            if (ErrReportEvent != null)
-            {
-                ErrReportEvent(sender, args);
-            }
+            ErrReportEvent?.Invoke(sender, args);
         }
 
         /// <summary>
@@ -160,6 +176,11 @@ namespace Rawler.Tool
             ErrReport(rawler,"上流に「"+ t.Name+"」が見つかりません");
         }
 
+        /// <summary>
+        /// プロパティが空の時のエラー
+        /// </summary>
+        /// <param name="rawler"></param>
+        /// <param name="propertyName"></param>
         public static void ErrEmptyPropertyName(RawlerBase rawler, string propertyName)
         {
             ErrReport(rawler, "プロパティ「"+propertyName+"」の値が空です。");
@@ -185,10 +206,7 @@ namespace Rawler.Tool
             }
             else
             {
-                if (ReportEvnet != null)
-                {
-                    ReportEvnet(sender, args);
-                }
+                ReportEvnet?.Invoke(sender, args);
             }
         }
 
@@ -203,10 +221,7 @@ namespace Rawler.Tool
             }
             else
             {
-                if (ReportEvnet != null)
-                {
-                    ReportEvnet(sender, args);
-                }
+                ReportEvnet?.Invoke(sender, args);
             }
         }
 
@@ -221,10 +236,7 @@ namespace Rawler.Tool
             }
             else
             {
-                if (ReportEvnet != null)
-                {
-                    ReportEvnet(sender, args);
-                }
+                ReportEvnet?.Invoke(sender, args);
             }
         }
 

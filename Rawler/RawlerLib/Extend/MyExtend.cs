@@ -189,43 +189,6 @@ namespace RawlerLib.MyExtend
     }
 
 
-    //public static class Web
-    //{
-    //    public static string DownloadHtml(System.Net.WebClient wc,string url)
-    //    {
-    //        var data = wc.DownloadData(url);
-    //        var text_utf8 = System.Text.Encoding.UTF8.GetString(data);
-
-    //        var p1 = "<meta http-equiv=\"content-type\" content=\"text/html; charset=(.*)\">";
-    //        var p2 = "<meta charset=\"(.*)\">";
-    //        var encoding = System.Text.Encoding.UTF8;
-    //        try
-    //        {
-    //            var head = text_utf8.Substring(0, 600);
-    //            var m1 = Regex.Match(head, p1, RegexOptions.IgnoreCase);
-    //            if (m1.Success)
-    //            {
-    //                encoding = System.Text.Encoding.GetEncoding(m1.Groups[1].Value);
-    //                return encoding.GetString(data);
-    //            }
-    //            else
-    //            {
-    //                var m2 = Regex.Match(head, p2, RegexOptions.IgnoreCase);
-    //                if (m2.Success)
-    //                {
-    //                    encoding = System.Text.Encoding.GetEncoding(m2.Groups[1].Value);
-    //                    return encoding.GetString(data);
-    //                }
-    //            }
-    //        }
-    //        catch (Exception e)
-    //        {
-
-    //        }
-    //        return text_utf8;
-    //    }
-    //}
-
     public static class DictionaryExtensions
     {
         /// <summary>

@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Rawler.Tool;
+using Rawler.Core;
 
-namespace Rawler.Tool
+namespace Rawler
 {
     public class RawlerMultiBase : RawlerBase,ILoopEnd
     {

@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using RawlerLib.MyExtend;
 
-namespace Rawler.Tool
+namespace Rawler
 {
     /// <summary>
     /// 一時的に蓄積する機能を提供する基本クラスです。

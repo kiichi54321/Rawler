@@ -6,7 +6,7 @@ using System.Windows.Markup;
 using System.Xml;
 using System.Xml.Linq;
 
-namespace Rawler.Tool
+namespace Rawler
 {
     /// <summary>
     /// Rawlerクラスのインタフェース

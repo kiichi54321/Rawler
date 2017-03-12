@@ -1673,6 +1673,24 @@ namespace TinySegmenterDotNet
             //    Replace = string.Empty;
             //}
 
+            static System.Collections.Concurrent.ConcurrentDictionary<string, WordDicData> dic = new System.Collections.Concurrent.ConcurrentDictionary<string, WordDicData>();
+            public static WordDicData Get(string text)
+            {
+                if(dic.ContainsKey(text))
+                {
+                    return dic[text];
+                }
+                else
+                {
+                    var w = new WordDicData() { Word = text, Length = text.Length, Replace = string.Empty };
+                    dic.TryAdd(text,w );
+                    return w;
+                }
+            }
+
+
+
+
             public static WordDicData Create(string text)
             {
                 var dd = new WordDicData();
@@ -1683,6 +1701,9 @@ namespace TinySegmenterDotNet
                 dd.Length = dd.Word.Length;
                 return dd;
             }
+
+
+
             public static WordDicData Create(string word,string replace)
             {
                 var dd = new WordDicData();
@@ -1731,54 +1752,62 @@ namespace TinySegmenterDotNet
             wordDic = list.GroupBy(n => n.Substring(0, 2)).Select(n => new { Key = n.Key, List = n.Select(m =>WordDicData.Create(m)).OrderByDescending(m => m.Length).ThenByDescending(m=>m.Replace.Length).ToList() }).ToDictionary(n => n.Key, n => n.List);
         }
 
-        private WordDicData SearchDic(string head, string text)
+        IEnumerable<char> GetChar(string text,int postion)
+        {
+            for (int i = postion; i < text.Length; i++)
+            {
+                yield return text[i];
+            }
+        }
+
+        private WordDicData SearchDic(string head, string text,int postion)
         {
             if (wordDic == null) CreateDic();
 
 
-            char firstChar = text.First();
+            char firstChar = text[postion];
             if(firstChar == ' ')
             {
                 return new WordDicData() { Word = " ", Replace = string.Empty, Length = 1 };
             }
-            if (endChar.Contains(firstChar)) return WordDicData.Create(firstChar.ToString());
+            if (endChar.Contains(firstChar)) return WordDicData.Get(firstChar.ToString());
 
             System.Text.StringBuilder sb = new System.Text.StringBuilder();
             //カタカナ連続
-            foreach (var item in text)
+            foreach (var item in  GetChar(text,postion))
             {
                 if (katakana.Contains(item)) sb.Append(item);
                 else break;
             }
-            if (sb.Length > 0) return WordDicData.Create(sb.ToString());
+            if (sb.Length > 0) return WordDicData.Get(sb.ToString());
 
 
             //数字の連続判別
-            foreach (var item in text)
+            foreach (var item in GetChar(text, postion))
             {
                 if (numChar.Contains(item)) sb.Append(item);
                 else break;
             }
             if (sb.Length > 0) return WordDicData.Create(sb.ToString());
             //アルファベットの連続
-            foreach (var item in text)
+            foreach (var item in GetChar(text, postion))
             {
                 if (alfabet.Contains(item)) sb.Append(item);
                 else break;
             }
-            if (sb.Length > 0) return WordDicData.Create(sb.ToString());
+            if (sb.Length > 0) return WordDicData.Get(sb.ToString());
 
             //辞書を使う
-            if (wordDic.ContainsKey(head))
-            {
-                var worddata = wordDic[head].DefaultIfEmpty(new WordDicData()).FirstOrDefault(n => n.EqualsText(text));
-                if (worddata.IsEmpty() == false) return worddata;
-            }
+            //if (wordDic.ContainsKey(head))
+            //{
+            //    var worddata = wordDic[head].DefaultIfEmpty(new WordDicData()).FirstOrDefault(n => n.EqualsText(text));
+            //    if (worddata.IsEmpty() == false) return worddata;
+            //}
 
 
             //括弧閉じ
             int カッコ数 = 0;
-            foreach (var item in text)
+            foreach (var item in GetChar(text, postion))
             {
                 if (startカッコ.Contains(item))
                 {
@@ -2015,7 +2044,7 @@ namespace TinySegmenterDotNet
                 WordDicData worddicdata = WordDicData.GetEmpty(); 
                 if (postion + 2 < input.Length)
                 {
-                    worddicdata = SearchDic(input.Substring(postion, 2), input.Substring(postion));
+                    worddicdata = SearchDic(input.Substring(postion, 2),input,postion);
                 }
                 if (worddicdata.IsEmpty()==false)
                 {

@@ -78,10 +78,6 @@
     <Compile Include="UnitTest2.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\MeCabDotNet\MecabDotNet.csproj">
-      <Project>{A8364E94-8B3F-4C80-9CBF-3B7DE86FC60E}</Project>
-      <Name>MecabDotNet</Name>
-    </ProjectReference>
     <ProjectReference Include="..\RawlerTool\RawlerTool.csproj">
       <Project>{2E85E164-1D2D-4125-95F9-3ABE2BE82968}</Project>
       <Name>RawlerTool</Name>

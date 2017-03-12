@@ -465,6 +465,11 @@ namespace Rawler.Tool
             return new List<string>(list.Distinct());
         }
 
+        public void ClearRows()
+        {
+            dataDic.Clear();
+            dataList.Clear();
+        }
 
         public TableData CreateTable()
         {
@@ -571,7 +576,7 @@ namespace Rawler.Tool
                             {
                                 if (list.Count > i)
                                 {
-                                    str.Append(list[i].Replace("\n", "").Replace("\r", "").Replace("\t", "") + "\t");
+                                    str.Append(list[i]?.Replace("\n", "").Replace("\r", "").Replace("\t", "") + "\t");
                                 }
                                 else
                                 {

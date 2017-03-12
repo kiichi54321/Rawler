@@ -1,0 +1,134 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+    <HasSharedItems>true</HasSharedItems>
+    <SharedGUID>a57db5e5-1dcf-45c9-8487-35d42173e715</SharedGUID>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration">
+    <Import_RootNamespace>RawlerShared</Import_RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)Condition\ChangeText.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Condition\CompareInt.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Condition\Contains.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Condition\Equal.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Condition\HashSet.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Condition\IsEmpty.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Condition\Once.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Condition\RandomRun.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Condition\Switch.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Condition\SwitchDateTimeNode.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Condition\SwitchIntNode.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Condition\SwitchTextContainsNode.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Core\IFileBase.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Core\InitTree.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Core\IRawler.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Core\RawlerBase.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Core\RawlerBatchBase.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Core\RawlerMultiBase.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Data\ChangeCurrentDataRow.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Data\CheckDataRow.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Data\Data.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Data\DataRow.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Data\DataWrite.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Data\IData.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Data\NextDataRow.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Data\ReportCurrentDataRow.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Data\ReportDataRow2Json.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Data\TempDataRows.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Date\DateTime.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Date\GetDateString.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Enumeration\GroupBy.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Enumeration\Iterator.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Enumeration\Loop.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Enumeration\Range.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Enumeration\Stack.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Html\DefinitionLists.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Html\GetScriptFunction.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Html\GetScriptVariable.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Html\GetTagParameters.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Html\HTMLextend.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Html\ImageLink.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Html\IsUrl.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Html\Link.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Html\RemoveHtmlComment.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Html\TagClear.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Html\TagExtraction.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Html\TagSplit.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Query\BasicQuery.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Query\RawlerQuery.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)RawlerLib\DynamicDictionary.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)RawlerLib\EventStringArgs.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)RawlerLib\Extend\Extend.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)RawlerLib\Extend\MyExtend.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)RawlerLib\Extend\MyExtend2.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)RawlerLib\Extend\RawlerExtend.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)RawlerLib\Io.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)RawlerLib\Jcode.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)RawlerLib\kanaxs-1.0.0.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)RawlerLib\ListDictionary.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)RawlerLib\Pair.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)RawlerLib\StopWatch.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)RawlerLib\TagAnalyze.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)RawlerLib\TagClass.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)RawlerLib\Text.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)RawlerLib\TinySegmenter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)RawlerLib\TinySegmenterExtend.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)RawlerLib\UIData.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)RawlerLib\UrlEncode.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)RawlerLib\Web.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Text\AppendText.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Text\ClipText.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Text\ConvertDateTime.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Text\Document.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Text\GetJsonData.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Text\ReadLine.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Text\RegularExpressions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Text\RemoveWordByRegular.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Text\Replace.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Text\Split.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Text\StringFormat.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Text\StringLength.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Text\ToCharArray.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Text\Trim.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Thread\Concurrent.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Utility\Counter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Utility\FunctionTree.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Utility\GetObject.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Utility\GlobalVar.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Utility\KeyValuePair.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Utility\KeyValueStore.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Utility\RandomIntValue.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Utility\Report.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Utility\ReportManage.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Utility\Root.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Utility\RunXaml.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Utility\SetTempVar.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Utility\Shutdown.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Utility\Sleep.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Utility\StopWatch.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Utility\ThrowCatch.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Web\AddAllInputParameter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Web\AddHiddenInputParameter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Web\AddInputParameter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Web\ConvertAbsolutePath.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Web\DownLoad.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Web\GetPageUrl.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Web\HostFilter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Web\HttpClient.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Web\NextPage.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Web\Page.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Web\PageNoDownLoad.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Web\PageOnce.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Web\PageParent.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Web\PageReload.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Web\UrlEncode.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Web\UrlParameter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Web\WebClient.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Web\WebForm.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="$(MSBuildThisFileDirectory)Script\" />
+  </ItemGroup>
+</Project>

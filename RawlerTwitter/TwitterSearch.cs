@@ -52,7 +52,8 @@ namespace RawlerTwitter
         public string Language { get; set; }
         public string GeoCode { get; set; }
         public string Locale { get; set; }
- 
+
+        public int MaxLoopCount { get; set; } = int.MaxValue;
         public string SearchWord { get; set; }
 
         protected void ReadSearch()
@@ -178,6 +179,7 @@ namespace RawlerTwitter
                         flag = false;
                     }
                 }
+                if (MaxLoopCount > loop) break;
 
                 if (SleepSecond > 0)
                 {

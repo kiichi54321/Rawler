@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace Rawler.Tool.IO
 {
+    /// <summary>
+    /// 指定のディレクトリに取得します。
+    /// </summary>
     public class DirectoryEnumerateFiles:RawlerMultiBase
     {
         public string DirectoryName { get; set; }

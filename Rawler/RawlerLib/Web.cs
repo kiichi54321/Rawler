@@ -429,7 +429,7 @@ namespace RawlerLib
                 link.Tag = match.Value;
                 link.TagWithoutUrl = match.Value.Replace(match.Groups[2].Value, string.Empty);
                 //HTTP‚ª“ü‚Á‚Ä‚¢‚é‚Æ‚«
-                if (regexHttp.IsMatch(link.Url) == false && url != null)
+                if (regexHttp.IsMatch(link.Url) == false && string.IsNullOrEmpty( url) ==false)
                 {
                     string[] tmpUrl = url.Split('?');
                     string[] tmpUrl2 = link.Url.Split('?');

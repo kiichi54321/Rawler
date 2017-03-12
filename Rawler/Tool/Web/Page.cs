@@ -228,6 +228,8 @@ namespace Rawler.Tool
             RunChildren(true);
         }
 
+        
+
         protected bool ReadPage(string url)
         {
             var client = GetWebClient();

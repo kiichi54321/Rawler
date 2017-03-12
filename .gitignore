@@ -31,6 +31,7 @@ obj/
 [Rr]elease*/
 Ankh.NoLoad
 bin/Release
+.vs/
 
 #MonoDevelop
 *.pidb
@@ -69,6 +70,7 @@ Test
 UpgradeLog.XML
 _UpgradeReport_Files/
 RawlerSample/
+NuGet.Packager1/
 
 *.nupkg
 
@@ -77,3 +79,5 @@ RawlerSample/
 *.psess
 
 Nuget.exe
+/RawlerSampleXamarin/RawlerSampleXamarin.iOS
+vssver2.scc

@@ -48,6 +48,7 @@ namespace RawlerTool
         {
             foldingStrategy = new XmlFoldingStrategy();
             textEditor.TextArea.IndentationStrategy = new ICSharpCode.AvalonEdit.Indentation.DefaultIndentationStrategy();
+            foldingManager = FoldingManager.Install(textEditor.TextArea);
 
             if (foldingStrategy != null)
             {
