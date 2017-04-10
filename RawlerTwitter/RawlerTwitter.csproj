@@ -46,17 +46,11 @@
     <Reference Include="Accessibility">
       <EmbedInteropTypes>True</EmbedInteropTypes>
     </Reference>
-    <Reference Include="CoreTweet, Version=0.5.3.40351, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\CoreTweet.0.5.3\lib\net40\CoreTweet.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="CoreTweet, Version=0.7.2.352, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\CoreTweet.0.7.2.352\lib\net45\CoreTweet.dll</HintPath>
     </Reference>
-    <Reference Include="CoreTweet.Streaming.Reactive, Version=0.5.3.40352, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\CoreTweet.Streaming.Reactive.0.5.3\lib\net40\CoreTweet.Streaming.Reactive.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Newtonsoft.Json, Version=7.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.7.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.10.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
@@ -104,7 +98,6 @@
     <Compile Include="TwitterList.cs" />
     <Compile Include="TwitterLogin.cs" />
     <Compile Include="TwitterSearch.cs" />
-    <Compile Include="TwitterStreaming.cs" />
     <Compile Include="UserLookup.cs" />
     <Compile Include="UserState.cs" />
   </ItemGroup>

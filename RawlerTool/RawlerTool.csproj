@@ -66,11 +66,10 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup>
-    <ManifestCertificateThumbprint>4A091E60F8211897F44637D303C5B7F66A2411DA</ManifestCertificateThumbprint>
+    <ManifestCertificateThumbprint>A59C005E9F13971E7391FBB7ACD69596F0B6A0B6</ManifestCertificateThumbprint>
   </PropertyGroup>
   <PropertyGroup>
-    <ManifestKeyFile>
-    </ManifestKeyFile>
+    <ManifestKeyFile>RawlerTool_2_TemporaryKey.pfx</ManifestKeyFile>
   </PropertyGroup>
   <PropertyGroup>
     <GenerateManifests>true</GenerateManifests>
@@ -85,21 +84,15 @@
     <TargetZone>Internet</TargetZone>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="CoreTweet, Version=0.5.3.40351, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\CoreTweet.0.5.3\lib\net45\CoreTweet.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="CoreTweet.Streaming.Reactive, Version=0.5.3.40352, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\CoreTweet.Streaming.Reactive.0.5.3\lib\net40\CoreTweet.Streaming.Reactive.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="CoreTweet, Version=0.7.2.352, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\CoreTweet.0.7.2.352\lib\net45\CoreTweet.dll</HintPath>
     </Reference>
     <Reference Include="ICSharpCode.AvalonEdit, Version=5.0.1.0, Culture=neutral, PublicKeyToken=9cc39be672370310, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\AvalonEdit.5.0.2\lib\Net40\ICSharpCode.AvalonEdit.dll</HintPath>
     </Reference>
-    <Reference Include="Newtonsoft.Json, Version=7.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.7.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.10.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
@@ -226,6 +219,7 @@
     </None>
     <AppDesigner Include="Properties\" />
     <None Include="RawlerTool_1_TemporaryKey.pfx" />
+    <None Include="RawlerTool_2_TemporaryKey.pfx" />
     <None Include="RawlerTool_TemporaryKey.pfx" />
   </ItemGroup>
   <ItemGroup>
@@ -235,10 +229,6 @@
     <ProjectReference Include="..\RawlerParallel\RawlerParallel.csproj">
       <Project>{25903e89-5d95-4531-a75d-47ed72e6bb2e}</Project>
       <Name>RawlerParallel</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\RawlerPhantom\RawlerPhantom.csproj">
-      <Project>{73534035-0bee-4c84-8409-f5b173999044}</Project>
-      <Name>RawlerPhantom</Name>
     </ProjectReference>
     <ProjectReference Include="..\RawlerTwitter\RawlerTwitter.csproj">
       <Project>{22251104-bc73-4fe6-a0e7-c63ecb6522df}</Project>
@@ -275,8 +265,7 @@
     </BootstrapperPackage>
     <BootstrapperPackage Include="Microsoft.Windows.Installer.4.5">
       <Visible>False</Visible>
-      <ProductName>Windows インストーラー 4.5
-</ProductName>
+      <ProductName>Windows インストーラー 4.5</ProductName>
       <Install>true</Install>
     </BootstrapperPackage>
   </ItemGroup>

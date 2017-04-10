@@ -467,24 +467,28 @@ namespace Rawler.Tool
             }
         }
 
+        static string GetBlockText(StrBlock[] list,RawlerBase rawler)
+        {
+            if (list.Length == 1)
+            {
+                return list[0].GetText(rawler);
+            }
+            else
+            {
+                StringBuilder sb = new StringBuilder();
+                foreach (var item in list)
+                {
+                    sb.Append(item.GetText(rawler));
+                }
+                return sb.ToString();
+            }
+        }
+
         static string GetConvertStr(string text, RawlerBase rawler)
         {
             if (keyDic.ContainsKey(text))
             {
-                StrBlock[] l = keyDic[text];
-                if (l.Length == 1)
-                {
-                    return l[0].GetText(rawler);
-                }
-                else
-                {
-                    StringBuilder sb1 = new StringBuilder();
-                    foreach (var item in l)
-                    {
-                        sb1.Append(item.GetText(rawler));
-                    }
-                    return sb1.ToString();
-                }
+                return GetBlockText(keyDic[text], rawler);
             }
             var text2 = text.Replace("[[", "&(").Replace("]]", "&)");
             // System.Text.RegularExpressions.Regex r = new System.Text.RegularExpressions.Regex(@"\[\w*\]");
@@ -496,7 +500,7 @@ namespace Rawler.Tool
 
                 if (item.Index != postion)
                 {
-                    blockList.Add(new StrBlock() { Text = text2.Substring(postion, item.Index - postion) });
+                    blockList.Add(new StrBlock() { Text = text2.Substring(postion, item.Index - postion).Replace("&(","[").Replace("&)","]") });
                 }
                 postion = item.Index + item.Value.Length;
 
@@ -512,7 +516,7 @@ namespace Rawler.Tool
             }
             if (postion < text2.Length)
             {
-                blockList.Add(new StrBlock() { Text = text2.Substring(postion, text2.Length - postion) });
+                blockList.Add(new StrBlock() { Text = text2.Substring(postion, text2.Length - postion).Replace("&(", "[").Replace("&)", "]") });
             }
 
             if (keyDic.ContainsKey(text))
@@ -523,12 +527,8 @@ namespace Rawler.Tool
             {
                 keyDic.Add(text, blockList.ToArray());
             }
-            StringBuilder sb = new StringBuilder();
-            foreach (var item in blockList)
-            {
-                sb.Append(item.GetText(rawler));
-            }
-            return sb.ToString();
+            return GetBlockText(keyDic[text], rawler);
+
         }
         
     
