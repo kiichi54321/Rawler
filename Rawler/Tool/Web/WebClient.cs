@@ -116,6 +116,22 @@ namespace Rawler.Tool
             return HttpGet(url, encoder);
         }
 
+        /// <summary>
+        /// 対象URLを読み込みます
+        /// </summary>
+        /// <param name="url"></param>
+        /// <param name="vals"></param>
+        /// <returns></returns>
+        public string HttpGet(string url, List<KeyValue> vals)
+        {
+            Sleep();
+            if( vals.Any())
+            {
+                url = url + "?" + vals.Select(n => $"{Uri.EscapeUriString(n.Key)}={Uri.EscapeUriString(n.Value)}").JoinText("&");
+            }
+            return HttpGet(url);
+        }
+
 
         private int count = 0;
         private int tryCount = 3;

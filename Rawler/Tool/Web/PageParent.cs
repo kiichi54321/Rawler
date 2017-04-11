@@ -17,6 +17,11 @@ namespace Rawler.Tool
         public string TargetName { get; set; }
 
         /// <summary>
+        /// スキップする数。
+        /// </summary>
+        public int Skip { get; set; } = 0;
+
+        /// <summary>
         /// Text
         /// </summary>
         public override string Text
@@ -24,6 +29,7 @@ namespace Rawler.Tool
             get
             {
                 var pages = this.GetAncestorRawler().Where(n => n is Page);
+                pages = pages.Skip(Skip);
                 if (pages.Count() > 0)
                 {
                     var targetName = TargetName.Convert(this);

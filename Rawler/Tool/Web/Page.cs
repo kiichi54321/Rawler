@@ -36,6 +36,9 @@ namespace Rawler.Tool
 
         protected string currentUrl = string.Empty;
 
+        public List<RawlerBase> BeforeTrees { get; set; } = new List<RawlerBase>();
+
+
         //現在読み込んでいるURLを取得します。
         public string GetCurrentUrl()
         {
@@ -234,23 +237,27 @@ namespace Rawler.Tool
         {
             var client = GetWebClient();
 
+            parameterList.Clear();
+            httpHeaderList.Clear();
+            if (BeforeTrees.Any())
+            {
+                foreach (var item in BeforeTrees)
+                {
+                    RawlerBase.GetText(GetText(), item, this);
+                }
+            }
+            if(InputParameterTree != null)
+            {
+                RawlerBase.GetText(GetText(), InputParameterTree, this);
+            }
+
             if (MethodType == Tool.MethodType.GET)
             {
-                this.text = client.HttpGet(url);
+                this.text = client.HttpGet(url,parameterList,httpHeaderList);
             }
             else if (MethodType == Tool.MethodType.POST)
             {
-                parameterDic.Clear();
-                if (InputParameterTree != null)
-                {                 
-                    RawlerBase.GetText(GetText(), InputParameterTree, this);
-                }
-                List<KeyValue> list = new List<KeyValue>();
-                foreach (var item in parameterDic)
-                {
-                    list.Add(new KeyValue() { Key = item.Key, Value = item.Value });
-                }
-                this.text = client.HttpPost(url, list);
+                this.text = client.HttpPost(url, parameterList,httpHeaderList);
             }
 
             this.currentUrl = url;
@@ -312,8 +319,7 @@ namespace Rawler.Tool
         }
 
         public RawlerBase InputParameterTree { get; set; }
-
-        protected List<KeyValue> parameterDic = new List<KeyValue>();
+        protected List<KeyValue> parameterList = new List<KeyValue>();
 
         /// <summary>
         /// formのinputの指定。加えるだけ
@@ -322,8 +328,21 @@ namespace Rawler.Tool
         /// <param name="value"></param>
         public void AddParameter(string key, string value)
         {
-            parameterDic.Add(new KeyValue() { Key = key, Value = value });
+            parameterList.Add(new KeyValue() { Key = key, Value = value });
         }
+
+        protected List<KeyValue> httpHeaderList = new List<KeyValue>();
+
+        /// <summary>
+        /// formのinputの指定。加えるだけ
+        /// </summary>
+        /// <param name="key"></param>
+        /// <param name="value"></param>
+        public void AddHttpHeader(string key, string value)
+        {
+            httpHeaderList.Add(new KeyValue() { Key = key, Value = value });
+        }
+
 
         /// <summary>
         /// formのinputの指定。加えるだけ置き換える。
@@ -332,14 +351,14 @@ namespace Rawler.Tool
         /// <param name="value"></param>
         public void ReplaceParameter(string key, string value)
         {
-            var list = parameterDic.Where(n => n.Key == key);
+            var list = parameterList.Where(n => n.Key == key);
             if (list.Any())
             {
                 list.First().SetValue(value);
             }
             else
             {
-                parameterDic.Add(new KeyValue(key, value));
+                parameterList.Add(new KeyValue(key, value));
             }
         }
 
@@ -351,15 +370,17 @@ namespace Rawler.Tool
             set { useReferer = value; }
         }
 
-        public WebClient GetWebClient()
+        public HttpHeaders HttpHeaders { get; set; }
+
+        public HttpClient GetWebClient()
         {
-            WebClient client = this.GetUpperRawler<WebClient>();
+            HttpClient client = this.GetUpperRawler<HttpClient>();
 
             if(client == null)
             {
-                ReportManage.ErrUpperNotFound<WebClient>(this);
-                ReportManage.ErrReport(this, "新しいWebClientを作成します");
-                client = new WebClient();
+                ReportManage.ErrUpperNotFound<HttpClient>(this);
+                ReportManage.ErrReport(this, "新しいHttpClientを作成します");
+                client = new HttpClient();
             }
 
             if (useReferer)
@@ -388,6 +409,9 @@ namespace Rawler.Tool
             {
                 client.Encoding = encoding;
             }
+
+            client.HttpHeaders = HttpHeaders;
+
             return client;
         }
         private MethodType methodType = MethodType.GET;

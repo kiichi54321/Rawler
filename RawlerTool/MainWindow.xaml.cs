@@ -74,7 +74,7 @@ namespace RawlerTool
         }
 
 
-        void ReportManage_ReportEvnet(object sender, ReportEvnetArgs e)
+        async void ReportManage_ReportEvnet(object sender, ReportEvnetArgs e)
         {
             if (e.Visible)
             {
@@ -83,21 +83,21 @@ namespace RawlerTool
                 {
                     txt += "\n";
                 }
-                AddMessage(txt);
+                await AddMessage(txt);
             }
             //if (e.Message.Contains("NextDataRow"))
             //{
             //    AddRowCount();
             //}
         }
-        void ReportManage_ErrReportEvent(object sender, ReportEvnetArgs e)
+        async void ReportManage_ErrReportEvent(object sender, ReportEvnetArgs e)
         {
             string txt = e.DateTime.ToShortTimeString() + "\t" + e.Message;
             if (e.ReturnCode)
             {
                 txt += "\n";
             }
-            AddMessage(txt);
+            await AddMessage(txt);
         }
 
         void ReportManage_ChangeRowCount(object sender, EventArgs e)
@@ -131,24 +131,9 @@ namespace RawlerTool
         }
 
      //   ActionBlock<string> messageActionBlock;
-        void AddMessage(string text)
+        async Task AddMessage(string text)
         {
-            //if(messageActionBlock == null)
-            //{
-            //    messageActionBlock = new ActionBlock<string>((n)=>
-            //    {
-            //        try
-            //        {
-            //            textBox2.AppendText(text);
-            //        }
-            //        catch (Exception e)
-            //        {
-            //            textBox2.Text = text;
-            //        }
-            //    }, new ExecutionDataflowBlockOptions() { TaskScheduler = UISyncContext });
-            //}
-            //messageActionBlock.SendAsync(text).Wait();
-            Task reportProgressTask = Task.Factory.StartNew(() =>
+            await Task.Factory.StartNew(() =>
             {
                 try
                 {
@@ -162,7 +147,6 @@ namespace RawlerTool
                       CancellationToken.None,
                       TaskCreationOptions.None,
                       UISyncContext);
-            reportProgressTask.Wait();
         }
         RawlerBase rawler = null;
         bool isBusy = false;
@@ -239,12 +223,12 @@ namespace RawlerTool
         private bool pause = false;
         private DateTime startDate;
 
-        private void StopWatch()
+        private async void StopWatch()
         {
             if (startDate != null)
             {
                 var time = DateTime.Now - startDate;
-                AddMessage("経過時間："+time.ToString());
+                await AddMessage("経過時間："+time.ToString());
             }
             MessageBox.Show("Complete");
         }

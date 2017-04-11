@@ -89,6 +89,7 @@ namespace Rawler.Tool
             set { preTree = value; }
         }
 
+
         
         public static string GetText(string text, RawlerBase rawler)
         {
