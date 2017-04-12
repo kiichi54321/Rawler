@@ -90,11 +90,11 @@ namespace Rawler.Tool
         {
             var page = GetPage();
             
-            var u = GetText().Split('#');
+            var u = GetText().Replace("&#","&&&&").Split('#');
             string url = string.Empty;
             if (u.Length > 0)
             {
-                url = u[0];
+                url = u[0].Replace("&&&&","&#");
             }
 
 

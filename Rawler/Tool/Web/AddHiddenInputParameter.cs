@@ -37,13 +37,13 @@ namespace Rawler.Tool
             System.Text.RegularExpressions.Regex r = new System.Text.RegularExpressions.Regex("<input [^>]*>");
             System.Text.RegularExpressions.Regex r2 = new System.Text.RegularExpressions.Regex(@"(\w)*\s*=\s*"+"\"([^\"]*)\"");
 
-            var p = this.GetAncestorRawler().OfType<Page>();
-            if (p.Any() == false)
+            var page = (IInputParameter)this.GetUpperInterface<IInputParameter>();
+            if (page == null)
             {
-                ReportManage.ErrReport(this, "上流にPageがありません");
+                ReportManage.ErrUpperNotFound<IInputParameter>(this);
                 return;
             }
-            var page = p.First();
+
             List<KeyValue> list = new List<KeyValue>();
             foreach (System.Text.RegularExpressions.Match item in r.Matches(GetText()))
             {
@@ -64,12 +64,16 @@ namespace Rawler.Tool
         private Dictionary<string, string> GetParameter(string input)
         {
             Dictionary<string, string> dic = new Dictionary<string, string>();
+            //TODO:正規表現がおかしい data-name-XXXといったパターンを正確に認識できない。            
             System.Text.RegularExpressions.Regex r2 = new System.Text.RegularExpressions.Regex(@"(\w*)\s*=\s*" + "\"([^\"]*)\"");
             foreach (System.Text.RegularExpressions.Match item in r2.Matches(input))
             {
                 string key = item.Groups[1].Value;
                 string val = item.Groups[2].Value;
-                dic.Add(key, val);
+                if (dic.ContainsKey(key) == false)
+                {
+                    dic.Add(key, val);
+                }
             }
             return dic;
         }

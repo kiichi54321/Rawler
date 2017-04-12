@@ -8,7 +8,7 @@ namespace Rawler.Tool
 {
     [ContentProperty("Children")]
     [Serializable]
-    public class Page : RawlerBase
+    public class Page : RawlerBase, IInputParameter
     {
         public Page()
             : base()
@@ -36,7 +36,7 @@ namespace Rawler.Tool
 
         protected string currentUrl = string.Empty;
 
-        public List<RawlerBase> BeforeTrees { get; set; } = new List<RawlerBase>();
+        public RawlerCollection BeforeTrees { get; set; } = new RawlerCollection();
 
 
         //現在読み込んでいるURLを取得します。
@@ -149,11 +149,11 @@ namespace Rawler.Tool
 
         public void PushUrl(string url)
         {
-
-            var u = url.Split('#');
+            var tmp = url.Replace("&#", "&&&&");
+            var u = tmp.Split('#');
             if (u.Length > 0)
             {
-                url = u[0];
+                url = u[0].Replace("&&&&","&#");
             }
             if (oncePageLoad)
             {

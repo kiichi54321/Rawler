@@ -36,45 +36,45 @@ namespace Rawler.Tool
         /// <param name="runChildren"></param>
         public override void Run(bool runChildren)
         {
-            var list = this.GetAncestorRawler().OfType<Page>();
+            var page = (IInputParameter)this.GetUpperInterface<IInputParameter>();
+            if (page == null)
+            {
+                ReportManage.ErrUpperNotFound<IInputParameter>(this);
+                return;
+            }
             string key = this.Key;
             if (KeyTree != null)
             {
-               key =  RawlerBase.GetText(this.Parent.Text, KeyTree,this.Parent);
+                key = RawlerBase.GetText(this.Parent.Text, KeyTree, this.Parent);
             }
             else
             {
                 key = key.Convert(this);
             }
-            if (list.Any())
+
+            if (string.IsNullOrEmpty(Value))
             {
-                if (string.IsNullOrEmpty(Value))
+                if (AddType == AddInputParameterType.replece)
                 {
-                    if (AddType == AddInputParameterType.replece)
-                    {
-                        list.First().ReplaceParameter(key, GetText());
-                    }
-                    else
-                    {
-                        list.First().AddParameter(key, GetText());
-                    }
+                    page.ReplaceParameter(key, GetText());
                 }
                 else
                 {
-                    if (AddType == AddInputParameterType.replece)
-                    {
-                        list.First().ReplaceParameter(key, Value.Convert(this));
-                    }
-                    else
-                    {
-                        list.First().AddParameter(key, Value.Convert(this));
-                    }
+                    page.AddParameter(key, GetText());
                 }
             }
             else
             {
-                ReportManage.ErrReport(this, "上流にPageが必要です。");
+                if (AddType == AddInputParameterType.replece)
+                {
+                    page.ReplaceParameter(key, Value.Convert(this));
+                }
+                else
+                {
+                    page.AddParameter(key, Value.Convert(this));
+                }
             }
+
             base.Run(runChildren);
         }
 

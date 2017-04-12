@@ -103,6 +103,45 @@ namespace Rawler.Tool
 //            set { dataDic = value; }
         }
 
+
+        /// <summary>
+        /// JSONを生成するためのDicを作って返す。
+        /// </summary>
+        /// <returns></returns>
+        public Dictionary<string,object> GetDataDicForJson()
+        {
+            Dictionary<string, object> dic = new Dictionary<string, object>();
+
+            foreach (var item in dataDic)
+            {
+                object obj = null;
+                if (dataTypeDic.TryGetValue(item.Key,out DataAttributeType dataAttribute) && dataAttribute == DataAttributeType.Json)
+                {                    
+                    if(item.Value.Count == 1)
+                    {
+                        obj = JsonConvert.DeserializeObject(item.Value.First());
+                    }
+                    else
+                    {
+                        obj = item.Value.Select(n => JsonConvert.DeserializeObject(n)).ToArray();
+                    }
+                }
+                else
+                {
+                    if (item.Value.Count == 1)
+                    {
+                        obj = item.Value.First();
+                    }
+                    else
+                    {
+                        obj = item.Value;
+                    }                
+                }
+                dic.Add(item.Key, obj);
+            }
+            return dic;
+        }
+
         public ICollection<string> Attributes
         {
             get
@@ -164,7 +203,7 @@ namespace Rawler.Tool
         /// <returns></returns>
         public string ToJson()
         {
-           return   JsonConvert.SerializeObject(dataDic);
+           return JsonConvert.SerializeObject(dataDic);
         }
 
         /// <summary>
@@ -197,24 +236,6 @@ namespace Rawler.Tool
             }
             return strBuilder.ToString();
         }
-
-
-        //public IEnumerable<CellData> GetCell(IEnumerable<string> keys)
-        //{
-        //    List<CellData> list = new List<CellData>();
-        //    foreach (var item in keys)
-        //    {
-        //        if( dataDic.ContainsKey(item))
-        //        {
-        //            list.Add(new CellData() { Key = item, Values = dataDic[item].Select(n=>n.Trim()).ToList() , DataType = dataTypeDic.GetValueOrDefault(item,DataAttributeType.Text) });
-        //        }
-        //        else
-        //        {
-        //            list.Add(new CellData() { Key = item, Values = new List<string>(), DataType = DataAttributeType.Text });
-        //        }
-        //    }
-        //    return list;
-        //}
 
         public IEnumerable<CellData> GetCell(IDictionary<string,int> dic)
         {
@@ -305,11 +326,11 @@ namespace Rawler.Tool
         }
     }
 
-   
+
 
 
     public enum DataAttributeType
     {
-        SourceUrl, Image, Url, Text,
+        SourceUrl, Image, Url, Text, Json
     }
 }

@@ -29,6 +29,8 @@ namespace Rawler.Tool
         FileSaveMode fileSaveMode = FileSaveMode.Create;
         private bool endReport = true;
 
+        public string Attribute { get; set; }
+
         public bool EndReport
         {
             get { return endReport; }
@@ -265,7 +267,12 @@ namespace Rawler.Tool
                 SaveFile();
             }
 
-            if (EndDataClear)
+            if (string.IsNullOrEmpty(Attribute) == false)
+            {
+                Data.DataWrite(this, Attribute, this.ToJson(),DataWriteType.add,  DataAttributeType.Json);
+            }
+
+            if (EndDataClear || string.IsNullOrEmpty(Attribute) == false)
             {
                 dataDic.Clear();
                 dataList.Clear();
@@ -344,7 +351,7 @@ namespace Rawler.Tool
                 }
                 if (saveFileType == FileType.Json)
                 {
-                    sw.WriteLine(Codeplex.Data.DynamicJson.Serialize(this.GetDataRows().Select(n => n.DataDic)));
+                    sw.WriteLine(Codeplex.Data.DynamicJson.Serialize(this.GetDataRows().Select(n => n.GetDataDicForJson())));
                 }
 
                 sw.Close();
@@ -374,58 +381,6 @@ namespace Rawler.Tool
 
                 sw.Write(ToTsv());
 
-                //HashSet<string> hash = new HashSet<string>();
-                //foreach (var item2 in this.GetDataRows())
-                //{
-                //    foreach (var item3 in item2.DataDic.Keys)
-                //    {
-                //        hash.Add(item3);
-                //    }
-                //}
-                //var order = CreateOrderString();
-                //var list = hash.ToList();
-
-                //var except = list.Except(order).ToList();
-                //except.Sort();
-                //list = order.Union(except).ToList();
-                //foreach (var key in list)
-                //{
-                //    sw.Write(key);
-                //    sw.Write("\t");
-                //}
-                //sw.WriteLine();
-
-
-
-                //foreach (var row in this.GetDataRows())
-                //{
-                //    foreach (var key in list)
-                //    {
-                //        if (row.DataDic.ContainsKey(key))
-                //        {
-                //            StringBuilder str = new StringBuilder();
-                //            bool flag = true;
-                //            foreach (var item5 in row.DataDic[key])
-                //            {
-                //                if (item5 != null)
-                //                {
-                //                    str.Append(item5.Replace("\n", "").Replace("\r", "").Replace("\t", "") + ",");
-                //                }
-                //                else
-                //                {
-                //                    flag = false;
-                //                }
-                //            }
-                //            if (flag)
-                //            {
-                //                str.Length = str.Length - 1;
-                //            }
-                //            sw.Write(str.ToString());
-                //        }
-                //        sw.Write("\t");
-                //    }
-                //    sw.WriteLine();
-                //}
                 sw.Close();
                 ReportManage.Report(this, filename + "作成完了", true, EndReport);
             }
@@ -514,8 +469,15 @@ namespace Rawler.Tool
         /// <returns></returns>
         public string ToJson(Newtonsoft.Json.Formatting format)
         {
-            var list = this.GetDataRows().Select(n => n.DataDic.ToDictionary(m => m.Key, m => m.Value.JoinText(","))).ToList();
-            return Newtonsoft.Json.JsonConvert.SerializeObject(list, format);
+            var list = this.GetDataRows().Select(n => n.GetDataDicForJson()).ToList();
+            if(list.Count == 1)
+            {
+                return Newtonsoft.Json.JsonConvert.SerializeObject(list.First(), format);
+            }
+            else
+            {
+                return Newtonsoft.Json.JsonConvert.SerializeObject(list, format);
+            }
         }
 
         /// <summary>

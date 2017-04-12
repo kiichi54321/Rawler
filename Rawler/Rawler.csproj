@@ -160,6 +160,7 @@
     <Compile Include="Tool\Data\Data.cs" />
     <Compile Include="Tool\Data\DataRow.cs" />
     <Compile Include="Tool\Data\DataWrite.cs" />
+    <Compile Include="Tool\Text\ConvertText.cs" />
     <Compile Include="Tool\Text\Document.cs" />
     <Compile Include="Tool\Condition\Equal.cs" />
     <Compile Include="Tool\IO\FileOpen.cs" />
@@ -193,6 +194,7 @@
     <Compile Include="Tool\Web\AddInputParameter.cs" />
     <Compile Include="Tool\Web\ConvertAbsolutePath.cs" />
     <Compile Include="Tool\Web\DownLoad.cs" />
+    <Compile Include="Tool\Web\GenerateUrl.cs" />
     <Compile Include="Tool\Web\GetPageUrl.cs" />
     <Compile Include="Tool\Html\GetScriptVariable.cs" />
     <Compile Include="Tool\Web\HostFilter.cs" />
@@ -200,6 +202,7 @@
     <Compile Include="Tool\Condition\IsEmpty.cs" />
     <Compile Include="Tool\Utility\KeyValuePair.cs" />
     <Compile Include="Tool\Web\HttpClient.cs" />
+    <Compile Include="Tool\Web\IInputParameter.cs" />
     <Compile Include="Tool\Web\PageNoDownLoad.cs" />
     <Compile Include="Tool\Web\PageOnce.cs" />
     <Compile Include="Tool\Web\PageParent.cs" />
