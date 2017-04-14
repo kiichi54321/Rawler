@@ -120,6 +120,7 @@
     <Compile Include="Tool\Data\CheckDataRow.cs" />
     <Compile Include="Tool\Data\DataGrouping.cs" />
     <Compile Include="Tool\Data\IData.cs" />
+    <Compile Include="Tool\Data\IsDataAttributeEmpty.cs" />
     <Compile Include="Tool\Data\ReportCurrentDataRow.cs" />
     <Compile Include="Tool\Data\ReportDataRow2Json.cs" />
     <Compile Include="Tool\Data\TempDataRows.cs" />
@@ -212,6 +213,7 @@
     <Compile Include="Tool\Text\ReadLine.cs" />
     <Compile Include="Tool\Text\RegularExpressions.cs" />
     <Compile Include="Tool\Web\PageReload.cs" />
+    <Compile Include="Tool\Web\Post.cs" />
     <Compile Include="Tool\Web\ReLogin.cs" />
     <Compile Include="Tool\Utility\ReportManage.cs" />
     <Compile Include="Tool\IRawler.cs" />

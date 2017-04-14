@@ -239,14 +239,9 @@ namespace Rawler.Tool
 
             parameterList.Clear();
             httpHeaderList.Clear();
-            if (BeforeTrees.Any())
-            {
-                foreach (var item in BeforeTrees)
-                {
-                    RawlerBase.GetText(GetText(), item, this);
-                }
-            }
-            if(InputParameterTree != null)
+            BeforeTrees.Run(this, GetText());
+
+            if (InputParameterTree != null)
             {
                 RawlerBase.GetText(GetText(), InputParameterTree, this);
             }

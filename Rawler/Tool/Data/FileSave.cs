@@ -110,8 +110,29 @@ namespace Rawler.Tool
         {
             if (count % 10000== 0) CheckFileSizeAndCreate();
             count++;
+            if(SaveFileType == FileType.Tsv)
+            {
+                TsvWrite(e);
+            }
+            else 
+            {
+                JsonWrite(e);
+            }
+        }
+
+
+        void JsonWrite(Data.EventDataRow e)
+        {
             if (streamWriter != null)
-            {                
+            {
+                streamWriter.WriteLine(Newtonsoft.Json.JsonConvert.SerializeObject(e.DataRow.GetDataDicForJson()));
+            }
+        }
+
+        void TsvWrite(Data.EventDataRow e)
+        {
+            if (streamWriter != null)
+            {
                 foreach (var item2 in order)
                 {
                     if (e.DataRow.DataDic.ContainsKey(item2))
@@ -132,7 +153,7 @@ namespace Rawler.Tool
                     streamWriter.Write("\t");
                 }
 
-                foreach (var item in e.DataRow.DataDic.OrderBy(n => n.Key).Where(n => order.Contains(n.Key)==false))
+                foreach (var item in e.DataRow.DataDic.OrderBy(n => n.Key).Where(n => order.Contains(n.Key) == false))
                 {
                     if (item.Key.Length > 0)
                     {
@@ -140,14 +161,16 @@ namespace Rawler.Tool
                     }
                     if (item.Value.Count > 1)
                     {
-                        item.Value.ForEach(n => streamWriter.Write(n.ReadLines().Select(m=> m.Replace("\t"," ").Trim()).JoinText(" ") + ","));
+                        item.Value.ForEach(n => streamWriter.Write(n.ReadLines().Select(m => m.Replace("\t", " ").Trim()).JoinText(" ") + ","));
                     }
                     else
                     {
-                        streamWriter.Write(item.Value.First().ReadLines().Select(m=> m.Replace("\t"," ").Trim()).JoinText(" "));
+                        streamWriter.Write(item.Value.First().ReadLines().Select(m => m.Replace("\t", " ").Trim()).JoinText(" "));
                     }
                     streamWriter.Write("\t");
                 }
+
+
                 streamWriter.WriteLine();
             }
 
@@ -179,26 +202,29 @@ namespace Rawler.Tool
                 streamWriter = File.AppendText(fileName);
             }
 
-            if (AttributeOrderString != null)
+            if (SaveFileType == FileType.Tsv)
             {
-                order = new List<string>(AttributeOrderString.Split(','));
-            }
-            else
-            {
-                order = CreateOrderString();
-            }
+                if (AttributeOrderString != null)
+                {
+                    order = new List<string>(AttributeOrderString.Split(','));
+                }
+                else
+                {
+                    order = CreateOrderString();
+                }
 
-            if (FileSaveMode == Tool.FileSaveMode.Create)
-            {
-                order.ForEach(n => streamWriter.Write(n + "\t"));
-                streamWriter.WriteLine();
-            }
-            else
-            {
-                if (existflag == false)
+                if (FileSaveMode == Tool.FileSaveMode.Create)
                 {
                     order.ForEach(n => streamWriter.Write(n + "\t"));
                     streamWriter.WriteLine();
+                }
+                else
+                {
+                    if (existflag == false)
+                    {
+                        order.ForEach(n => streamWriter.Write(n + "\t"));
+                        streamWriter.WriteLine();
+                    }
                 }
             }
 
@@ -274,4 +300,6 @@ namespace Rawler.Tool
     {
         Create, Append
     }
+
+   
 }

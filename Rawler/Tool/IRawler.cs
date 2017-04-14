@@ -859,9 +859,15 @@ namespace Rawler.Tool
     [Serializable]
     public class RawlerCollection : System.Collections.ObjectModel.ObservableCollection<RawlerBase>
     {
-        public void test()
+        public void Run(RawlerBase root,string text)
         {
-            
+            if (this.Any())
+            {
+                foreach (var item in this)
+                {
+                    RawlerBase.GetText(text, item, root);
+                }
+            }
         }
     }
 

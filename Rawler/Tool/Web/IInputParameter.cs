@@ -18,5 +18,15 @@ namespace Rawler.Tool
         /// <param name="value"></param>
         void AddParameter(string key, string value);
         void ReplaceParameter(string key, string value);
+
     }
+
+    /// <summary>
+    /// HTTP 用のパラメータをセットする。
+    /// </summary>
+    public interface IHttpHeader
+    {
+        void AddHttpHeader(string key, string value);
+    }
+
 }
