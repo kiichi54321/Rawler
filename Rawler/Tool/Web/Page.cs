@@ -20,13 +20,6 @@ namespace Rawler.Tool
         {
             this.Url = url;
         }
-        //public Page(string url, string encoding)
-        //    : base()
-        //{
-        //    this.Url = url;
-        //    Encoding = encoding;
-        //}
-
 
         /// <summary>
         /// 初めに指定したURLを取得します。

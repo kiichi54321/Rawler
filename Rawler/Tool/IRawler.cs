@@ -213,6 +213,7 @@ namespace Rawler.Tool
                 try
                 {
                     OnBeginRunEvent();
+                    ReportComment();
                     Run(true);
                     Completed();
                     OnEndRunEvent();
@@ -279,7 +280,16 @@ namespace Rawler.Tool
 
         }
 
-
+        /// <summary>
+        /// commentを出力する。
+        /// </summary>
+        protected void ReportComment()
+        {
+            if(!string.IsNullOrEmpty( this.commnet))
+            {
+                ReportManage.Report(this, this.Comment);
+            }
+        }
 
         public void SetParent()
         {

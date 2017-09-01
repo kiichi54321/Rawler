@@ -52,7 +52,10 @@ namespace Rawler.Tool
         {
             this.Sleep();
             System.Net.Http.HttpClient client = GetHttpClient();
-            client.DefaultRequestHeaders.Referrer = new Uri(this.Referer);
+            if (!string.IsNullOrEmpty(this.Referer))
+            {
+                client.DefaultRequestHeaders.Referrer = new Uri(this.Referer);
+            }
             var result = client.GetByteArrayAsync(url);
             result.Wait();
 
@@ -93,6 +96,10 @@ namespace Rawler.Tool
             this.Sleep();
             System.Net.Http.HttpClient client = GetHttpClient();
             client.SetHeader(httpHeaderList);
+            if (ReportUrl)
+            {
+                ReportManage.Report(this, $"Post {url} { Newtonsoft.Json.JsonConvert.SerializeObject(parameterList.ToDictionary(n=>n.Key,n=>n.Value))}.", true, true);
+            }
 
             var r = client.PostAsync(url, new FormUrlEncodedContent(parameterList.Select(n => new KeyValuePair<string, string>(n.Key, n.Value))));
             r.Wait();

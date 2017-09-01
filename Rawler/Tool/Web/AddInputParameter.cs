@@ -52,7 +52,7 @@ namespace Rawler.Tool
                 key = key.Convert(this);
             }
 
-            if (string.IsNullOrEmpty(Value))
+            if (Value == null)
             {
                 if (AddType == AddInputParameterType.replece)
                 {
