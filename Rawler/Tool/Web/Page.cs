@@ -257,11 +257,9 @@ namespace Rawler.Tool
             }
             else
             {
-                if (client.ErrMessage.Contains("503") || client.ErrMessage.Contains("500"))
+                if (client.ErrMessage != null && ( client.ErrMessage.Contains("503") || client.ErrMessage.Contains("500")))
                 {
-                    ReportManage.Report(this, "待機します", true, true);
-                    System.Threading.Thread.Sleep(new TimeSpan(0, 0, 30));
-                    urlStack.Push(url);
+                    ReportManage.ErrReport(this,$"{client.ErrMessage} {url}の読み込みに失敗しました。");
                 }
                 else
                 {

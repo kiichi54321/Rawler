@@ -40,9 +40,9 @@ namespace Rawler.Tool
                 ReportManage.Report(this, "GET " + url, true, true);
             }
             System.Net.Http.HttpClient client = GetHttpClient();
-            var result = client.GetStringAsync(url);
-            result.Wait();
-            return result.Result;
+            var result = client.GetStringAsync(url).ConfigureAwait(false);
+            
+            return result.GetAwaiter().GetResult(); 
         }
 
 
@@ -56,10 +56,8 @@ namespace Rawler.Tool
             {
                 client.DefaultRequestHeaders.Referrer = new Uri(this.Referer);
             }
-            var result = client.GetByteArrayAsync(url);
-            result.Wait();
-
-            return result.Result;
+            var result = client.GetByteArrayAsync(url).ConfigureAwait(false);          
+            return result.GetAwaiter().GetResult(); 
         }
 
 
@@ -68,11 +66,11 @@ namespace Rawler.Tool
         {
             this.Sleep();
             System.Net.Http.HttpClient client = GetHttpClient();
-            var r = client.PostAsync(url, new FormUrlEncodedContent(vals.Select(n => new KeyValuePair<string, string>(n.Key, n.Value))));
-            r.Wait();
-            var r2 = r.Result.Content.ReadAsStringAsync();
-            r2.Wait();
-            return r2.Result;
+            var r = client.PostAsync(url, new FormUrlEncodedContent(vals.Select(n => new KeyValuePair<string, string>(n.Key, n.Value)))).ConfigureAwait(false).GetAwaiter().GetResult();
+            var r2 = r.Content.ReadAsStringAsync().ConfigureAwait(false).GetAwaiter().GetResult();
+            this.ErrMessage = r.StatusCode.ToString();
+
+            return r2;
         }
 
         public string HttpGet(string url, List<KeyValue> parameterList, List<KeyValue> httpHeaderList)
@@ -85,10 +83,10 @@ namespace Rawler.Tool
             System.Net.Http.HttpClient client = GetHttpClient();
 
             client.SetHeader(httpHeaderList);
-            var result = client.GetStringAsync(url);
-            result.Wait();
+            var result = client.GetStringAsync(url).ConfigureAwait(false).GetAwaiter().GetResult();           
             client.RemoveHeader(httpHeaderList);
-            return result.Result;
+
+            return result;
         }
 
         public string HttpPost(string url, List<KeyValue> parameterList, List<KeyValue> httpHeaderList)
@@ -101,11 +99,11 @@ namespace Rawler.Tool
                 ReportManage.Report(this, $"Post {url} { Newtonsoft.Json.JsonConvert.SerializeObject(parameterList.ToDictionary(n=>n.Key,n=>n.Value))}.", true, true);
             }
 
-            var r = client.PostAsync(url, new FormUrlEncodedContent(parameterList.Select(n => new KeyValuePair<string, string>(n.Key, n.Value))));
-            r.Wait();
-            var r2 = r.Result.Content.ReadAsStringAsync();
-            r2.Wait();
-            return r2.Result;
+            var r = client.PostAsync(url, new FormUrlEncodedContent(parameterList.Select(n => new KeyValuePair<string, string>(n.Key, n.Value)))).ConfigureAwait(false).GetAwaiter().GetResult();
+           
+            var r2 = r.Content.ReadAsStringAsync().ConfigureAwait(false).GetAwaiter().GetResult();
+            this.ErrMessage = r.StatusCode.ToString();
+            return r2;
         }
     }
 

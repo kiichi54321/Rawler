@@ -32,6 +32,10 @@ namespace Rawler.Tool
             set { doSave = value; }
         }
 
+        public IEnumerable<ReportEvnetArgs> GetErrorReports()
+        {
+            return reportList.Where(n => n.IsErr);
+        }
 
         public void AddReport(ReportEvnetArgs ea)
         {
@@ -42,7 +46,7 @@ namespace Rawler.Tool
                     System.IO.File.AppendAllText(FileName, ea.DateTime.ToFileTimeUtc() + "\t" + ea.Message+"\n");
                 }
             }
-            if (isStock && ea.IsErr)
+            if (isStock )
             {
                 reportList.Add(ea);
             }
@@ -150,16 +154,17 @@ namespace Rawler.Tool
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="err"></param>
-        public static void ErrReport(RawlerBase sender, string err)
+        /// <param name="errorCode"></param>
+        public static void ErrReport(RawlerBase sender, string err,int errorCode = 0)
         {
             ReportEvnetArgs args;
             if (sender != null)
             {
-                args = new ReportEvnetArgs(sender, GetTopComment(sender) + "ERR:" + sender.GetType().Name + ":" + err, true, true);
+                args = new ReportEvnetArgs(sender, GetTopComment(sender) + "ERR:" + sender.GetType().Name + ":" + err, true, true, code: errorCode);
             }
             else
             {
-                args = new ReportEvnetArgs(sender, GetTopComment(sender) + "ERR:" + err, true, true);
+                args = new ReportEvnetArgs(sender, GetTopComment(sender) + "ERR:" + err, true, true,code:errorCode);
             }
             AddReportEventArgs(sender, args);
             ErrReportEvent?.Invoke(sender, args);
@@ -269,27 +274,26 @@ namespace Rawler.Tool
     public class ReportEvnetArgs : EventArgs
     {
         public string Message { get; set; }
-        //      public RawlerBase Sender { get; set; }
+        public int Code { get; set; }
         public bool IsErr { get; set; }
         public DateTime DateTime { get; set; }
         public bool Visible { get; set; }
         public bool ReturnCode { get; set; }
-        public ReportEvnetArgs()
-            :base()
+        public ReportEvnetArgs() :base()
         { }
 
-        public ReportEvnetArgs(RawlerBase sender, string message, bool returncode)
+        public ReportEvnetArgs(RawlerBase sender, string message, bool returncode,int code = 0)
             : base()
         {
-            //        this.Sender = sender;
             this.Message = message;
             this.IsErr = false;
             this.DateTime = DateTime.Now;
             this.Visible = false;
             this.ReturnCode = returncode;
+            this.Code = code;
         }
 
-        public ReportEvnetArgs(RawlerBase sender, string message, bool returncode, bool isErr)
+        public ReportEvnetArgs(RawlerBase sender, string message, bool returncode, bool isErr,int code = 0)
             : base()
         {
             //       this.Sender = sender;
@@ -298,6 +302,7 @@ namespace Rawler.Tool
             this.DateTime = DateTime.Now;
             this.Visible = true;
             this.ReturnCode = returncode;
+            this.Code = code;
         }
 
         public string ToText()
