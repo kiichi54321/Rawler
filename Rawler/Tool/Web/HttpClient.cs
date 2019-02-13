@@ -96,7 +96,7 @@ namespace Rawler.Tool
             client.SetHeader(httpHeaderList);
             if (ReportUrl)
             {
-                ReportManage.Report(this, $"Post {url} { Newtonsoft.Json.JsonConvert.SerializeObject(parameterList.ToDictionary(n=>n.Key,n=>n.Value))}.", true, true);
+                ReportManage.Report(this, $"Post {url} [{string.Join("\t", parameterList.Select(n=>$"{n.Key}:{n.Value}"))}]", true, true);
             }
 
             var r = client.PostAsync(url, new FormUrlEncodedContent(parameterList.Select(n => new KeyValuePair<string, string>(n.Key, n.Value)))).ConfigureAwait(false).GetAwaiter().GetResult();
