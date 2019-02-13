@@ -1,5 +1,5 @@
 {
-  "version": 2,
+  "version": 3,
   "targets": {
     ".NETPortable,Version=v4.5,Profile=Profile7": {
       "Newtonsoft.Json/10.0.2": {
@@ -91,7 +91,17 @@
       "projectName": "RawlerPCL.IO",
       "projectPath": "C:\\Users\\t-ito\\Source\\Repos\\Rawler\\RawlerPCL.IO\\RawlerPCL.IO.csproj",
       "projectJsonPath": "C:\\Users\\t-ito\\Source\\Repos\\Rawler\\RawlerPCL.IO\\project.json",
+      "packagesPath": "C:\\Users\\t-ito\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\t-ito\\Source\\Repos\\Rawler\\RawlerPCL.IO\\obj\\",
       "projectStyle": "ProjectJson",
+      "configFilePaths": [
+        "C:\\Users\\t-ito\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+      ],
+      "sources": {
+        "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+        "https://api.nuget.org/v3/index.json": {}
+      },
       "frameworks": {
         "portable45-net45+win8": {
           "projectReferences": {
