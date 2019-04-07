@@ -1,4 +1,4 @@
-#概要
+# 概要
 オレオレフレームワークのオレオレ言語です。XAMLでプログラミングします。
 なまえは、Rawlerとしています。
 Webからのデータ取得と加工に特化した言語です。いわゆるDSL（ドメイン特化言語）ですね。
@@ -16,7 +16,7 @@ Webからのデータ取得から、形態素解析によるデータ作成と�
 * [実行クライアント(ClickOneなのでIEで開くとスムーズ)](http://web.sfc.keio.ac.jp/~kiichi/soft/rawler/publish.htm)
 * [基本的な書き方PPT(slideshare)](http://www.slideshare.net/TakaichiIto/rawler-12571428)
 
-#サンプルコード
+# サンプルコード
 
 ```xml:sample.xaml
 <WebClient Comment="" 
@@ -65,7 +65,7 @@ Webからのデータ取得から、形態素解析によるデータ作成と�
 ```
 このXMLをコピって、[実行クライアント](http://web.sfc.keio.ac.jp/~kiichi/soft/rawler/publish.htm)にコピペし、「Run」ボタンを押すと実行。最終的には、My DocumentsのRawlerというフォルダに、test.tsvというファイルが作られる。ファイルを読みに行かなくても、ViewDataボタンで内容を見ることができる。
 
-#コンセプト
+# コンセプト
 Webスクレイピングは退屈な作業なので、楽したい。
 プログラムのための必須記述を書くのが面倒。newしたり、変数作ったり、foreach文を回したり。
 対象サイト用の設定と、プログラムのための記述が混じると、読みにくくなる。
@@ -73,7 +73,7 @@ Webスクレイピングは退屈な作業なので、楽したい。
 「たくさんのサイトからデータを取得したい」となると、モチベーションが保てない。
 IntelliSenseが効いて、メソッドチェーンっぽく何とかならんかと思いながら、作った。（数年前）
 
-#特徴
+# 特徴
 Webスクレイピングに必要な設定のみを書くだけで、実行可能。
 XAMLでテキスト処理の連鎖を書く。XAMLは木構造のため、同じテキストに対する処理を複数書ける。
 そのため、関数型言語っぽい、メソッドチェーンができる。
@@ -86,27 +86,27 @@ XAMLなので、Visual StudioでIntelliSenseが効果を発揮する。
 テキスト処理が得意なので、ついでに簡単な自然言語処理もつけた。
 
 
-#導入方法
-##Visual Studioのインストール
- 無償版だと、for windows Desktop版がベストだと思う。
-##NugetでRawlerをインストール
+# 導入方法
+## Visual Studioのインストール
+無償版だと、for windows Desktop版がベストだと思う。
+## NugetでRawlerをインストール
 Visual Studioを起動し、WPFプロジェクトの作成。そして、Nugetから「Rawler」で検索。インストール。
 WPFプロジェクトなのは、一部でWPFを使っているので、最終的に面倒がなさそうなので。
-##RawlerTree.xamlを編集
+## RawlerTree.xamlを編集
 デザインビューは、存在しないので、ぐいっと、XAML画面だけにして、編集する。
-##Rawlerの書き方について
+## Rawlerの書き方について
 [全体像のパワーポイント](http://www.slideshare.net/TakaichiIto/rawlerv2)を読んでください。
 基本的な書き方については、[Rawler基本](http://www.slideshare.net/TakaichiIto/rawler-12571428)　を読んでください。
 
-##書いたXAMLの実行
+## 書いたXAMLの実行
 [実行クライアント](http://web.sfc.keio.ac.jp/~kiichi/soft/rawler/publish.htm)に、コピペして実行が一番楽です。
 自身のプログラム内で使いたいときは、[RawlerConsole](https://github.com/kiichi54321/Rawler/blob/master/RawlerConsole/Program.cs)を参考にしてください。
 一番重要なのは、SetParent()です。上流との通信ができなくなるので、実行ができなくなる。
 ちなみに、RawlerConsoleをGitからダウンロードしてコンパイルすると、コマンドラインで実行可能になります。
 
 
-#コードのサンプル
-##ページング
+# コードのサンプル
+## ページング
 PageとNextPageを組み合わせると、同じページに対しての、再帰的に同じ処理でデータを取得をできる。
 終了条件は、「次へ」というリンクがなくなるまで。
 
@@ -138,7 +138,7 @@ PageとNextPageを組み合わせると、同じページに対しての、再�
 
 
 
-##認証が必要なサイトにログインする。
+## 認証が必要なサイトにログインする。
 POSTもできます。
 
 ```xml:pixiv.xaml
@@ -172,7 +172,7 @@ POSTもできます。
 </WebClient>
 ```
 
-##ファイルの読み込み
+## ファイルの読み込み
 TSVファイルの読み込みはこんなかんじです。
 TSVファイルはDataで作られる基本的なデータ形式です。そのため、データを取ってきたものを保存し、その後、読み込むなんていうこともできます。
 
@@ -218,7 +218,7 @@ TSVファイルはDataで作られる基本的なデータ形式です。その�
 </WebClient>
 ```
 
-##簡単な形態素解析
+## 簡単な形態素解析
 [http://chasen.org/~taku/software/TinySegmenter/](http://chasen.org/~taku/software/TinySegmenter/)　これのC#版を使い形態素解析をします。
 
 ```xml:pixiv.xaml
@@ -246,7 +246,7 @@ TSVファイルはDataで作られる基本的なデータ形式です。その�
 
 
 
-#拡張
+# 拡張
 たくさんの機能を用意していますが、結局は、自分が取得に困ったときに作っています。
 拡張は簡単で、C#でRawlerBaseまたは、RawlerMultiBaseの継承をし、overrideをするだけです。
 究極的には、テキストを変数にして、テキストを返せばいいので、何でもありです。
@@ -254,15 +254,15 @@ Jsonを返すようにすれば、オブジェクトを渡すことになりま�
 
 機能の追加の方法は、
 
-1.それ専用のプロジェクトの追加。
-2.NugetでRawlerを取得
-3.単数の場合は、RawlerBase,複数の時は、RawlerMultiBaseを継承。
-4.Run()をoverrideする。
-5.親テキストの取得には、GetText()を使う。
-6.XAML編集画面で使うには、コンパイルして、root要素にある、xmlnsに追加してください。
+1. それ専用のプロジェクトの追加。
+2. NugetでRawlerを取得
+3. 単数の場合は、RawlerBase,複数の時は、RawlerMultiBaseを継承。
+4. Run()をoverrideする。
+5. 親テキストの取得には、GetText()を使う。
+6. XAML編集画面で使うには、コンパイルして、root要素にある、xmlnsに追加してください。
 
-##サンプル
-###シンプルな例
+## サンプル
+### シンプルな例
 タグの中のパラメータを取得する
 https://github.com/kiichi54321/Rawler/blob/master/Rawler/Tool/Html/GetTagParameters.cs
 単語の指定の区切りで分割する。返しは複数。
@@ -270,7 +270,7 @@ https://github.com/kiichi54321/Rawler/blob/master/Rawler/Tool/Text/Split.cs
 
 他のソースコードには、Clone()とObjectNameがテンプレとして存在しますが、結局使いませんでした。あってもなくてもいいです。
 
-###祖先関係で成立する例
+### 祖先関係で成立する例
 XAMLの木構造を使い、祖先にあるオブジェクトに対して効果を発揮するものがいくつかあります。
 DataとDataWriteがそうですが、多少ややこしいので、シンプル目のものを紹介します。
 
@@ -280,13 +280,13 @@ GetTsvValueクラスのRunメソッドにある、
 `var file = this.GetAncestorRawler().OfType<TsvReadLines>();`
 で、親のオブジェクトを取得し、そこに問い合わせている。
 
-###Staticクラスにアクセスする例
+### Staticクラスにアクセスする例
 木構造をたどる場合、必ず、上流にオブジェクトを配置しないといけないのは面倒である。
 どこでもほしい時に配置できるのは、やっぱり便利である。
 https://github.com/kiichi54321/Rawler/blob/master/Rawler/Tool/Utility/GlobalVar.cs
 スコープがなくなり、Staticおじさんとなるので、並列実行したとき、おかしくなると思うが、とりあえず便利です。
 
-#おわりに
+# おわりに
 そんなわけで使ってみてください。
 XAMLはWPFだけのものじゃないよっと。
 元々はヴィジュアルプログラミングっぽくやりたかったのですが、XAMLの表現力で満足しました。
